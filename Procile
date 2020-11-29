@@ -1,2 +1,1 @@
-Aptfile
-git
+worker: node index.js

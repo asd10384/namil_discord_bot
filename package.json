@@ -1,7 +1,7 @@
 {
-  "name": "disbot",
+  "name": "namil-discord-bot",
   "version": "1.0.0",
-  "description": "disbot",
+  "description": "namil discord bot",
   "main": "index.js",
   "dependencies": {
     "axios": "^0.21.0",
@@ -15,7 +15,6 @@
     "path": "^0.12.7",
     "quick.db": "^7.1.3"
   },
-  "devDependencies": {},
   "scripts": {
     ".": "node index.js"
   },

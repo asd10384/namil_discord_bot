@@ -19,19 +19,19 @@ module.exports = {
 
         const com1 = new MessageEmbed()
             .setTitle('명령어 모음')
-            .addField(`\` ${pp}help \``, '명령어 설명')
-            .addField(`\` ${pp}ping \``, '핑 확인')
-            .addField(`\` ${pp}setprefix \``, 'prefix 설정')
+            .addField(`\` ${pp}help [h] \``, '명령어 설명')
+            .addField(`\` ${pp}ping [p] \``, '핑 확인')
+            .addField(`\` ${pp}setprefix [sp] \``, 'prefix 설정')
             .setColor('RANDOM');
 
         const com2 = new MessageEmbed()
             .setTitle('명령어 모음')
-            .addField(`\` ${pp}타이머 \``, 'timer')
+            .addField(`\` ${pp}타이머 [timer] \``, 'timer')
             .setColor('RANDOM');
 
         const com3 = new MessageEmbed()
             .setTitle('명령어 모음')
-            .addField(`\` ${pp}help \``, '명령어 설명')
+            .addField(`\` ${pp}covid [코로나] \``, '국내 코로나 확인')
             .setColor('RANDOM');
 
         const pages = [

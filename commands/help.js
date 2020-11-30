@@ -26,7 +26,8 @@ module.exports = {
 
         const com2 = new MessageEmbed()
             .setTitle('명령어 모음')
-            .addField(`\` ${pp}타이머 [timer] \``, 'timer')
+            .addField(`\` ${pp}타이머 [timer] \``, '타이머')
+            .addField(`\` ${pp}임베드 [embed] \``, '임베드 제작')
             .setColor('RANDOM');
 
         const com3 = new MessageEmbed()

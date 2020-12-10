@@ -2,5 +2,8 @@
     "token": "",
     "default_prefix": ";",
     "msg_time": 10000,
-    "help_time": 30000
+    "help_time": 30000,
+    "textchannel": "783671264493174824",
+    "general_manager": "457782005728280577",
+    "assistant_manager": "457878758322601985"
 }

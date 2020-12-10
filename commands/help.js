@@ -28,12 +28,19 @@ module.exports = {
 
         const com2 = new MessageEmbed()
             .setTitle('명령어 모음')
+            .addField(`\` ${pp}covid [코로나] \``, '국내 코로나 확인')
             .addField(`\` ${pp}급식 [meal] \``, '남일고 급식확인')
             .setColor('RANDOM');
 
         const com3 = new MessageEmbed()
             .setTitle('명령어 모음')
-            .addField(`\` ${pp}covid [코로나] \``, '국내 코로나 확인')
+            .addField(`\` ${pp}tts [say,음성] \``, 'text to speech')
+            .addField(`\` ${pp}join [j] \``, 'join voice channel')
+            .addField(`\` ${pp}voice [vo] \``, 'change language')
+            .addField(`\` ${pp}dm [디엠] \``, '디엠 보내기')
+            .addField(`\` ${pp}avatar [av,프로필] \``, '플레이어 정보 확인')
+            .addField(`\` ${pp}nickname [닉네임] \``, '서버 닉네임 변경')
+            .addField(`\` ${pp}message [channel id] [text] \``, '채팅채널에 채팅입력')
             .setColor('RANDOM');
 
         const pages = [

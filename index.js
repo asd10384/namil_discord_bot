@@ -132,4 +132,7 @@ client.on('message', async message => {
     }
 });
 
+// test token
+// Nzk2OTIyNjEwMTUwNjcwMzc2.X_e-BA.cO4xeym1Sz57ZzhNpIWuG3dpODk
+// process.env.token
 client.login(process.env.token);

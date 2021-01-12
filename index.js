@@ -132,6 +132,5 @@ client.on('message', async message => {
     }
 });
 
-// test token
 // process.env.token
 client.login(process.env.token);

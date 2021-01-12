@@ -6,7 +6,7 @@ const { default_prefix, msg_time, help_time } = require('../config.json');
 
 module.exports = {
     name: 'help',
-    aliases: ['h'],
+    aliases: ['h','명령어','도움말'],
     description: '명령어 확인',
     async run (client, message, args) {
         function msgdelete(m, t) {

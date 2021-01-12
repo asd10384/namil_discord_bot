@@ -24,7 +24,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node index.js"
+    ".": "node index.js"
   },
   "author": "asd10384",
   "license": "ISC"

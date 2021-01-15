@@ -30,7 +30,7 @@ module.exports = {
                 ${pp}voice help
 
                 \` 명령어 \`
-                ${pp}voice [leng]
+                ${pp}voice [lan]
                 ex: ${pp}voice 한국어
 
                 \` 사용가능한 음성확인 \`

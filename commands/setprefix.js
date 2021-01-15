@@ -18,15 +18,19 @@ module.exports = {
 
         const dp = new MessageEmbed()
             .setTitle(`prefix 변경 실패`)
-            .setDescription(`권한이 없습니다.`);
+            .setDescription(`권한이 없습니다.`)
+            .setColor('RANDOM');
         const np = new MessageEmbed()
             .setTitle(`prefix 변경 실패`)
-            .setDescription(`바꿀 prefix를 입력해주세요.\n( ${pp}setprefix [prefix] )`);
+            .setDescription(`바꿀 prefix를 입력해주세요.\n( ${pp}setprefix [prefix] )`)
+            .setColor('RANDOM');
         const tp = new MessageEmbed()
             .setTitle(`prefix 변경 실패`)
-            .setDescription(`prefix는 띄어쓰기를 사용하실수 없습니다.`);
+            .setDescription(`prefix는 띄어쓰기를 사용하실수 없습니다.`)
+            .setColor('RANDOM');
         const sp = new MessageEmbed()
-            .setTitle(`prefix 변경 성공`);
+            .setTitle(`prefix 변경 성공`)
+            .setColor('RANDOM');
         
         const fbp = db.get(`prefix_${message.guild.id}`);
 

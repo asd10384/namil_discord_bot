@@ -2,7 +2,6 @@
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time } = require('../config.json');
-const { writeFileSync, readFileSync } = require('fs');
 
 module.exports = {
     name: 'voice',
@@ -67,7 +66,7 @@ module.exports = {
         };
 
         try {
-            var be = readFileSync('lang.txt', 'utf-8');
+            var be = db.get('lang');
             var belangtext = Object.keys(langlist).find(key => langlist[key] === be);
         } catch(error) {
             var belangtext = '한국어';
@@ -89,7 +88,7 @@ module.exports = {
         if (langlist[args[0]]) {
             var now = langlist[args[0]];
             var nowlangtext = Object.keys(langlist).find(key => langlist[key] === now);
-            writeFileSync('lang.txt', now, 'utf-8');
+            db.set('lang', now);
             langfin.setDescription(`\` ${belangtext} \` -> \` ${nowlangtext} \``);
             message.channel.send(langfin).then(m => msgdelete(m, msg_time));
         } else {

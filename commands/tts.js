@@ -2,7 +2,6 @@
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time } = require('../config.json');
-const { readFileSync, writeFileSync } = require('fs');
 
 module.exports = {
     name: 'tts',
@@ -45,9 +44,9 @@ module.exports = {
                 var channel = client.channels.cache.get(channelid);
             }
             try {
-                var lang = readFileSync('lang.txt', 'utf-8');
+                var lang = db.get('lang');
             } catch(error) {
-                writeFileSync('lang.txt', 'ko', 'utf-8');
+                db.set('lang', 'ko');
                 var lang = 'ko';
             }
 

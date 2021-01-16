@@ -13,8 +13,11 @@ module.exports = {
                 m.delete();
             }, t)
         }
-        var pp = db.get(`prefix_${message.guild.id}`);
-        if (pp === null) pp = default_prefix;
+        var pp = db.get(`dp.prefix.${message.guild.id}`);
+        if (pp === null) {
+            await db.set(`db.prefix.${message.guild.id}`, default_prefix);
+            pp = default_prefix;
+        }
         
         const role = new MessageEmbed()
             .setTitle(`\` 이 명령어를 사용할 권한이 없습니다. \``)

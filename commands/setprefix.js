@@ -13,8 +13,11 @@ module.exports = {
                 m.delete();
             }, t)
         }
-        let pp = await db.get(`prefix_${message.guild.id}`);
-        if (pp === null) pp = default_prefix;
+        let pp = await db.get(`db.prefix.${message.guild.id}`);
+        if (pp === null) {
+            await db.set(`db.prefix.${message.guild.id}`, default_prefix);
+            pp = default_prefix;
+        }
 
         const dp = new MessageEmbed()
             .setTitle(`prefix 변경 실패`)
@@ -32,12 +35,12 @@ module.exports = {
             .setTitle(`prefix 변경 성공`)
             .setColor('RANDOM');
         
-        const fbp = db.get(`prefix_${message.guild.id}`);
+        const fbp = db.get(`db.prefix.${message.guild.id}`);
 
         if (!args[0]) return message.channel.send(np).then(m => msgdelete(m, msg_time));
         if(args[1]) return message.channel.send(tp).then(m => msgdelete(m, msg_time));
-        db.set(`prefix_${message.guild.id}`, args[0]);
-        const sbp = db.get(`prefix_${message.guild.id}`);
+        db.set(`db.prefix.${message.guild.id}`, args[0]);
+        const sbp = await db.get(`db.prefix.${message.guild.id}`);
         sp.setDescription('` ' + fbp + ' ` -> ` ' + sbp + ' `');
         client.user.setActivity(`${default_prefix}help`);
         message.channel.send(sp).then(m => msgdelete(m, msg_time));

@@ -13,8 +13,11 @@ module.exports = {
                 m.delete();
             }, t)
         }
-        var pp = db.get(`prefix_${message.guild.id}`);
-        if (pp === null) pp = default_prefix;
+        var pp = db.get(`db.prefix.${message.guild.id}`);
+        if (pp === null) {
+            await db.set(`db.prefix.${message.guild.id}`, default_prefix);
+            pp = default_prefix;
+        }
         
         const help = new MessageEmbed()
             .setTitle(`임베드 명령어`)

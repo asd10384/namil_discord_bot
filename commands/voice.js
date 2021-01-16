@@ -13,8 +13,11 @@ module.exports = {
                 m.delete();
             }, t)
         }
-        var pp = db.get(`prefix_${message.guild.id}`);
-        if (pp === null) pp = default_prefix;
+        var pp = db.get(`dp.prefix.${message.guild.id}`);
+        if (pp === null) {
+            await db.set(`db.prefix.${message.guild.id}`, default_prefix);
+            pp = default_prefix;
+        }
 
         const info = new MessageEmbed()
             .setTitle(`\` 현재 음성 \``)
@@ -66,7 +69,7 @@ module.exports = {
         };
 
         try {
-            var be = db.get('lang');
+            var be = await db.get('db.tts.lang');
             var belangtext = Object.keys(langlist).find(key => langlist[key] === be);
         } catch(error) {
             var belangtext = '한국어';
@@ -88,7 +91,7 @@ module.exports = {
         if (langlist[args[0]]) {
             var now = langlist[args[0]];
             var nowlangtext = Object.keys(langlist).find(key => langlist[key] === now);
-            db.set('lang', now);
+            await db.set('db.tts.lang', now);
             langfin.setDescription(`\` ${belangtext} \` -> \` ${nowlangtext} \``);
             message.channel.send(langfin).then(m => msgdelete(m, msg_time));
         } else {

@@ -13,8 +13,11 @@ module.exports = {
                 m.delete();
             }, t)
         }
-        var pp = db.get(`prefix_${message.guild.id}`);
-        if (pp === null) pp = default_prefix;
+        var pp = db.get(`dp.prefix.${message.guild.id}`);
+        if (pp === null) {
+            await db.set(`db.prefix.${message.guild.id}`, default_prefix);
+            pp = default_prefix;
+        }
         
         const help = new MessageEmbed()
             .setTitle(`\` 명령어 \``)
@@ -44,9 +47,9 @@ module.exports = {
                 var channel = client.channels.cache.get(channelid);
             }
             try {
-                var lang = db.get('lang');
+                var lang = await db.get('db.tts.lang');
             } catch(error) {
-                db.set('lang', 'ko');
+                db.set('db.tts.lang', 'ko');
                 var lang = 'ko';
             }
 

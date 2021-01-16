@@ -13,8 +13,11 @@ module.exports = {
                 m.delete();
             }, t)
         }
-        var pp = db.get(`prefix_${message.guild.id}`);
-        if (pp === null) pp = default_prefix;
+        var pp = db.get(`dp.prefix.${message.guild.id}`);
+        if (pp === null) {
+            await db.set(`db.prefix.${message.guild.id}`, default_prefix);
+            pp = default_prefix;
+        }
         
         const vc = new MessageEmbed()
             .setTitle(`봇이 음성채널에 없습니다.`)

@@ -13,8 +13,11 @@ module.exports = {
                 m.delete();
             }, t)
         }
-        let pp = await db.get(`prefix_${message.guild.id}`);
-        if (pp === null) pp = default_prefix;
+        let pp = await db.get(`dp.prefix.${message.guild.id}`);
+        if (pp === null) {
+            await db.set(`db.prefix.${message.guild.id}`, default_prefix);
+            pp = default_prefix;
+        }
 
         const ping = new MessageEmbed()
             .setTitle(`🏓 \` ${client.ws.ping} \` ms`)

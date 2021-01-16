@@ -133,4 +133,4 @@ client.on('message', async message => {
 });
 // process.env.token
 client.login(process.env.token);
-//client.login('Nzk2OTIyNjEwMTUwNjcwMzc2.X_e-BA.O3YRdp-0G_cOpvppHyr1pe1nVFc');
+//client.login('testNzk2OTIyNjEwMTUwNjcwMzc2.X_e-BA.O3YRdp-0G_cOpvppHyr1pe1nVFc');

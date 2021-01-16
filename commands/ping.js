@@ -5,7 +5,7 @@ const { default_prefix, msg_time, help_time } = require('../config.json');
 
 module.exports = {
     name: 'ping',
-    aliases: ['p'],
+    aliases: ['핑'],
     description: '핑 확인',
     async run (client, message, args) {
         function msgdelete(m, t) {
@@ -20,7 +20,8 @@ module.exports = {
         }
 
         const ping = new MessageEmbed()
-            .setTitle(`🏓 \` ${client.ws.ping} \` ms`)
+            .setTitle(`\` PONG! \``)
+            .setDescription(`🏓 \` ${client.ws.ping} \` ms`)
             .setColor('RANDOM');
         message.channel.send(ping).then(m => msgdelete(m, msg_time));
     },

@@ -20,9 +20,9 @@ module.exports = {
             }
             return num;
         }
-        var pp = db.get(`db.prefix.${message.guild.id}`);
-        if (pp === null) {
-            await db.set(`db.prefix.${message.guild.id}`, default_prefix);
+        var pp = db.get(`db.prefix.${message.member.id}`);
+        if (pp == (null || undefined)) {
+            await db.set(`db.prefix.${message.member.id}`, default_prefix);
             pp = default_prefix;
         }
         
@@ -66,33 +66,32 @@ module.exports = {
                 .setColor('RANDOM');
             
             return message.channel.send(embed).then(m => msgdelete(m, help_time + (parseInt(help_time/2))));
-        } else {
-            let User = message.mentions.members.first();
-            User.roles.cache.forEach((role) => {
-                roles += role.name + '\n';
-            });
-
-            datelist = formatDate(User.joinedAt).split(/-/g);
-            date = `${datelist[0]}년 ${addzero(datelist[1])}월 ${addzero(datelist[2])}일`;
-
-            embed.setTitle(`\` ${message.guild.members.cache.get(User.id).nickname} \` 님의 정보`)
-                .setThumbnail(client.users.cache.get(User.id).displayAvatarURL())
-                .setDescription(`
-                    \` 태그 \`
-                    ${client.users.cache.get(User.id).tag}
-
-                    \` 서버에 들어온 날짜 \`
-                    ${date}
-                    
-                    \` 아이디 \`
-                    ${User.id}
-                    
-                    \` 역활 \`
-                    ${roles}
-                `)
-                .setColor('RANDOM');
-
-            return message.channel.send(embed).then(m => msgdelete(m, help_time + (parseInt(help_time/2))));
         }
+        let User = message.mentions.members.first();
+        User.roles.cache.forEach((role) => {
+            roles += role.name + '\n';
+        });
+
+        datelist = formatDate(User.joinedAt).split(/-/g);
+        date = `${datelist[0]}년 ${addzero(datelist[1])}월 ${addzero(datelist[2])}일`;
+
+        embed.setTitle(`\` ${message.guild.members.cache.get(User.id).displayName} \` 님의 정보`)
+            .setThumbnail(client.users.cache.get(User.id).displayAvatarURL())
+            .setDescription(`
+                \` 태그 \`
+                ${client.users.cache.get(User.id).tag}
+
+                \` 서버에 들어온 날짜 \`
+                ${date}
+                
+                \` 아이디 \`
+                ${User.id}
+                
+                \` 역활 \`
+                ${roles}
+            `)
+            .setColor('RANDOM');
+
+        return message.channel.send(embed).then(m => msgdelete(m, help_time + (parseInt(help_time/2))));
     },
 };

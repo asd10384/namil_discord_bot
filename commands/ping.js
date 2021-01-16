@@ -13,9 +13,9 @@ module.exports = {
                 m.delete();
             }, t)
         }
-        let pp = await db.get(`dp.prefix.${message.guild.id}`);
-        if (pp === null) {
-            await db.set(`db.prefix.${message.guild.id}`, default_prefix);
+        let pp = await db.get(`dp.prefix.${message.member.id}`);
+        if (pp == (null || undefined)) {
+            await db.set(`db.prefix.${message.member.id}`, default_prefix);
             pp = default_prefix;
         }
 

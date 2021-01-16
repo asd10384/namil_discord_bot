@@ -14,9 +14,9 @@ module.exports = {
                 m.delete();
             }, t)
         }
-        var pp = db.get(`dp.prefix.${message.guild.id}`);
-        if (pp === null) {
-            await db.set(`db.prefix.${message.guild.id}`, default_prefix);
+        var pp = db.get(`dp.prefix.${message.member.id}`);
+        if (pp == (null || undefined)) {
+            await db.set(`db.prefix.${message.member.id}`, default_prefix);
             pp = default_prefix;
         }
 
@@ -34,6 +34,7 @@ module.exports = {
             .addField(`\` ${pp}covid [코로나] \``, '국내 코로나 확인')
             .addField(`\` ${pp}급식 [meal] \``, '남일고 급식확인')
             .addField(`\` ${pp}avatar [av,프로필] \``, '플레이어 정보 확인')
+            .addField(`\` ${pp}db [데이터베이스] \``, '데이터베이스 확인')
             .setColor('RANDOM');
         const com3 = new MessageEmbed()
             .setTitle('게임 명령어 모음')

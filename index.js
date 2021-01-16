@@ -90,8 +90,11 @@ client.on('message', async message => {
     if (message.author.bot) return;
     if (message.channel.type === 'dm') return;
     
-    let prefix = await db.get(`db.prefix.${message.guild.id}`);
-    if (prefix === null) prefix = default_prefix;
+    var prefix = await db.get(`db.prefix.${message.member.id}`);
+    if (prefix == (null || undefined)) {
+        await db.set(`db.prefix.${message.member.id}`, default_prefix);
+        prefix = default_prefix;
+    }
     if (message.content.startsWith(prefix)) {
         const args = message.content.slice(prefix.length).trim().split(/ +/g);
         const commandName = args.shift().toLowerCase();
@@ -133,4 +136,4 @@ client.on('message', async message => {
 });
 // process.env.token
 client.login(process.env.token);
-//client.login('testNzk2OTIyNjEwMTUwNjcwMzc2.X_e-BA.O3YRdp-0G_cOpvppHyr1pe1nVFc');
+//client.login('testNzk2OTIyNjEwMTUwNjcwMzc2.X_e-BA.ebnnX0csj-WA_eKsgw-OUO2vCqU');

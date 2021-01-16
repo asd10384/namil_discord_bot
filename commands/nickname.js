@@ -1,7 +1,7 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
-const { default_prefix, msg_time, help_time, general_manager, assistant_manager } = require('../config.json');
+const { default_prefix, msg_time, help_time, drole } = require('../config.json');
 
 module.exports = {
     name: 'nickname',
@@ -13,9 +13,9 @@ module.exports = {
                 m.delete();
             }, t)
         }
-        var pp = db.get(`dp.prefix.${message.guild.id}`);
-        if (pp === null) {
-            await db.set(`db.prefix.${message.guild.id}`, default_prefix);
+        var pp = db.get(`dp.prefix.${message.member.id}`);
+        if (pp == (null || undefined)) {
+            await db.set(`db.prefix.${message.member.id}`, default_prefix);
             pp = default_prefix;
         }
         
@@ -39,7 +39,7 @@ module.exports = {
             .setTitle(`닉네임 변경 완료`)
             .setColor('RANDOM');
 
-        if (!(message.guild.roles.cache.get(general_manager) || message.guild.roles.cache.get(assistant_manager))) return message.channel.send(role).then(m => msgdelete(m, msg_time));
+        if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(role).then(m => msgdelete(m, msg_time));
     
         if (!(args[0] || args[1])) return message.channel.send(help).then(m => msgdelete(m, msg_time));
     

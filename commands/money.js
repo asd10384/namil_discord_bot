@@ -25,34 +25,34 @@ module.exports = {
         const help = new MessageEmbed()
             .setTitle(`money 명령어`)
             .setDescription(`
-                \` 명령어 \`
-                ${pp}money : 돈확인
-                ${pp}money @[user] : user 돈 확인
-                ${pp}money give : 돈 추가
-                ${pp}money remove : 돈 제거
-                ${pp}money set : 돈 설정
+                \` 유저 명령어 \`
+                ${pp}돈 : 돈확인
+
+                \` 관리자 명령어 \`
+                ${pp}돈 @[user] : user 돈 확인
+                ${pp}돈 give : 돈 추가
+                ${pp}돈 remove : 돈 제거
+                ${pp}돈 set : 돈 설정
             `)
             .setColor('RANDOM');
         const help_give = new MessageEmbed()
             .setTitle(`명령어`)
             .setDescription(`${pp}money give @[user] [amount]`)
-            .setFooter(`${pp}money help`)
+            .setFooter(`${pp}돈 명령어`)
             .setColor('RANDOM');
         const help_remove = new MessageEmbed()
             .setTitle(`명령어`)
             .setDescription(`${pp}money remove @[user] [amount]`)
-            .setFooter(`${pp}money help`)
+            .setFooter(`${pp}돈 명령어`)
             .setColor('RANDOM');
         const help_set = new MessageEmbed()
             .setTitle(`명령어`)
             .setDescription(`${pp}money set @[user] [amount]`)
-            .setFooter(`${pp}money help`)
+            .setFooter(`${pp}돈 명령어`)
             .setColor('RANDOM');
         const bal = new MessageEmbed()
-            .setFooter(`${pp}money`)
+            .setFooter(`${pp}돈`)
             .setColor('RANDOM');
-        
-        if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
         
         if (!args[0]) {
             var user = message.member.user;
@@ -65,6 +65,9 @@ module.exports = {
                 .setDescription(`\` ${money} \`원`);
             return message.channel.send(bal).then(m => msgdelete(m, msg_time+2000));
         }
+
+        if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+
         var muser = message.guild.members.cache.get(args[0].replace(/[^0-9]/g, ''));
         if (muser) {
             var user = muser.user;

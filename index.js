@@ -50,10 +50,10 @@ client.on('ready', async () => {
     var db_text = '';
     var db_key_list = Object.keys(db.all()[0]['data']);
     for (i=0; i<db_key_list.length; i++) {
-        db_text += `\n\`${i+1}. ${db_key_list[i]} \``;
+        db_text += `\n       \`${i+1}. ${db_key_list[i]} \``;
         for (j=0; j<Object.keys(db.all()[0]['data'][db_key_list[i]]).length; j++) {
             var db_user_id = Object.keys(db.all()[0]['data'][db_key_list[i]])[j];
-            db_text += `\n${db_user_id}　:　`;
+            db_text += `\n       ${db_user_id}　:　`;
             db_text += `${Object.values(db.all()[0]['data'][db_key_list[i]])[j]}\n`;
         }
     }
@@ -66,9 +66,9 @@ client.on('ready', async () => {
         ==========================
 
     `);
-    console.log('====================');
+    console.log('       ====================');
     console.log(db_text);
-    console.log('====================\n');
+    console.log('       ====================\n');
 
     client.user.setPresence({
         activity: {

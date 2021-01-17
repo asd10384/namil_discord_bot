@@ -37,8 +37,8 @@ module.exports = {
             .addField(`\` ${pp}db [데이터베이스] \``, '데이터베이스 확인')
             .setColor('RANDOM');
         const com3 = new MessageEmbed()
-            .setTitle('게임 명령어 모음')
-            .addField(`\` ${pp}- [-] \``, '-')
+            .setTitle('주식 명령어 모음')
+            .addField(`\` ${pp}money [bal] \``, '돈 관련 명령어')
             .setColor('RANDOM');
 
         const com4 = new MessageEmbed()

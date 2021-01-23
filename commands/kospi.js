@@ -4,7 +4,6 @@ const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole } = require('../config.json');
 const request = require('request');
 const cheerio = require('cheerio');
-const { default: axios } = require('axios');
 
 module.exports = {
     name: 'kospi',

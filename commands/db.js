@@ -42,25 +42,49 @@ module.exports = {
         
         if (!args[0]) return message.channel.send(help).then(m => msgdelete(m, msg_time));
 
-        if (args[0] == ('all' || '전체' || '확인')) {
-            var db_text = '';
-            var db_key_list = Object.keys(db.all()[0]['data']);
-            for (i=0; i<db_key_list.length; i++) {
-                db_text += `\`${i+1}. ${db_key_list[i]} \``;
-                for (j=0; j<Object.keys(db.all()[0]['data'][db_key_list[i]]).length; j++) {
-                    var db_user_id = Object.keys(db.all()[0]['data'][db_key_list[i]])[j];
-                    db_text += `\n${db_user_id}　:　`;
-                    db_text += `${Object.values(db.all()[0]['data'][db_key_list[i]])[j]}\n`;
-                    db_text += `( <@!${db_user_id}> )\n`;
+        if (args[0]) {
+            if (args[0] == ('all' || '전체' || '확인')) {
+                var db_text = '';
+                var db_key_list = Object.keys(db.all()[0]['data']);
+                for (i=0; i<db_key_list.length; i++) {
+                    db_text += `\`${i+1}. ${db_key_list[i]} \``;
+                    for (j=0; j<Object.keys(db.all()[0]['data'][db_key_list[i]]).length; j++) {
+                        var db_user_id = Object.keys(db.all()[0]['data'][db_key_list[i]])[j];
+                        db_text += `\n${db_user_id}　:　`;
+                        db_text += `${Object.values(db.all()[0]['data'][db_key_list[i]])[j]}\n`;
+                        db_text += `( <@!${db_user_id}> )\n`;
+                    }
+                    db_text += '\n\n';
                 }
-                db_text += '\n\n';
+                await db_em.setDescription(db_text);
+                return message.channel.send(db_em).then(m => msgdelete(m, help_time));
             }
-            await db_em.setDescription(db_text);
-            return message.channel.send(db_em).then(m => msgdelete(m, msg_time));
-        }
-        if (args[0] == ('del' || '삭제')) {
-            await db.delete('db');
-            return message.channel.send(db_del).then(m => msgdelete(m, msg_time));
+            if (args[0] == ('del' || '삭제')) {
+                await db.delete('db');
+                return message.channel.send(db_del).then(m => msgdelete(m, msg_time));
+            }
+            if (args[1]) {
+                if (args[2]) {
+                    if (args[3]) {
+                        if (args[4]) {
+                            if (args[5]) {
+                                var watch = db.all()[0]['data'][args[0]][args[1]][args[2]][args[3]][args[4]][args[5]];
+                                return console.log(watch);
+                            }
+                            var watch = db.all()[0]['data'][args[0]][args[1]][args[2]][args[3]][args[4]];
+                            return console.log(watch);
+                        }
+                        var watch = db.all()[0]['data'][args[0]][args[1]][args[2]][args[3]];
+                        return console.log(watch);
+                    }
+                    var watch = db.all()[0]['data'][args[0]][args[1]][args[2]];
+                    return console.log(watch);
+                }
+                var watch = db.all()[0]['data'][args[0]][args[1]];
+                return console.log(watch);
+            }
+            var watch = db.all()[0]['data'][args[0]];
+            return console.log(watch);
         }
         return message.channel.send(help).then(m => msgdelete(m, msg_time));
     },

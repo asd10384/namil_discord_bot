@@ -1,5 +1,5 @@
 
-const { formatDate } = require('../functions');
+const { formatDate } = require('../functions.js');
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time } = require('../config.json');
@@ -45,10 +45,10 @@ module.exports = {
                 roles += role.name + '\n';
             });
             
-            datelist = formatDate(message.member.joinedAt).split(/-/g);
-            date = `${datelist[0]}년 ${addzero(datelist[1])}월 ${addzero(datelist[2])}일`;
+            datelist = formatDate(message.member.joinedAt).split(/. /g);
+            date = `${datelist[0]}년 ${addzero(datelist[1])}월 ${addzero(datelist[2].slice(0,-1))}일`;
             
-            embed.setTitle(`\` ${message.member.nickname} \` 정보`)
+            embed.setTitle(`\` ${message.member.user.username} \` 정보`)
                 .setThumbnail(message.author.displayAvatarURL())
                 .setDescription(`
                     \` 태그 \`
@@ -72,8 +72,8 @@ module.exports = {
             roles += role.name + '\n';
         });
 
-        datelist = formatDate(User.joinedAt).split(/-/g);
-        date = `${datelist[0]}년 ${addzero(datelist[1])}월 ${addzero(datelist[2])}일`;
+        datelist = formatDate(User.joinedAt).split(/. /g);
+        date = `${datelist[0]}년 ${addzero(datelist[1])}월 ${addzero(datelist[2].slice(0,-1))}일`;
 
         embed.setTitle(`\` ${message.guild.members.cache.get(User.id).displayName} \` 님의 정보`)
             .setThumbnail(client.users.cache.get(User.id).displayAvatarURL())

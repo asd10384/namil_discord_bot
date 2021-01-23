@@ -1,9 +1,9 @@
 
 const db = require('quick.db');
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, Collection } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole } = require('../config.json');
-const request = require('request');
-const cheerio = require('cheerio');
+const { readdirSync } = require('fs');
+const { join } = require('path');
 
 module.exports = {
     name: '주식',
@@ -27,40 +27,19 @@ module.exports = {
         
         // if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
         
-        function make_url(market = 0, pagesize = 20, page = 1) {
-            return `http://m.stock.naver.com/api/json/sise/siseListJson.nhn?menu=market_sum&stock_market[i]=${market}&pageSize=${pagesize}&page=${page}`;
+        client.commands = new Collection();
+
+        const commandFiles = readdirSync(join(__dirname, '../commands')).filter(file => file.endsWith('.js'));
+        for (const file of commandFiles) {
+            const command = require(join(__dirname, '../commands', `${file}`));
+            client.commands.set(command.name, command);
         }
 
-        var stock_market = ['kospi', 'kosdaq'];
-        for (i = 0; i<2; i++) {
-            var url = make_url(i, 10000, 1);
-            request(url, function (err, res, html) {
-                if (!err) {
-                    var $ = cheerio.load(html);
-                    $("body").each(function () {
-                        var data = $(this);
-                        var res = eval(`[${data.text()}]`);
-                    
-                        var text2 = '';
-                        var res2 = res[0]['result']['itemList'];
-                        for (j=0; j<res2.length-1; j++) {
-                            text2 += `'${res2[j]['nm']}':'${res2[j]['cd']}',`;
-                        }
-                        text2 += `'${res2[res2.length-1]['nm']}':'${res2[res2.length-1]['cd']}'`;
-                        var name = eval(`{[{${text2}}]}`);
-                        db.set(`db.stock.name.${stock_market[i]}`, name);
-
-                        var text3 = '';
-                        for (j=0; j<res2.length-1; j++) {
-                            text3 += `'${res2[j]['nm']}': {'시세': '${res2[j]['nv']}','전일비': '${res2[j]['cv']}','등락률': '${res2[j]['cr']}','시가총액': '${res2[j]['mks']}','거래량': '${res2[j]['aq']}'},`;
-                        }
-                        text3 += `'${res2[res2.length-1]['nm']}': {'시세': '${res2[res2.length-1]['nv']}','전일비': '${res2[res2.length-1]['cv']}','등락률': '${res2[res2.length-1]['cr']}','시가총액': '${res2[res2.length-1]['mks']}','거래량': '${res2[res2.length-1]['aq']}'}`;
-                        var all = eval(`{[{${text3}}]}`);
-                        db.set(`db.stock.all.${stock_market[i]}`, all);
-                    });
-                }
-            });
-        }
+        var command = client.commands.get('kospi');
+        command.run(client, message, args);
+        
+        var command = client.commands.get('kosdaq');
+        command.run(client, message, args);
 
         const help = new MessageEmbed()
             .setTitle(`주식 명령어`)
@@ -178,6 +157,11 @@ module.exports = {
             var oneallstock = 50;
             if (args[1] == ('코스피' || 'kospi')) {
                 var name = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
+            }
+            if (args[1] == ('코스닥' || 'kosdaq')) {
+                var name = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
+            }
+            if (name) {
                 var key = Object.keys(name);
                 var val = Object.values(name);
                 var p = 0;
@@ -199,28 +183,6 @@ module.exports = {
                     .setFooter(`페이지 ${p+1} / ${Math.ceil(key.length / oneallstock)}`);
                 return message.channel.send(lem).then(m => msgdelete(m, help_time+1000));
             }
-            if (args[1] == ('코스닥' || 'kosdaq')) {
-                var name = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);
-                var key = Object.keys(name);
-                var val = Object.values(name);
-                var p = 0;
-                var num = 0;
-                if (args[2]) {
-                    if (args[2].replace(/[^0-9]/g,'') < Math.ceil(key.length / oneallstock) && args[2].replace(/[^0-9]/g,'') > 0) {
-                        p = args[2]-1;
-                        num = (args[2]-1) * oneallstock;
-                    } else {
-                        return message.channel.send(`페이지는 1~${Math.ceil(key.length / oneallstock)}까지 존재함`).then(m => msgdelete(m, msg_time));
-                    }
-                }
-                var text = '';
-                for (i = num; i<num+oneallstock; i++) {
-                    text += `${i+1}. \` ${key[i]} \` (코드 : ${val[i]})\n`;
-                }
-                lem.setDescription(text)
-                    .setFooter(`페이지 ${p+1} / ${Math.ceil(key.length / oneallstock)}`);
-                return message.channel.send(lem).then(m => msgdelete(m, help_time+1000));
-            }
             return message.channel.send(listem).then(m => msgdelete(m, msg_time));
         }
         if (args[0] == ('검색' || '확인' || 'serch' || 'check')) {
@@ -229,35 +191,17 @@ module.exports = {
 
             if (args[1]) {
                 if (name_kospi[args[1]] !== (null || undefined)) {
+                    var market = '코스피'
                     var id = name_kospi[args[1]];
-                    var image = `https://ssl.pstatic.net/imgfinance/chart/mobile/mini/${id}_end_up_tablet.png`;
                     var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][args[1]]);
-                    if (all[1][0] == '-') {
-                        var cv = `▼ ${all[1].slice(1)}`;
-                    } else {
-                        var cv = `▲ ${all[1]}`;
-                    }
-                    if (all[2][0] == '-') {
-                        var cr = `- ${all[2].slice(1)}`;
-                    } else {
-                        var cr = `+ ${all[2]}`;
-                    }
-                    serch.setTitle(`주식 검색 : \` ${args[1]} \` [코스피]`)
-                        .setImage(image)
-                        .setDescription(`
-                            \` 시세 \` : ${all[0]}원
-                            \` 전일비 \` : ${cv}
-                            \` 등락률 \` : ${cr}%
-                            \` 시가총액 \` : ${all[3]}원
-                            \` 거래량 \` : ${all[4]}원
-                        `);
-                    return message.channel.send(serch).then(m => msgdelete(m, help_time));
                 }
-                
                 if (name_kosdaq[args[1]] !== (null || undefined)) {
+                    var market = '코스닥'
                     var id = name_kosdaq[args[1]];
-                    var image = `https://ssl.pstatic.net/imgfinance/chart/mobile/mini/${id}_end_up_tablet.png`;
                     var all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][args[1]]);
+                }
+                if (id) {
+                    var image = `https://ssl.pstatic.net/imgfinance/chart/mobile/mini/${id}_end_up_tablet.png`;
                     if (all[1][0] == '-') {
                         var cv = `▼ ${all[1].slice(1)}`;
                     } else {
@@ -268,7 +212,7 @@ module.exports = {
                     } else {
                         var cr = `+ ${all[2]}`;
                     }
-                    serch.setTitle(`주식 검색 : \` ${args[1]} \` [코스닥]`)
+                    serch.setTitle(`주식 검색 : \` ${args[1]} \` [${market}]`)
                         .setImage(image)
                         .setDescription(`
                             \` 시세 \` : ${all[0]}원
@@ -299,13 +243,15 @@ module.exports = {
                 var name_kospi = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
                 var name_kosdaq = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);
 
-                if ((name_kospi[args[1]] !== (null || undefined)) || (name_kosdaq[args[1]] !== (null || undefined))) {
+                if (name_kospi[args[1]] !== (null || undefined)) {
+                    var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][args[1]]);
+                }
+                if (name_kosdaq[args[1]] !== (null || undefined)) {
+                    var all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][args[1]]);
+                }
+                if (all) {
                     if (args[2]) {
                         if (args[2].replace(/[^0-9]/g,'') > 0) {
-                            var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][args[1]]);
-                            if (!all[0]) {
-                                all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][args[1]]);
-                            }
                             var user = message.member.user;
                             var price = all[0];
                             var allprice = price * args[2];
@@ -391,13 +337,15 @@ module.exports = {
                 var name_kospi = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
                 var name_kosdaq = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);
 
-                if ((name_kospi[args[1]] !== (null || undefined)) || (name_kosdaq[args[1]] !== (null || undefined))) {
+                if (name_kospi[args[1]] !== (null || undefined)) {
+                    var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][args[1]]);
+                }
+                if (name_kosdaq[args[1]] !== (null || undefined)) {
+                    var all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][args[1]]);
+                }
+                if (all) {
                     if (args[2]) {
                         if (args[2].replace(/[^0-9]/g,'') > 0) {
-                            var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][args[1]]);
-                            if (!all[0]) {
-                                all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][args[1]]);
-                            }
                             var user = message.member.user;
                             var price = all[0];
                             var allprice = price * args[2];

@@ -82,7 +82,11 @@ client.on('message', async message => {
                 .setColor('DARK_RED')
                 .setDescription(`\` ${commandName} \` 이라는 명령어를 찾을수 없습니다.`)
                 .setFooter(` ${prefix}help 를 입력해 명령어를 확인해 주세요.`);
-            return message.channel.send(embed).then(m => msgdelete(m, msg_time));
+            message.channel.send(embed).then(m => {
+                setTimeout(function() {
+                    m.delete();
+                }, msg_time);
+            });
         }
     } else if (message.channel.id === textchannel) {
         try {

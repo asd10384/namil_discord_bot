@@ -1,0 +1,498 @@
+
+const db = require('quick.db');
+const { MessageEmbed } = require('discord.js');
+const { default_prefix, msg_time, help_time, drole } = require('../config.json');
+const request = require('request');
+const cheerio = require('cheerio');
+
+module.exports = {
+    name: '주식',
+    aliases: ['stock'],
+    description: '주식 명령어',
+    async run (client, message, args) {
+        function msgdelete(m, t) {
+            setTimeout(function() {
+                m.delete();
+            }, t)
+        }
+        var pp = db.get(`dp.prefix.${message.member.id}`);
+        if (pp == (null || undefined)) {
+            await db.set(`db.prefix.${message.member.id}`, default_prefix);
+            pp = default_prefix;
+        }
+        
+        const per = new MessageEmbed()
+            .setTitle(`이 명령어를 사용할 권한이 없습니다.`)
+            .setColor('RED');
+        
+        // if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+        
+        function make_url(market = 0, pagesize = 20, page = 1) {
+            return `http://m.stock.naver.com/api/json/sise/siseListJson.nhn?menu=market_sum&stock_market[i]=${market}&pageSize=${pagesize}&page=${page}`;
+        }
+
+        var stock_market = ['kospi', 'kosdaq'];
+        for (i = 0; i<2; i++) {
+            var url = make_url(i, 10000, 1);
+            request(url, function (err, res, html) {
+                if (!err) {
+                    var $ = cheerio.load(html);
+                    $("body").each(function () {
+                        var data = $(this);
+                        var res = eval(`[${data.text()}]`);
+                    
+                        var text2 = '';
+                        var res2 = res[0]['result']['itemList'];
+                        for (j=0; j<res2.length-1; j++) {
+                            text2 += `'${res2[j]['nm']}':'${res2[j]['cd']}',`;
+                        }
+                        text2 += `'${res2[res2.length-1]['nm']}':'${res2[res2.length-1]['cd']}'`;
+                        var name = eval(`{[{${text2}}]}`);
+                        db.set(`db.stock.name.${stock_market[i]}`, name);
+
+                        var text3 = '';
+                        for (j=0; j<res2.length-1; j++) {
+                            text3 += `'${res2[j]['nm']}': {'시세': '${res2[j]['nv']}','전일비': '${res2[j]['cv']}','등락률': '${res2[j]['cr']}','시가총액': '${res2[j]['mks']}','거래량': '${res2[j]['aq']}'},`;
+                        }
+                        text3 += `'${res2[res2.length-1]['nm']}': {'시세': '${res2[res2.length-1]['nv']}','전일비': '${res2[res2.length-1]['cv']}','등락률': '${res2[res2.length-1]['cr']}','시가총액': '${res2[res2.length-1]['mks']}','거래량': '${res2[res2.length-1]['aq']}'}`;
+                        var all = eval(`{[{${text3}}]}`);
+                        db.set(`db.stock.all.${stock_market[i]}`, all);
+                    });
+                }
+            });
+        }
+
+        const help = new MessageEmbed()
+            .setTitle(`주식 명령어`)
+            .setDescription(`
+                \` 주식 변동 시간 \`
+                주식은 매일마다 변동됩니다.
+
+                \` 유저 명령어 \`
+                ${pp}주식 명령어 : 명령어 확인
+                ${pp}주식 보유 : 소지한 주식 확인
+                ${pp}주식 종목 [코스피|코스닥] [page]
+                ${pp}주식 검색 [주식이름] : 주식 정보 확인
+                ${pp}주식 구매 [이름] [수량] : 주식 구매
+
+                \` 관리자 명령어 \`
+                ${pp}주식 보유 [player] : player가 소지한 주식 확인
+            `)
+            .setColor('RANDOM');
+        const stem = new MessageEmbed()
+            .setFooter(`${pp}주식 명령어`)
+            .setColor('RANDOM');
+        const listem = new MessageEmbed()
+            .setTitle(`명령어`)
+            .setDescription(`
+                \` 명령어 \`
+                ${pp}주식 종목 코스피 [page] : 코스피 주식 확인
+                ${pp}주식 종목 코스닥 [page] : 코스닥 주식 확인
+            `)
+            .setColor('RANDOM');
+        const lem = new MessageEmbed()
+            .setTitle(`주식 종목`)
+            .setFooter(`${pp}주식 명령어`)
+            .setColor('RANDOM');
+        const page = new MessageEmbed()
+            .setTitle(`\` 페이지 오류 \``)
+            .setColor('RED');
+        const serch = new MessageEmbed()
+            .setFooter(`${pp}주식 명령어`)
+            .setColor('RANDOM');
+        const buy = new MessageEmbed()
+            .setFooter(`${pp}주식 보유`)
+            .setColor('RANDOM');
+        const sell = new MessageEmbed()
+            .setFooter(`${pp}주식 보유`)
+            .setColor('RANDOM');
+        
+        if (!args[0]) return message.channel.send(help).then(m => msgdelete(m, msg_time));
+
+        if (args[0] == ('보유' || 'has')) {
+            try {
+                var muser = message.guild.members.cache.get(args[1].replace(/[^0-9]/g, ''));
+            } catch (err) {
+                var muser = undefined;
+            }
+            if (muser) {
+                if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+                
+                var user = muser.user;
+                var stock = await db.get(`db.stock.${user.id}`);
+                if (stock == (null || undefined)) {
+                    var text = `{[{'이름': '없음'}]}`;
+                    await db.set(`db.stock.${user.id}`, eval(text));
+                    stock = [{'이름': '없음'}];
+                }
+                if (stock[0]['이름'] == '없음') {
+                    stem.setTitle(`\` ${user.username} \`님의 보유주식`)
+                        .setDescription(`${stock[0]['이름']}`);
+                    return message.channel.send(stem).then(m => msgdelete(m, msg_time+5000));
+                }
+                var ap = 0;
+                var stocktext = '[ 주식이름 ] ( 현재가 ) < 수량 > 「 예상수익률 」〔 순수익 〕\n\n';
+                for (i=0; i<stock.length; i++) {
+                    var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][stock[i]['이름']]);
+                    if (!all[0]) {
+                        all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][stock[i]['이름']]);
+                    }
+                    var ap = ap + (all[0]*stock[i]['수량'])-(stock[i]['가격']*stock[i]['수량']);
+                    var cv = ((stock[i]['가격'] - all[0]) / 100).toFixed(2);
+                    stocktext += `\`[ ${stock[i]['이름']} ]\`( ${all[0]}원 ) < ${stock[i]['수량']}개 > 「 ${cv}% 」 〔 ${all[0]-stock[i]['가격']}원 〕\n`;
+                }
+                stocktext += `\n\` 평가손익 \` : ${ap}원`;
+                stem.setTitle(`\` ${user.username} \`님의 보유주식`)
+                    .setDescription(stocktext);
+                return message.channel.send(stem).then(m => msgdelete(m, help_time+5000));
+            }
+            var user = message.member.user;
+            var ustock = await db.get(`db.stock.${user.id}`);
+            if (ustock == (null || undefined)) {
+                var text = `{[{'이름': '없음'}]}`;
+                await db.set(`db.stock.${user.id}`, eval(text));
+                ustock = [{'이름': '없음'}];
+            }
+            if (ustock[0]['이름'] == '없음') {
+                stem.setTitle(`\` ${user.username} \`님의 보유주식`)
+                    .setDescription(`${ustock[0]['이름']}`);
+                return message.channel.send(stem).then(m => msgdelete(m, help_time));
+            }
+            var ap = 0;
+            var ustocktext = '[ 주식이름 ] ( 현재가 ) < 수량 > 「 예상수익률 」〔 순수익 〕 〔 평가손익 〕\n\n';
+            for (i=0; i<ustock.length; i++) {
+                var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][ustock[i]['이름']]);
+                if (!all[0]) {
+                    all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][ustock[i]['이름']]);
+                }
+                var ap = (all[0]*ustock[i]['수량'])-(ustock[i]['가격']*ustock[i]['수량']);
+                var cv = ((ustock[i]['가격'] - all[0]) / 100).toFixed(2);
+                ustocktext += `\`[ ${ustock[i]['이름']} ]\`( ${all[0]}원 ) < ${ustock[i]['수량']}개 > 「 ${cv}% 」 〔 ${all[0]-ustock[i]['가격']}원 〕\n`;
+            }
+            ustocktext += `\n\` 평가손익 \` : ${ap}원`;
+            stem.setTitle(`\` ${user.username} \`님의 보유주식`)
+                .setDescription(ustocktext);
+            return message.channel.send(stem).then(m => msgdelete(m, msg_time+2000));
+        }
+        if (args[0] == ('종목' || 'list' || '목록')) {
+            var oneallstock = 50;
+            if (args[1] == ('코스피' || 'kospi')) {
+                var name = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
+                var key = Object.keys(name);
+                var val = Object.values(name);
+                var p = 0;
+                var num = 0;
+                if (args[2]) {
+                    if (args[2].replace(/[^0-9]/g,'') < Math.ceil(key.length / oneallstock) && args[2].replace(/[^0-9]/g,'') > 0) {
+                        p = args[2]-1;
+                        num = (args[2]-1) * oneallstock;
+                    } else {
+                        page.setDescription(`페이지는 1~${Math.ceil(key.length / oneallstock)} 중의 숫자로 입력해야합니다.`);
+                        return message.channel.send(page).then(m => msgdelete(m, msg_time));
+                    }
+                }
+                var text = '';
+                for (i = num; i<num+oneallstock; i++) {
+                    text += `${i+1}. \` ${key[i]} \` (코드 : ${val[i]})\n`;
+                }
+                lem.setDescription(text)
+                    .setFooter(`페이지 ${p+1} / ${Math.ceil(key.length / oneallstock)}`);
+                return message.channel.send(lem).then(m => msgdelete(m, help_time+1000));
+            }
+            if (args[1] == ('코스닥' || 'kosdaq')) {
+                var name = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);
+                var key = Object.keys(name);
+                var val = Object.values(name);
+                var p = 0;
+                var num = 0;
+                if (args[2]) {
+                    if (args[2].replace(/[^0-9]/g,'') < Math.ceil(key.length / oneallstock) && args[2].replace(/[^0-9]/g,'') > 0) {
+                        p = args[2]-1;
+                        num = (args[2]-1) * oneallstock;
+                    } else {
+                        return message.channel.send(`페이지는 1~${Math.ceil(key.length / oneallstock)}까지 존재함`).then(m => msgdelete(m, msg_time));
+                    }
+                }
+                var text = '';
+                for (i = num; i<num+oneallstock; i++) {
+                    text += `${i+1}. \` ${key[i]} \` (코드 : ${val[i]})\n`;
+                }
+                lem.setDescription(text)
+                    .setFooter(`페이지 ${p+1} / ${Math.ceil(key.length / oneallstock)}`);
+                return message.channel.send(lem).then(m => msgdelete(m, help_time+1000));
+            }
+            return message.channel.send(listem).then(m => msgdelete(m, msg_time));
+        }
+        if (args[0] == ('검색' || '확인' || 'serch' || 'check')) {
+            var name_kospi = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
+            var name_kosdaq = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);
+
+            if (args[1]) {
+                if (name_kospi[args[1]] !== (null || undefined)) {
+                    var id = name_kospi[args[1]];
+                    var image = `https://ssl.pstatic.net/imgfinance/chart/mobile/mini/${id}_end_up_tablet.png`;
+                    var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][args[1]]);
+                    if (all[1][0] == '-') {
+                        var cv = `▼ ${all[1].slice(1)}`;
+                    } else {
+                        var cv = `▲ ${all[1]}`;
+                    }
+                    if (all[2][0] == '-') {
+                        var cr = `- ${all[2].slice(1)}`;
+                    } else {
+                        var cr = `+ ${all[2]}`;
+                    }
+                    serch.setTitle(`주식 검색 : \` ${args[1]} \` [코스피]`)
+                        .setImage(image)
+                        .setDescription(`
+                            \` 시세 \` : ${all[0]}원
+                            \` 전일비 \` : ${cv}
+                            \` 등락률 \` : ${cr}%
+                            \` 시가총액 \` : ${all[3]}원
+                            \` 거래량 \` : ${all[4]}원
+                        `);
+                    return message.channel.send(serch).then(m => msgdelete(m, help_time));
+                }
+                
+                if (name_kosdaq[args[1]] !== (null || undefined)) {
+                    var id = name_kosdaq[args[1]];
+                    var image = `https://ssl.pstatic.net/imgfinance/chart/mobile/mini/${id}_end_up_tablet.png`;
+                    var all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][args[1]]);
+                    if (all[1][0] == '-') {
+                        var cv = `▼ ${all[1].slice(1)}`;
+                    } else {
+                        var cv = `▲ ${all[1]}`;
+                    }
+                    if (all[2][0] == '-') {
+                        var cr = `- ${all[2].slice(1)}`;
+                    } else {
+                        var cr = `+ ${all[2]}`;
+                    }
+                    serch.setTitle(`주식 검색 : \` ${args[1]} \` [코스닥]`)
+                        .setImage(image)
+                        .setDescription(`
+                            \` 시세 \` : ${all[0]}원
+                            \` 전일비 \` : ${cv}
+                            \` 등락률 \` : ${cr}%
+                            \` 시가총액 \` : ${all[3]}원
+                            \` 거래량 \` : ${all[4]}원
+                        `);
+                    return message.channel.send(serch).then(m => msgdelete(m, help_time));
+                }
+                serch.setTitle(`\` 이름 입력 오류 \``)
+                    .setDescription(`주식을 찾을수 없음`)
+                    .setFooter(`${pp}주식 명령어`)
+                    .setColor('RED');
+                return message.channel.send(serch).then(m => msgdelete(m, msg_time));
+            }
+            serch.setTitle(`\` 이름 입력 오류 \``)
+            .setDescription(`
+                ${pp}주식 검색 [이름]
+                이름을 입력하지 않음
+            `)
+            .setFooter(`${pp}주식 명령어`)
+            .setColor('RED');
+        return message.channel.send(serch).then(m => msgdelete(m, msg_time));
+        }
+        if (args[0] == ('구매' || 'buy')) {
+            if (args[1]) {
+                var name_kospi = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
+                var name_kosdaq = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);
+
+                if ((name_kospi[args[1]] !== (null || undefined)) || (name_kosdaq[args[1]] !== (null || undefined))) {
+                    if (args[2]) {
+                        if (args[2].replace(/[^0-9]/g,'') > 0) {
+                            var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][args[1]]);
+                            if (!all[0]) {
+                                all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][args[1]]);
+                            }
+                            var user = message.member.user;
+                            var price = all[0];
+                            var allprice = price * args[2];
+                            var money = await db.get(`db.money.${user.id}`);
+                            if (!(allprice > money)) {
+                                await db.set(`db.money.${user.id}`, money - allprice);
+                                var userstock = await db.get(`db.stock.${user.id}`);
+                                if (userstock[0]['이름'] == '없음') {
+                                    userstock = [];
+                                }
+                                var text = '';
+                                if (userstock.length > 0) {
+                                    for (i=0; i<userstock.length; i++) {
+                                        if (userstock[i]['이름'] == args[1]) {
+                                            count = userstock[i]['수량'];
+                                        }
+                                        text += `{'이름': '${userstock[i]['이름']}','가격': ${userstock[i]['가격']},'수량': ${userstock[i]['수량']}},`;
+                                    }
+                                }
+                                text += `{'이름': '${args[1]}','가격': ${price},'수량': ${args[2]}}`;
+                                await db.set(`db.stock.${user.id}`, eval(`{[${text}]}`));
+                                buy.setTitle(`\` 구매가 완료되었습니다. \``)
+                                    .setDescription(`
+                                        \` 구매내역 \`
+                                        이름 : ${args[1]}
+                                        금액(개당) : ${price}원
+                                        총금액 : ${allprice}원
+                                        잔액 : ${money - allprice}원
+                                    `)
+                                return message.channel.send(buy).then(m => msgdelete(m, help_time-1000));
+                            }
+                            buy.setTitle(`\` 구매오류 \``)
+                                .setDescription(`
+                                    \` 잔액부족 \`
+                                    구매비용 : ${allprice}원
+                                    잔액 : ${money}원
+                                `)
+                                .setFooter(`${pp}주식 명령어`)
+                                .setColor('RED');
+                            return message.channel.send(buy).then(m => msgdelete(m, msg_time));
+                        }
+                        buy.setTitle(`\` 구매오류 \``)
+                        .setDescription(`
+                            \` 수량 입력 오류 \`
+                        `)
+                        .setFooter(`${pp}주식 명령어`)
+                        .setColor('RED');
+                        return message.channel.send(buy).then(m => msgdelete(m, msg_time));
+                    }
+                    buy.setTitle(`\` 구매오류 \``)
+                    .setDescription(`
+                        \` 수량 입력 오류 \`
+                        ${pp}주식 구매 [이름] [수량]
+                        수량을 입력하지 않음
+                    `)
+                    .setFooter(`${pp}주식 명령어`)
+                    .setColor('RED');
+                    return message.channel.send(buy).then(m => msgdelete(m, msg_time));
+                }
+                buy.setTitle(`\` 구매오류 \``)
+                .setDescription(`
+                    \` 주식 이름 오류 \`
+                    ${pp}주식 구매 [이름] [수량]
+                    해당 이름의 주식을
+                    찾을수 없음
+                `)
+                .setFooter(`${pp}주식 명령어`)
+                .setColor('RED');
+                return message.channel.send(buy).then(m => msgdelete(m, msg_time));
+            }
+            buy.setTitle(`\` 구매오류 \``)
+            .setDescription(`
+                \` 주식 이름 오류 \`
+                ${pp}주식 구매 [이름] [수량]
+                이름을 입력하지 않음
+            `)
+            .setFooter(`${pp}주식 명령어`)
+            .setColor('RED');
+            return message.channel.send(buy).then(m => msgdelete(m, msg_time));
+        }
+        if (args[0] == ('판매' || 'sell')) {
+            if (args[0]) {
+                var name_kospi = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
+                var name_kosdaq = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);
+
+                if ((name_kospi[args[1]] !== (null || undefined)) || (name_kosdaq[args[1]] !== (null || undefined))) {
+                    if (args[2]) {
+                        if (args[2].replace(/[^0-9]/g,'') > 0) {
+                            var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][args[1]]);
+                            if (!all[0]) {
+                                all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][args[1]]);
+                            }
+                            var user = message.member.user;
+                            var price = all[0];
+                            var allprice = price * args[2];
+                            var money = await db.get(`db.money.${user.id}`);
+                            var stock = await db.get(`db.stock.${user.id}`);
+                            var hasname = [];
+                            for (i=0; i<stock.length; i++) {
+                                hasname.push(stock[i]['이름']);
+                            }
+                            if (hasname.indexOf(args[1]) > -1) {
+                                var text = '';
+                                for (i=0; i<stock.length; i++) {
+                                    var hname = stock[i]['이름'];
+                                    var hprice = stock[i]['가격'];
+                                    var hcount = stock[i]['수량'];
+                                    if (hname == args[1]) {
+                                        hcount = hcount - args[2];
+                                        if (hcount < 0) {
+                                            sell.setTitle(`\` 판매오류 \``)
+                                                .setDescription(`
+                                                    \` 수량오류 \`
+                                                    보유수량이 판매수량보다 적음
+                                                `)
+                                                .setColor('RED');
+                                            return message.channel.send(sell).then(m => msgdelete(m, msg_time));
+                                        }
+                                        if (hcount == 0) {
+                                            continue;
+                                        }
+                                        var cprice = all[0]*args[2];
+                                        await db.set(`'db.money.${user.id}`, money+(all[0]*args[2]));
+                                    }
+                                    text += `{'이름':'${hname}','가격':${hprice},'수량':${hcount}},`;
+                                }
+                                await db.set(`db.stock.${user.id}`, eval(`{[${text.slice(0,-1)}]}`));
+                                sell.setTitle(`\` 판매완료 \``)
+                                    .setDescription(`
+                                        이름 : ${args[1]}
+                                        판매금액 : ${all[0]}원
+                                        수량 : ${args[2]}개
+                                        총 판매금액 : ${all[0]*args[2]}
+                                        잔액 : ${money+(all[0]*args[2])}
+                                    `)
+                                    .setFooter(`${pp}주식 보유`);
+                                return message.channel.send(sell).then(m => msgdelete(m, help_time+2000));
+                            }
+                            sell.setTitle(`\` 판매오류 \``)
+                                .setDescription(`
+                                    \` 소지주식오류 \`
+                                    판매하려는 주식을
+                                    소유하고있지 않습니다.
+                                `)
+                                .setFooter(`${pp}주식 보유`)
+                                .setColor('RED');
+                            return message.channel.send(sell).then(m => msgdelete(m, msg_time));
+                        }
+                        sell.setTitle(`\` 판매오류 \``)
+                        .setDescription(`
+                            \` 수량 입력 오류 \`
+                        `)
+                        .setFooter(`${pp}주식 명령어`)
+                        .setColor('RED');
+                        return message.channel.send(sell).then(m => msgdelete(m, msg_time));
+                    }
+                    sell.setTitle(`\` 판매오류 \``)
+                        .setDescription(`
+                            \` 수량 오류 \`
+                            ${pp}주식 판매 [이름] [수량]
+                            수량을 입력하지 않음
+                        `)
+                        .setFooter(`${pp}주식 명령어`)
+                        .setColor('RED');
+                    return message.channel.send(sell).then(m => msgdelete(m, msg_time));
+                }
+                sell.setTitle(`\` 판매오류 \``)
+                    .setDescription(`
+                        \` 주식 입력 오류 \`
+                        해당 이름의 주식을
+                        찾을수 없음
+                    `)
+                    .setFooter(`${pp}주식 명령어`)
+                    .setColor('RED');
+                return message.channel.send(sell).then(m => msgdelete(m, msg_time));
+            }
+            sell.setTitle(`\` 판매오류 \``)
+                    .setDescription(`
+                        \` 주식 오류 \`
+                        ${pp}주식 판매 [이름] [수량]
+                        이름을 입력하지 않음
+                    `)
+                    .setFooter(`${pp}주식 명령어`)
+                    .setColor('RED');
+            return message.channel.send(sell).then(m => msgdelete(m, msg_time));
+        }
+        
+        return message.channel.send(help).then(m => msgdelete(m, msg_time));
+    },
+};

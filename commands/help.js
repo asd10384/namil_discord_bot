@@ -39,6 +39,8 @@ module.exports = {
         const com3 = new MessageEmbed()
             .setTitle('주식 명령어 모음')
             .addField(`\` ${pp}money [bal] \``, '돈 관련 명령어')
+            .addField(`\` ${pp}주식 [stock] \``, '주식 관련 명령어')
+            .addField(`\` ${pp}기본금 \``, '기본금')
             .setColor('RANDOM');
 
         const com4 = new MessageEmbed()

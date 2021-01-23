@@ -47,18 +47,16 @@ module.exports = {
                 var channel = client.channels.cache.get(channelid);
             }
             try {
-                var lang = await db.get('db.tts.lang');
+                var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=${await db.get('db.tts.lang')}`;
             } catch(error) {
                 db.set('db.tts.lang', 'ko');
-                var lang = 'ko';
+                var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=${await db.get('db.tts.lang')}`;
             }
 
             const broadcast = client.voice.createBroadcast();
             channel.join().then(connection => {
-                var url = 'http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=' + text + '&tl=' + lang;
-
                 broadcast.play(url);
-                const dispatcher = connection.play(broadcast);
+                connection.play(broadcast);
             });
         } catch (error) {
             return message.channel.send(vcerr).then(m => msgdelete(m, msg_time));

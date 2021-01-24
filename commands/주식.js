@@ -25,7 +25,7 @@ module.exports = {
             .setTitle(`이 명령어를 사용할 권한이 없습니다.`)
             .setColor('RED');
         
-        // if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+        if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
         
         client.commands = new Collection();
 
@@ -41,17 +41,29 @@ module.exports = {
         var command = client.commands.get('kosdaq');
         command.run(client, message, args);
 
+        var tcount = db.get('db.stock.count');
+        if (tcount == (null || undefined) || tcount >= 10) {
+            await db.set('db.stock.count', 0);
+            var command = client.commands.get('nasdaq');
+            command.run(client, message, args);
+        }else if (tcount < 10) {
+            await db.add('db.stock.count', 1);
+        }
+
         const help = new MessageEmbed()
             .setTitle(`주식 명령어`)
             .setDescription(`
                 \` 주식 변동 시간 \`
                 주식은 매일마다 변동됩니다.
 
+                \` ${pp}나스닥 \` 을 입력하여
+                나스닥 정보를 최신상태로 유지해주세요.
+
                 \` 유저 명령어 \`
                 ${pp}기본금 : 기본금
                 ${pp}주식 명령어 : 명령어 확인
                 ${pp}주식 보유 : 소지한 주식 확인
-                ${pp}주식 종목 [코스피|코스닥] [page]
+                ${pp}주식 종목 [마켓이름] [page]
                 ${pp}주식 검색 [주식이름] : 주식 정보 확인
                 ${pp}주식 구매 [이름] [수량] : 주식 구매
 
@@ -68,6 +80,7 @@ module.exports = {
                 \` 명령어 \`
                 ${pp}주식 종목 코스피 [page] : 코스피 주식 확인
                 ${pp}주식 종목 코스닥 [page] : 코스닥 주식 확인
+                ${pp}주식 종목 나스닥 [page] : 나스닥 주식 확인
             `)
             .setColor('RANDOM');
         const lem = new MessageEmbed()
@@ -162,6 +175,9 @@ module.exports = {
             if (args[1] == ('코스닥' || 'kosdaq')) {
                 var name = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
             }
+            if (args[1] == ('나스닥' || 'nasdaq')) {
+                var name = Object(db.all()[0]['data']['stock']['name']['nasdaq'][0]);
+            }
             if (name) {
                 var key = Object.keys(name);
                 var val = Object.values(name);
@@ -189,6 +205,7 @@ module.exports = {
         if (args[0] == ('검색' || '확인' || 'serch' || 'check')) {
             var name_kospi = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
             var name_kosdaq = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);
+            var name_nasdaq = Object(db.all()[0]['data']['stock']['name']['nasdaq'][0]);
 
             if (args[1]) {
                 if (name_kospi[args[1]] !== (null || undefined)) {
@@ -200,6 +217,11 @@ module.exports = {
                     var market = '코스닥'
                     var id = name_kosdaq[args[1]];
                     var all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][args[1]]);
+                }
+                if (name_nasdaq[args[1]] !== (null || undefined)) {
+                    var market = '나스닥'
+                    var id = name_nasdaq[args[1]];
+                    var all = Object.values(db.all()[0]['data']['stock']['all']['nasdaq'][0][args[1]]);
                 }
                 if (id) {
                     var image = `https://ssl.pstatic.net/imgfinance/chart/mobile/mini/${id}_end_up_tablet.png`;
@@ -243,12 +265,16 @@ module.exports = {
             if (args[1]) {
                 var name_kospi = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
                 var name_kosdaq = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);
+                var name_nasdaq = Object(db.all()[0]['data']['stock']['name']['nasdaq'][0]);
 
                 if (name_kospi[args[1]] !== (null || undefined)) {
                     var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][args[1]]);
                 }
                 if (name_kosdaq[args[1]] !== (null || undefined)) {
                     var all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][args[1]]);
+                }
+                if (name_nasdaq[args[1]] !== (null || undefined)) {
+                    var all = Object.values(db.all()[0]['data']['stock']['all']['nasdaq'][0][args[1]]);
                 }
                 if (all) {
                     if (args[2]) {
@@ -337,12 +363,16 @@ module.exports = {
             if (args[0]) {
                 var name_kospi = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
                 var name_kosdaq = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);
+                var name_nasdaq = Object(db.all()[0]['data']['stock']['name']['nasdaq'][0]);
 
                 if (name_kospi[args[1]] !== (null || undefined)) {
                     var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][args[1]]);
                 }
                 if (name_kosdaq[args[1]] !== (null || undefined)) {
                     var all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][args[1]]);
+                }
+                if (name_nasdaq[args[1]] !== (null || undefined)) {
+                    var all = Object.values(db.all()[0]['data']['stock']['all']['nasdaq'][0][args[1]]);
                 }
                 if (all) {
                     if (args[2]) {

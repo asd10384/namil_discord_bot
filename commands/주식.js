@@ -46,8 +46,15 @@ module.exports = {
             await db.set('db.stock.count', 0);
             var command = client.commands.get('nasdaq');
             command.run(client, message, args);
-        }else if (tcount < 10) {
+        }else if (tcount < 15) {
             await db.add('db.stock.count', 1);
+            const nas = new MessageEmbed()
+                .setTitle(`
+                    \` 15번 명령어를 입력할때마다 \`
+                    \` 자동으로 주식 정보 업데이트\`
+                `)
+                .setColor('BLUE');
+            return message.channel.send(nas).then(m => msgdelete(m, msg_time));
         }
 
         const help = new MessageEmbed()

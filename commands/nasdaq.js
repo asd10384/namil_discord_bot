@@ -29,6 +29,7 @@ module.exports = {
 
         const mm = new MessageEmbed()
             .setTitle(`\` 나스닥 정보 로딩중... \``)
+            .setFooter(`주식 명령어와는 상관없음`)
             .setColor('BLUE');
         const mm2 = new MessageEmbed()
             .setTitle(`\` 로딩완료! \``)

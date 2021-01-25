@@ -1,14 +1,14 @@
 
-const db = require('quick.db');
-const { MessageEmbed } = require('discord.js');
-const { default_prefix, msg_time, help_time, drole } = require('../config.json');
-const request = require('request');
-const cheerio = require('cheerio');
+const db = require("quick.db");
+const { MessageEmbed } = require("discord.js");
+const { default_prefix, msg_time, help_time, drole } = require("../config.json");
+const request = require("request");
+const cheerio = require("cheerio");
 
 module.exports = {
-    name: 'kosdaq',
-    aliases: ['코스닥'],
-    description: 'kosdaq',
+    name: "kosdaq",
+    aliases: ["코스닥"],
+    description: "kosdaq",
     async run (client, message, args) {
         function msgdelete(m, t) {
             setTimeout(function() {
@@ -23,7 +23,7 @@ module.exports = {
         
         const per = new MessageEmbed()
             .setTitle(`이 명령어를 사용할 권한이 없습니다.`)
-            .setColor('RED');
+            .setColor("RED");
         
         // if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
         
@@ -39,24 +39,21 @@ module.exports = {
                 $("body").each(function () {
                     var data = $(this);
                     var text = data.text();
-                    var res = eval(`[${text}]`);
+                    var res = eval(`[${text}]`)[0]["result"]["itemList"];
                     
                     var text2 = '';
-                    var res2 = res[0]['result']['itemList'];
-                    for (i=0; i<res2.length-1; i++) {
-                        text2 += `'${res2[i]['nm']}':'${res2[i]['cd']}',`;
+                    for (i=0; i<res.length; i++) {
+                        text2 += `"${res[i]["nm"]}":"${res[i]["cd"]}",`;
                     }
-                    text2 += `'${res2[res2.length-1]['nm']}':'${res2[res2.length-1]['cd']}'`;
-                    var name = eval(`{[{${text2}}]}`);
-                    db.set('db.stock.name.kosdaq', name);
+                    var name = eval(`{[{${text2.slice(0,-1)}}]}`);
+                    db.set("db.stock.name.kosdaq", name);
 
                     var text3 = '';
-                    for (i=0; i<res2.length-1; i++) {
-                        text3 += `'${res2[i]['nm']}': {'시세': '${res2[i]['nv']}','전일비': '${res2[i]['cv']}','등락률': '${res2[i]['cr']}','시가총액': '${res2[i]['mks']}','거래량': '${res2[i]['aq']}'},`;
+                    for (i=0; i<res.length; i++) {
+                        text3 += `"${res[i]["nm"]}": {"시세": "${res[i]["nv"]}","전일비": "${res[i]["cv"]}","등락률": "${res[i]["cr"]}","시가총액": "${res[i]["mks"]}","거래량": "${res[i]["aq"]}"},`;
                     }
-                    text3 += `'${res2[res2.length-1]['nm']}': {'시세': '${res2[res2.length-1]['nv']}','전일비': '${res2[res2.length-1]['cv']}','등락률': '${res2[res2.length-1]['cr']}','시가총액': '${res2[res2.length-1]['mks']}','거래량': '${res2[res2.length-1]['aq']}'}`;
-                    var all = eval(`{[{${text3}}]}`);
-                    db.set('db.stock.all.kosdaq', all);
+                    var all = eval(`{[{${text3.slice(0,-1)}}]}`);
+                    db.set("db.stock.all.kosdaq", all);
                 });
             }
         });

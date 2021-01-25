@@ -192,7 +192,7 @@ module.exports = {
                 var p = 0;
                 var num = 0;
                 if (args[2]) {
-                    if (args[2].replace(/[^0-9]/g,'') < Math.ceil(key.length / oneallstock) && args[2].replace(/[^0-9]/g,'') > 0) {
+                    if (args[2].replace(/[^0-9]/g,'') <= Math.ceil(key.length / oneallstock) && args[2].replace(/[^0-9]/g,'') > 0) {
                         p = args[2]-1;
                         num = (args[2]-1) * oneallstock;
                     } else {

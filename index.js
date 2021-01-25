@@ -75,7 +75,9 @@ client.on('message', async message => {
 
         try {
             command.run(client, message, args);
-            msgdelete(20);
+            if (!(textchannel['stock'].includes(message.channel.id))) {
+                msgdelete(20);
+            }
         } catch(error) {
             msgdelete(20);
             const embed = new Discord.MessageEmbed()
@@ -88,7 +90,7 @@ client.on('message', async message => {
                 }, msg_time);
             });
         }
-    } else if (message.channel.id === textchannel) {
+    } else if (message.channel.id === textchannel['tts']) {
         try {
             var args = message.content.trim().split(/ +/g);
         } catch(error) {

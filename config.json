@@ -3,7 +3,13 @@
     "default_prefix": ";",
     "msg_time": 10000,
     "help_time": 30000,
-    "textchannel": "783671264493174824",
+    "textchannel": {
+        "tts": "783671264493174824",
+        "stock": [
+            "769088330297114654",
+            "774576313959972874"
+        ]
+    },
     "drole": [
         "Server Creator",
         "General management",

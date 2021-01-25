@@ -25,7 +25,7 @@ module.exports = {
             .setTitle(`이 명령어를 사용할 권한이 없습니다.`)
             .setColor('RED');
         
-        if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+        // if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
         
         client.commands = new Collection();
 
@@ -42,18 +42,20 @@ module.exports = {
         command.run(client, message, args);
 
         var tcount = db.get('db.stock.count');
-        if (tcount == (null || undefined) || tcount >= 10) {
+        if (tcount == (null || undefined)) {
             await db.set('db.stock.count', 0);
             var command = client.commands.get('nasdaq');
-            command.run(client, message, args);
-        }else if (tcount > 15) {
-            await db.add('db.stock.count', 1);
+            return command.run(client, message, args);
+        }else if (tcount > 20) {
+            await db.set('db.stock.count', 0);
             const nas = new MessageEmbed()
-                .setTitle(`\` 15번 명령어를 입력할때마다\n자동으로 주식 정보 업데이트\``)
+                .setTitle(`\` 20번 명령어를 입력할때마다\n자동으로 주식 정보 업데이트\``)
                 .setColor('BLUE');
             var command = client.commands.get('nasdaq');
             command.run(client, message, args);
             return message.channel.send(nas).then(m => msgdelete(m, msg_time));
+        } else {
+            await db.add('db.stock.count', 1);
         }
 
         const help = new MessageEmbed()
@@ -127,7 +129,7 @@ module.exports = {
                 if (stock[0]['이름'] == '없음') {
                     stem.setTitle(`\` ${user.username} \`님의 보유주식`)
                         .setDescription(`${stock[0]['이름']}`);
-                    return message.channel.send(stem).then(m => msgdelete(m, msg_time+5000));
+                    return message.channel.send(stem);//.then(m => msgdelete(m, msg_time+5000));
                 }
                 var ap = 0;
                 var stocktext = '[ 주식이름 ] ( 현재가 ) < 수량 > 「 예상수익률 」〔 순수익 〕\n\n';
@@ -143,7 +145,7 @@ module.exports = {
                 stocktext += `\n\` 평가손익 \` : ${ap}원`;
                 stem.setTitle(`\` ${user.username} \`님의 보유주식`)
                     .setDescription(stocktext);
-                return message.channel.send(stem).then(m => msgdelete(m, help_time+5000));
+                return message.channel.send(stem);//.then(m => msgdelete(m, help_time+5000));
             }
             var user = message.member.user;
             var ustock = await db.get(`db.stock.${user.id}`);
@@ -155,7 +157,7 @@ module.exports = {
             if (ustock[0]['이름'] == '없음') {
                 stem.setTitle(`\` ${user.username} \`님의 보유주식`)
                     .setDescription(`${ustock[0]['이름']}`);
-                return message.channel.send(stem).then(m => msgdelete(m, help_time));
+                return message.channel.send(stem);//.then(m => msgdelete(m, help_time));
             }
             var ap = 0;
             var ustocktext = '[ 주식이름 ] ( 현재가 ) < 수량 > 「 예상수익률 」〔 순수익 〕 〔 평가손익 〕\n\n';
@@ -171,7 +173,7 @@ module.exports = {
             ustocktext += `\n\` 평가손익 \` : ${ap}원`;
             stem.setTitle(`\` ${user.username} \`님의 보유주식`)
                 .setDescription(ustocktext);
-            return message.channel.send(stem).then(m => msgdelete(m, msg_time+2000));
+            return message.channel.send(stem);//.then(m => msgdelete(m, msg_time+2000));
         }
         if (args[0] == ('종목' || 'list' || '목록')) {
             var oneallstock = 50;
@@ -204,7 +206,7 @@ module.exports = {
                 }
                 lem.setDescription(text)
                     .setFooter(`페이지 ${p+1} / ${Math.ceil(key.length / oneallstock)}`);
-                return message.channel.send(lem).then(m => msgdelete(m, help_time+1000));
+                return message.channel.send(lem);//.then(m => msgdelete(m, help_time+1000));
             }
             return message.channel.send(listem).then(m => msgdelete(m, msg_time));
         }
@@ -250,7 +252,7 @@ module.exports = {
                             \` 시가총액 \` : ${all[3]}원
                             \` 거래량 \` : ${all[4]}원
                         `);
-                    return message.channel.send(serch).then(m => msgdelete(m, help_time));
+                    return message.channel.send(serch);//.then(m => msgdelete(m, help_time));
                 }
                 serch.setTitle(`\` 이름 입력 오류 \``)
                     .setDescription(`주식을 찾을수 없음`)
@@ -314,7 +316,7 @@ module.exports = {
                                         총금액 : ${allprice}원
                                         잔액 : ${money - allprice}원
                                     `)
-                                return message.channel.send(buy).then(m => msgdelete(m, help_time-1000));
+                                return message.channel.send(buy);//.then(m => msgdelete(m, help_time-1000));
                             }
                             buy.setTitle(`\` 구매오류 \``)
                                 .setDescription(`
@@ -412,7 +414,6 @@ module.exports = {
                                         if (hcount == 0) {
                                             continue;
                                         }
-                                        var cprice = all[0]*args[2];
                                         await db.set(`'db.money.${user.id}`, money+(all[0]*args[2]));
                                     }
                                     text += `{'이름':'${hname}','가격':${hprice},'수량':${hcount}},`;
@@ -427,7 +428,7 @@ module.exports = {
                                         잔액 : ${money+(all[0]*args[2])}
                                     `)
                                     .setFooter(`${pp}주식 보유`);
-                                return message.channel.send(sell).then(m => msgdelete(m, help_time+2000));
+                                return message.channel.send(sell);//.then(m => msgdelete(m, help_time+2000));
                             }
                             sell.setTitle(`\` 판매오류 \``)
                                 .setDescription(`

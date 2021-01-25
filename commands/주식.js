@@ -220,19 +220,21 @@ module.exports = {
                     var market = '코스피'
                     var id = name_kospi[args[1]];
                     var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][args[1]]);
+                    var image = `http://ssl.pstatic.net/imgfinance/chart/mobile/mini/${id}_end_up_tablet.png`;
                 }
                 if (name_kosdaq[args[1]] !== (null || undefined)) {
                     var market = '코스닥'
                     var id = name_kosdaq[args[1]];
                     var all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][args[1]]);
+                    var image = `http://ssl.pstatic.net/imgfinance/chart/mobile/mini/${id}_end_up_tablet.png`;
                 }
                 if (name_nasdaq[args[1]] !== (null || undefined)) {
                     var market = '나스닥'
                     var id = name_nasdaq[args[1]];
                     var all = Object.values(db.all()[0]['data']['stock']['all']['nasdaq'][0][args[1]]);
+                    var image = `http://ssl.pstatic.net/imgfinance/chart/mobile/world/item/day/${id}_end_up_tablet.png`;
                 }
                 if (id) {
-                    var image = `https://ssl.pstatic.net/imgfinance/chart/mobile/mini/${id}_end_up_tablet.png`;
                     if (all[1][0] == '-') {
                         var cv = `▼ ${all[1].slice(1)}`;
                     } else {

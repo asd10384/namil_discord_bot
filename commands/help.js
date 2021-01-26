@@ -36,6 +36,7 @@ module.exports = {
             .addField(`\` ${pp}avatar [av,프로필] \``, '플레이어 정보 확인')
             .addField(`\` ${pp}db [데이터베이스] \``, '데이터베이스 확인')
             .setColor('RANDOM');
+        
         const com3 = new MessageEmbed()
             .setTitle('주식 명령어 모음')
             .addField(`\` ${pp}money [bal] \``, '돈 관련 명령어')
@@ -44,20 +45,25 @@ module.exports = {
             .setColor('RANDOM');
 
         const com4 = new MessageEmbed()
-            .setTitle('기타 명령어 모음')
+            .setTitle('음성 명령어 모음')
             .addField(`\` ${pp}tts [say,음성] \``, 'text to speech')
             .addField(`\` ${pp}join [j] \``, 'join voice channel')
             .addField(`\` ${pp}voice [vo] \``, 'change language')
+            .setColor('RANDOM');
+        
+        const com5 = new MessageEmbed()
+            .setTitle('관리자 명령어 모음')
             .addField(`\` ${pp}dm [디엠] \``, '디엠 보내기')
-            .addField(`\` ${pp}nickname [닉네임] \``, '서버 닉네임 변경')
             .addField(`\` ${pp}message [channel id] [text] \``, '채팅채널에 채팅입력')
+            .addField(`\` ${pp}랜덤 [random] \``, '랜덤')
             .setColor('RANDOM');
 
         const pages = [
             com1,
             com2,
             com3,
-            com4
+            com4,
+            com5
         ];
 
         const emojiList = ["⏪", "⏩"];

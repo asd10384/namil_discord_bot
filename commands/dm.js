@@ -33,6 +33,13 @@ module.exports = {
         const fin = new MessageEmbed()
             .setColor('RANDOM');
 
+
+        const per = new MessageEmbed()
+            .setTitle(`이 명령어를 사용할 권한이 없습니다.`)
+            .setColor('RED');
+        
+        if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+        
         var user = message.mentions.members.first() ||
             message.guild.members.cache.get(args[0]);
 

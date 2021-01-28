@@ -39,10 +39,8 @@ module.exports = {
         var text = args.join(' ');
 
         try {
-            text = text.replace(/?/g, '물음표');
-        } catch(e) {
-            text = text;
-        }
+            text = text.replace(/\?/gi, '물음표');
+        } catch(e) {}
 
         try {
             if (message.member.voice.channelID) {

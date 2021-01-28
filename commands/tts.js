@@ -36,7 +36,7 @@ module.exports = {
             .setColor('RANDOM');
 
         if (!args[0]) return message.channel.send(help).then(m => msgdelete(m, msg_time));
-        let text = args.join(' ');
+        var text = args.join(' ').replace(/?/, '물음표');
 
         try {
             if (message.member.voice.channelID) {

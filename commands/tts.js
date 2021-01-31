@@ -38,9 +38,19 @@ module.exports = {
         if (!args[0]) return message.channel.send(help).then(m => msgdelete(m, msg_time));
         var text = args.join(' ');
 
-        try {
-            text = text.replace(/\?/gi, '물음표');
-        } catch(e) {}
+        text = text.replace(/\?/gi, '물음표') || text;
+        text = text.replace(/\!/gi, '느낌표') || text;
+        text = text.replace(/\~/gi, '물결표') || text;
+
+        text = text.replace(/\'/gi, '따옴표') || text;
+        text = text.replace(/\"/gi, '큰따옴표') || text;
+
+        text = text.replace(/\(/gi, '여는소괄호') || text;
+        text = text.replace(/\)/gi, '닫는소괄호') || text;
+        text = text.replace(/\{/gi, '여는중괄호') || text;
+        text = text.replace(/\}/gi, '닫는중괄호') || text;
+        text = text.replace(/\[/gi, '여는대괄호') || text;
+        text = text.replace(/\]/gi, '닫는대괄호') || text;
 
         try {
             if (message.member.voice.channelID) {
@@ -50,16 +60,15 @@ module.exports = {
                 var channelid = message.guild.voice.channelID;
                 var channel = client.channels.cache.get(channelid);
             }
-            try {
-                var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=${await db.get('db.tts.lang')}`;
-            } catch(error) {
-                db.set('db.tts.lang', 'ko');
-                var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=${await db.get('db.tts.lang')}`;
+            var lang = await db.get('db.tts.lang');
+            if (!(!!lang)) {
+                await db.set('db.tts.lang', 'ko');
+                lang = 'ko';
             }
 
             const broadcast = client.voice.createBroadcast();
             channel.join().then(connection => {
-                broadcast.play(url);
+                broadcast.play(`http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=${lang}`);
                 connection.play(broadcast);
             });
         } catch (error) {

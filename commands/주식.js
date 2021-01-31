@@ -69,11 +69,13 @@ module.exports = {
 
                 \` 유저 명령어 \`
                 ${pp}기본금 : 기본금
+                ${pp}돈 : 돈 확인
                 ${pp}주식 명령어 : 명령어 확인
                 ${pp}주식 보유 : 소지한 주식 확인
                 ${pp}주식 종목 [마켓이름] [page]
                 ${pp}주식 검색 [주식이름] : 주식 정보 확인
-                ${pp}주식 구매 [이름] [수량] : 주식 구매
+                ${pp}주식 매수 [이름] [수량] : 주식 구매
+                ${pp}주식 매도 [이름] [수량] : 주식 판매
 
                 \` 관리자 명령어 \`
                 ${pp}주식 보유 [player] : player가 소지한 주식 확인
@@ -271,7 +273,7 @@ module.exports = {
             .setColor('RED');
         return message.channel.send(serch).then(m => msgdelete(m, msg_time));
         }
-        if (args[0] == ('구매' || 'buy')) {
+        if (args[0] == ('구매' || 'buy' || '매수')) {
             if (args[1]) {
                 var name_kospi = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
                 var name_kosdaq = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);
@@ -369,7 +371,7 @@ module.exports = {
             .setColor('RED');
             return message.channel.send(buy).then(m => msgdelete(m, msg_time));
         }
-        if (args[0] == ('판매' || 'sell')) {
+        if (args[0] == ('판매' || 'sell' || '매도')) {
             if (args[0]) {
                 var name_kospi = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
                 var name_kosdaq = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);

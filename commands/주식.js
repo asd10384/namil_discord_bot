@@ -483,6 +483,6 @@ module.exports = {
             return message.channel.send(sell).then(m => msgdelete(m, msg_time));
         }
         
-        return message.channel.send(help).then(m => msgdelete(m, msg_time));
+        return message.channel.send(help);
     },
 };

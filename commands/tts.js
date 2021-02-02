@@ -53,13 +53,12 @@ module.exports = {
         text = text.replace(/\]/gi, '닫는대괄호') || text;
 
         try {
-            if (message.member.voice.channel) {
+            if (!!message.member.voice.channel) {
                 var channel = message.member.voice.channel;
-                console.log(channel);
-            } else if (message.guild.me.voice.channel) {
+            } else if (!!message.guild.me.voice.channel) {
                 var channel = message.guild.voice.channel;
-                console.log(channel);
             }
+
             var lang = await db.get('db.tts.lang');
             if (!(!!lang)) {
                 await db.set('db.tts.lang', 'ko');

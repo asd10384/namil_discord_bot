@@ -1,9 +1,17 @@
 
 const db = require('quick.db');
 const { MessageEmbed, Collection } = require('discord.js');
-const { default_prefix, msg_time, help_time, drole } = require('../config.json');
+const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');
 const { readdirSync } = require('fs');
 const { join } = require('path');
+
+const { dbset } = require('../functions.js');
+const { connect } = require('mongoose');
+connect(mongourl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+const Data = require('../modules/data.js');
 
 module.exports = {
     name: '주식',
@@ -112,7 +120,7 @@ module.exports = {
         
         if (!args[0]) return message.channel.send(help).then(m => msgdelete(m, msg_time));
 
-        if (args[0] == ('보유' || 'has')) {
+        if (args[0] == '보유' || args[0] == 'has') {
             try {
                 var muser = message.guild.members.cache.get(args[1].replace(/[^0-9]/g, ''));
             } catch (err) {
@@ -122,62 +130,80 @@ module.exports = {
                 if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
                 
                 var user = muser.user;
-                var stock = await db.get(`db.stock.${user.id}`);
-                if (stock == (null || undefined)) {
-                    var text = `{[{'이름': '없음'}]}`;
-                    await db.set(`db.stock.${user.id}`, eval(text));
-                    stock = [{'이름': '없음'}];
-                }
-                if (stock[0]['이름'] == '없음') {
-                    stem.setTitle(`\` ${user.username} \`님의 보유주식`)
-                        .setDescription(`${stock[0]['이름']}`);
-                    return message.channel.send(stem);//.then(m => msgdelete(m, msg_time+5000));
-                }
-                var ap = 0;
-                var stocktext = '[ 주식이름 ] ( 현재가 ) < 수량 > 「 예상수익률 」〔 순수익 〕\n\n';
-                for (i=0; i<stock.length; i++) {
-                    var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][stock[i]['이름']]);
-                    if (!all[0]) {
-                        all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][stock[i]['이름']]);
+                Data.findOne({
+                    userID: user.id
+                }, (err, data) => {
+                    if (err) console.log(err);
+                    if (!data) {
+                        dbset(user);
+                        var hasstock = '없음';
+                    } else {
+                        var stock = data.stock;
+                        if (stock[0]['이름'] == '없음') {
+                            var hasstock = '없음';
+                        } else {
+                            var hasstock = '';
+                            var ap = 0;
+                            var hasstock = '[ 주식이름 ] ( 현재가 ) < 수량 > 「 예상수익률 」〔 순수익 〕\n\n';
+                            for (i=0; i<stock.length; i++) {
+                                var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][stock[i]['이름']]);
+                                if (!all[0]) {
+                                    all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][stock[i]['이름']]);
+                                }
+                                if (!all[0]) {
+                                    all = Object.values(db.all()[0]['data']['stock']['all']['nasdaq'][0][stock[i]['이름']]);
+                                }
+                                var ap = ap + (all[0]*stock[i]['수량'])-(stock[i]['가격']*stock[i]['수량']);
+                                var cv = ((stock[i]['가격'] - all[0]) / 100).toFixed(2);
+                                hasstock += `\`[ ${stock[i]['이름']} ]\`( ${all[0]}원 ) < ${stock[i]['수량']}개 > 「 ${cv}% 」 〔 ${stock[i]['가격']-all[0]}원 〕\n`;
+                            }
+                            hasstock += `\n\` 평가손익 \` : ${ap}원`;
+                        }
                     }
-                    var ap = ap + (all[0]*stock[i]['수량'])-(stock[i]['가격']*stock[i]['수량']);
-                    var cv = ((stock[i]['가격'] - all[0]) / 100).toFixed(2);
-                    stocktext += `\`[ ${stock[i]['이름']} ]\`( ${all[0]}원 ) < ${stock[i]['수량']}개 > 「 ${cv}% 」 〔 ${all[0]-stock[i]['가격']}원 〕\n`;
-                }
-                stocktext += `\n\` 평가손익 \` : ${ap}원`;
-                stem.setTitle(`\` ${user.username} \`님의 보유주식`)
-                    .setDescription(stocktext);
-                return message.channel.send(stem);//.then(m => msgdelete(m, help_time+5000));
+                    stem.setTitle(`\` ${user.username} \`님의 보유주식`)
+                        .setDescription(hasstock);
+                    return message.channel.send(stem);
+                });
+            } else {
+                var user = message.member.user;
+                Data.findOne({
+                    userID: user.id
+                }, (err, data) => {
+                    if (err) console.log(err);
+                    if (!data) {
+                        dbset(user);
+                        var hasstock = '없음';
+                    } else {
+                        var stock = data.stock;
+                        if (stock[0]['이름'] == '없음') {
+                            var hasstock = '없음';
+                        } else {
+                            var hasstock = '';
+                            var ap = 0;
+                            var hasstock = '[ 주식이름 ] ( 현재가 ) < 수량 > 「 예상수익률 」〔 순수익 〕\n\n';
+                            for (i=0; i<stock.length; i++) {
+                                var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][stock[i]['이름']]);
+                                if (!all[0]) {
+                                    all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][stock[i]['이름']]);
+                                }
+                                if (!all[0]) {
+                                    all = Object.values(db.all()[0]['data']['stock']['all']['nasdaq'][0][stock[i]['이름']]);
+                                }
+                                var ap = ap + (all[0]*stock[i]['수량'])-(stock[i]['가격']*stock[i]['수량']);
+                                var cv = ((stock[i]['가격'] - all[0]) / 100).toFixed(2);
+                                hasstock += `\`[ ${stock[i]['이름']} ]\`( ${all[0]}원 ) < ${stock[i]['수량']}개 > 「 ${cv}% 」 〔 ${stock[i]['가격']-all[0]}원 〕\n`;
+                            }
+                            hasstock += `\n\` 평가손익 \` : ${ap}원`;
+                        }
+                    }
+                    stem.setTitle(`\` ${user.username} \`님의 보유주식`)
+                        .setDescription(hasstock);
+                    return message.channel.send(stem);
+                });
             }
-            var user = message.member.user;
-            var ustock = await db.get(`db.stock.${user.id}`);
-            if (ustock == (null || undefined)) {
-                var text = `{[{'이름': '없음'}]}`;
-                await db.set(`db.stock.${user.id}`, eval(text));
-                ustock = [{'이름': '없음'}];
-            }
-            if (ustock[0]['이름'] == '없음') {
-                stem.setTitle(`\` ${user.username} \`님의 보유주식`)
-                    .setDescription(`${ustock[0]['이름']}`);
-                return message.channel.send(stem);//.then(m => msgdelete(m, help_time));
-            }
-            var ap = 0;
-            var ustocktext = '[ 주식이름 ] ( 현재가 ) < 수량 > 「 예상수익률 」〔 순수익 〕 〔 평가손익 〕\n\n';
-            for (i=0; i<ustock.length; i++) {
-                var all = Object.values(db.all()[0]['data']['stock']['all']['kospi'][0][ustock[i]['이름']]);
-                if (!all[0]) {
-                    all = Object.values(db.all()[0]['data']['stock']['all']['kosdaq'][0][ustock[i]['이름']]);
-                }
-                var ap = (all[0]*ustock[i]['수량'])-(ustock[i]['가격']*ustock[i]['수량']);
-                var cv = ((ustock[i]['가격'] - all[0]) / 100).toFixed(2);
-                ustocktext += `\`[ ${ustock[i]['이름']} ]\`( ${all[0]}원 ) < ${ustock[i]['수량']}개 > 「 ${cv}% 」 〔 ${all[0]-ustock[i]['가격']}원 〕\n`;
-            }
-            ustocktext += `\n\` 평가손익 \` : ${ap}원`;
-            stem.setTitle(`\` ${user.username} \`님의 보유주식`)
-                .setDescription(ustocktext);
-            return message.channel.send(stem);//.then(m => msgdelete(m, msg_time+2000));
+            return ;
         }
-        if (args[0] == ('종목' || 'list' || '목록')) {
+        if (args[0] == '종목' || args[0] == 'list' || args[0] == '목록') {
             var oneallstock = 50;
             if (args[1] == ('코스피' || 'kospi')) {
                 var name = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
@@ -212,7 +238,7 @@ module.exports = {
             }
             return message.channel.send(listem).then(m => msgdelete(m, msg_time));
         }
-        if (args[0] == ('검색' || '확인' || 'serch' || 'check')) {
+        if (args[0] == '검색' || args[0] == '확인' || args[0] == 'serch' || args[0] == 'check') {
             var name_kospi = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
             var name_kosdaq = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);
             var name_nasdaq = Object(db.all()[0]['data']['stock']['name']['nasdaq'][0]);
@@ -273,7 +299,7 @@ module.exports = {
             .setColor('RED');
         return message.channel.send(serch).then(m => msgdelete(m, msg_time));
         }
-        if (args[0] == ('구매' || 'buy' || '매수')) {
+        if (args[0] == '매수' || args[0] == 'buy' || args[0] == '구매') {
             if (args[1]) {
                 var name_kospi = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
                 var name_kosdaq = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);
@@ -294,43 +320,56 @@ module.exports = {
                             var user = message.member.user;
                             var price = all[0];
                             var allprice = price * args[2];
-                            var money = await db.get(`db.money.${user.id}`);
-                            if (!(allprice > money)) {
-                                await db.set(`db.money.${user.id}`, money - allprice);
-                                var userstock = await db.get(`db.stock.${user.id}`);
-                                if (userstock[0]['이름'] == '없음') {
-                                    userstock = [];
+                            Data.findOne({
+                                userID: user.id
+                            }, (err, data) => {
+                                if (err) console.log(err);
+                                if (!data) {
+                                    dbset(user, 0);
+                                    var money = 0;
+                                } else {
+                                    var money = data.money;
                                 }
-                                var text = '';
-                                if (userstock.length > 0) {
-                                    for (i=0; i<userstock.length; i++) {
-                                        if (userstock[i]['이름'] == args[1]) {
-                                            count = userstock[i]['수량'];
-                                        }
-                                        text += `{'이름': '${userstock[i]['이름']}','가격': ${userstock[i]['가격']},'수량': ${userstock[i]['수량']}},`;
+                                if (!(allprice > money)) {
+                                    data.money -= allprice;
+                                    var userstock = data.stock;
+                                    if (userstock[0]['이름'] == '없음') {
+                                        userstock = [];
                                     }
+                                    var text = '';
+                                    if (userstock.length > 0) {
+                                        for (i=0; i<userstock.length; i++) {
+                                            if (userstock[i]['이름'] == args[1]) {
+                                                count = userstock[i]['수량'];
+                                            }
+                                            text += `{'이름': '${userstock[i]['이름']}','가격': ${userstock[i]['가격']},'수량': ${userstock[i]['수량']}},`;
+                                        }
+                                    }
+                                    text += `{'이름': '${args[1]}','가격': ${price},'수량': ${args[2]}}`;
+                                    data.stock = eval(`[${text}]`);
+                                    data.save().catch(err => console.log(err));
+                                    buy.setTitle(`\` 구매가 완료되었습니다. \``)
+                                        .setDescription(`
+                                            \` 구매내역 \`
+                                            이름 : ${args[1]}
+                                            금액(개당) : ${price}원
+                                            총금액 : ${allprice}원
+                                            잔액 : ${money - allprice}원
+                                        `)
+                                    return message.channel.send(buy);//.then(m => msgdelete(m, help_time-1000));
+                                } else {
+                                    buy.setTitle(`\` 구매오류 \``)
+                                        .setDescription(`
+                                            \` 잔액부족 \`
+                                            구매비용 : ${allprice}원
+                                            잔액 : ${money}원
+                                        `)
+                                        .setFooter(`${pp}주식 명령어`)
+                                        .setColor('RED');
+                                    return message.channel.send(buy).then(m => msgdelete(m, msg_time));
                                 }
-                                text += `{'이름': '${args[1]}','가격': ${price},'수량': ${args[2]}}`;
-                                await db.set(`db.stock.${user.id}`, eval(`{[${text}]}`));
-                                buy.setTitle(`\` 구매가 완료되었습니다. \``)
-                                    .setDescription(`
-                                        \` 구매내역 \`
-                                        이름 : ${args[1]}
-                                        금액(개당) : ${price}원
-                                        총금액 : ${allprice}원
-                                        잔액 : ${money - allprice}원
-                                    `)
-                                return message.channel.send(buy);//.then(m => msgdelete(m, help_time-1000));
-                            }
-                            buy.setTitle(`\` 구매오류 \``)
-                                .setDescription(`
-                                    \` 잔액부족 \`
-                                    구매비용 : ${allprice}원
-                                    잔액 : ${money}원
-                                `)
-                                .setFooter(`${pp}주식 명령어`)
-                                .setColor('RED');
-                            return message.channel.send(buy).then(m => msgdelete(m, msg_time));
+                            });
+                            return;
                         }
                         buy.setTitle(`\` 구매오류 \``)
                         .setDescription(`
@@ -371,7 +410,7 @@ module.exports = {
             .setColor('RED');
             return message.channel.send(buy).then(m => msgdelete(m, msg_time));
         }
-        if (args[0] == ('판매' || 'sell' || '매도')) {
+        if (args[0] == '매도' || args[0] == 'sell' || args[0] == '판매') {
             if (args[0]) {
                 var name_kospi = Object(db.all()[0]['data']['stock']['name']['kospi'][0]);
                 var name_kosdaq = Object(db.all()[0]['data']['stock']['name']['kosdaq'][0]);
@@ -392,57 +431,75 @@ module.exports = {
                             var user = message.member.user;
                             var price = all[0];
                             var allprice = price * args[2];
-                            var money = await db.get(`db.money.${user.id}`);
-                            var stock = await db.get(`db.stock.${user.id}`);
-                            var hasname = [];
-                            for (i=0; i<stock.length; i++) {
-                                hasname.push(stock[i]['이름']);
-                            }
-                            if (hasname.indexOf(args[1]) > -1) {
-                                var text = '';
-                                for (i=0; i<stock.length; i++) {
-                                    var hname = stock[i]['이름'];
-                                    var hprice = stock[i]['가격'];
-                                    var hcount = stock[i]['수량'];
-                                    if (hname == args[1]) {
-                                        hcount = hcount - args[2];
-                                        if (hcount < 0) {
-                                            sell.setTitle(`\` 판매오류 \``)
-                                                .setDescription(`
-                                                    \` 수량오류 \`
-                                                    보유수량이 판매수량보다 적음
-                                                `)
-                                                .setColor('RED');
-                                            return message.channel.send(sell).then(m => msgdelete(m, msg_time));
-                                        }
-                                        if (hcount == 0) {
-                                            continue;
-                                        }
-                                        await db.set(`'db.money.${user.id}`, money+(all[0]*args[2]));
-                                    }
-                                    text += `{'이름':'${hname}','가격':${hprice},'수량':${hcount}},`;
+                            Data.findOne({
+                                userID: user.id
+                            }, (err, data) => {
+                                if (err) console.log(err);
+                                if (!data) {
+                                    dbset(user, 0);
+                                    var money = 0;
+                                    var stock = data.stock;
+                                } else {
+                                    var money = data.money;
+                                    var stock = data.stock;
                                 }
-                                await db.set(`db.stock.${user.id}`, eval(`{[${text.slice(0,-1)}]}`));
-                                sell.setTitle(`\` 판매완료 \``)
+                                var hasname = [];
+                                for (i=0; i<stock.length; i++) {
+                                    hasname.push(stock[i]['이름']);
+                                }
+                                if (hasname.indexOf(args[1]) > -1) {
+                                    var text = '';
+                                    var done = true;
+                                    for (i=0; i<stock.length; i++) {
+                                        var hname = stock[i]['이름'];
+                                        var hprice = stock[i]['가격'];
+                                        var hcount = stock[i]['수량'];
+                                        if (hname == args[1] && done) {
+                                            done = false;
+                                            hcount = hcount - args[2];
+                                            if (hcount < 0) {
+                                                sell.setTitle(`\` 판매오류 \``)
+                                                    .setDescription(`
+                                                        \` 수량오류 \`
+                                                        보유수량이 판매수량보다 적음
+                                                    `)
+                                                    .setColor('RED');
+                                                return message.channel.send(sell).then(m => msgdelete(m, msg_time));
+                                            }
+                                            if (hcount == 0) {
+                                                continue;
+                                            }
+                                            data.money += all[0]*args[2];
+                                        }
+                                        text += `{'이름':'${hname}','가격':${hprice},'수량':${hcount}},`;
+                                    }
+                                    if (!(!!text)) {
+                                        text += `{'이름':'없음','가격':0,'수량':0},`;
+                                    }
+                                    data.stock = eval(`[${text.slice(0,-1)}]`);
+                                    data.save().catch(err => console.log(err));
+                                    sell.setTitle(`\` 판매완료 \``)
+                                        .setDescription(`
+                                            이름 : ${args[1]}
+                                            판매금액 : ${all[0]}원
+                                            수량 : ${args[2]}개
+                                            총 판매금액 : ${all[0]*args[2]}
+                                            잔액 : ${money+(all[0]*args[2])}
+                                        `)
+                                        .setFooter(`${pp}주식 보유`);
+                                    return message.channel.send(sell);//.then(m => msgdelete(m, help_time+2000));
+                                }
+                                sell.setTitle(`\` 판매오류 \``)
                                     .setDescription(`
-                                        이름 : ${args[1]}
-                                        판매금액 : ${all[0]}원
-                                        수량 : ${args[2]}개
-                                        총 판매금액 : ${all[0]*args[2]}
-                                        잔액 : ${money+(all[0]*args[2])}
+                                        \` 소지주식오류 \`
+                                        판매하려는 주식을
+                                        소유하고있지 않습니다.
                                     `)
-                                    .setFooter(`${pp}주식 보유`);
-                                return message.channel.send(sell);//.then(m => msgdelete(m, help_time+2000));
-                            }
-                            sell.setTitle(`\` 판매오류 \``)
-                                .setDescription(`
-                                    \` 소지주식오류 \`
-                                    판매하려는 주식을
-                                    소유하고있지 않습니다.
-                                `)
-                                .setFooter(`${pp}주식 보유`)
-                                .setColor('RED');
-                            return message.channel.send(sell).then(m => msgdelete(m, msg_time));
+                                    .setFooter(`${pp}주식 보유`)
+                                    .setColor('RED');
+                                return message.channel.send(sell).then(m => msgdelete(m, msg_time));
+                            });
+                            return;
                         }
                         sell.setTitle(`\` 판매오류 \``)
                         .setDescription(`

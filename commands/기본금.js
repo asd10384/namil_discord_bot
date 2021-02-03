@@ -1,7 +1,15 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
-const { default_prefix, msg_time, help_time, drole } = require('../config.json');
+const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');
+
+const { dbset } = require('../functions.js');
+const { connect } = require('mongoose');
+connect(mongourl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+const Data = require('../modules/data.js');
 
 module.exports = {
     name: '기본금',
@@ -25,48 +33,54 @@ module.exports = {
         
         // if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
         
-        const give = new MessageEmbed()
+        const emgive = new MessageEmbed()
             .setTitle(`\` 기본급 지급완료 \``)
             .setFooter(`${pp}돈 , ${pp}주식 명령어`)
             .setColor('RANDOM');
-        const err = new MessageEmbed()
+        const emerr = new MessageEmbed()
             .setTitle(`\` 기본급 지급오류 \``)
             .setFooter(`${pp}돈 , ${pp}주식 명령어`)
             .setColor('RED');
         
-        var user = message.member.user;
-        var normal = await db.get(`db.기본금.${user.id}`);
-        if (normal == (null || undefined)) {
-            var date = new Date();
-            var year = date.getFullYear();
-            var month = date.getMonth();
-            var day = date.getDate();
-            var week = date.getDay();
-            var hour = date.getHours();
-            var min = date.getMinutes();
-            var sec = date.getSeconds();
-            if (week == 0) week = '일';
-            if (week == 1) week = '월';
-            if (week == 2) week = '화';
-            if (week == 3) week = '수';
-            if (week == 4) week = '목';
-            if (week == 5) week = '금';
-            if (week == 6) week = '토';
-            var nowtime = `${year}년 ${month}월 ${day}일(${week}요일) ${hour}시 ${min}분 ${sec}초`;
-            await db.set(`db.기본금.${user.id}`, nowtime);
-            await db.set(`db.money.${user.id}`, 5000000);
-            give.setDescription(`
-                \` ${user.username} \` 님에게
-                기본금 \` 5,000,000 \`원을
-                지급해 드렸습니다.
-            `);
-            return message.channel.send(give).then(m => msgdelete(m, msg_time+2000));
+        var user = message.author;
+        Data.findOne({
+            userID: user.id
+        }, (err, data) => {
+            if (err) console.log(err);
+            if (!data) {
+                var dd = new Date();
+                var d = `${z(dd.getFullYear())}년${z(dd.getMonth())}월${z(dd.getDate())}일 ${z(dd.getHours())}시${z(dd.getMinutes())}분${z(dd.getSeconds())}초`;
+                dbset(user, 5000000, d);
+                emgive.setDescription(`
+                    \` ${user.username} \` 님에게
+                    기본금 \` 5,000,000 \`원을
+                    지급해 드렸습니다.
+                `);
+                return message.channel.send(emgive).then(m => msgdelete(m, msg_time+2000));
+            } else {
+                if (data.daily === "없음") {
+                    data.money += 5000000;
+                    var dd = new Date();
+                    data.daily = `${z(dd.getFullYear())}년${z(dd.getMonth())}월${z(dd.getDate())}일 ${z(dd.getHours())}시${z(dd.getMinutes())}분${z(dd.getSeconds())}초`;
+                    data.save().catch(err => console.log(err));
+                    emgive.setDescription(`
+                        \` ${user.username} \` 님에게
+                        기본금 \` 5,000,000 \`원을
+                        지급해 드렸습니다.
+                    `);
+                    return message.channel.send(emgive).then(m => msgdelete(m, msg_time+2000));
+                } else {
+                    emerr.setDescription(`
+                        \` 이미 기본급을 지급받으셧습니다. \`
+            
+                        \` 지급일 : ${data.daily} \`
+                    `);
+                    return message.channel.send(emerr).then(m => msgdelete(m, msg_time+2000));
+                }
+            }
+        });
+        function z(num) {
+            return num < 10 ? "0" + num : num;
         }
-        err.setDescription(`
-            \` 이미 기본급을 지급받으셧습니다. \`
-
-            \` 지급일 : ${normal} \`
-        `);
-        return message.channel.send(err).then(m => msgdelete(m, msg_time+1000));
     },
 };

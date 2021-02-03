@@ -72,15 +72,12 @@ module.exports = {
             }
 
             var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=${lang}`;
-            var options = {
-                quality: 'highestaudio'
-            };
+            var options = {};
             if (args[0].match(checkyturl)) {
                 try {
-                    url = ytdl(args[0]);
+                    url = ytdl(args[0], { bitrate: 512000 });
                     options = {
-                        quality: 'highestaudio',
-                        volume: 0.05
+                        volume: 0.06
                     };
                 } catch(e) {
                     return message.channel.send(yterr).then(m => msgdelete(m, msg_time));

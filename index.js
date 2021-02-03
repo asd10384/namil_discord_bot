@@ -11,8 +11,7 @@ const db = require('quick.db');
 
 const { dbset } = require('./functions.js');
 const { connect } = require('mongoose');
-var dburl = process.env.mongourl;
-// var dburl = mongourl; // config 수정
+var dburl = mongourl;
 connect(dburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,

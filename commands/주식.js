@@ -7,7 +7,8 @@ const { join } = require('path');
 
 const { dbset } = require('../functions.js');
 const { connect } = require('mongoose');
-connect(mongourl, {
+var dburl = process.env.mongourl || mongourl; // config 수정
+connect(dburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });

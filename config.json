@@ -17,5 +17,5 @@
         "SYSTEM BOT",
         "역활"
     ],
-    "mongourl": "mongodb://asd10384:tmdgks040466!!@asd10384-shard-00-00.l8u0o.mongodb.net:27017,asd10384-shard-00-01.l8u0o.mongodb.net:27017,asd10384-shard-00-02.l8u0o.mongodb.net:27017/<dbname>?ssl=true&replicaSet=atlas-11ibdz-shard-0&authSource=admin&retryWrites=true&w=majority"
+    "mongourl": "mongodb://[name:asd]:[pw:tmd]@asd10384-shard-00-00.l8u0o.mongodb.net:27017,asd10384-shard-00-01.l8u0o.mongodb.net:27017,asd10384-shard-00-02.l8u0o.mongodb.net:27017/<dbname>?ssl=true&replicaSet=atlas-11ibdz-shard-0&authSource=admin&retryWrites=true&w=majority"
 }

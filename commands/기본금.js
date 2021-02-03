@@ -5,7 +5,8 @@ const { default_prefix, msg_time, help_time, drole, mongourl } = require('../con
 
 const { dbset } = require('../functions.js');
 const { connect } = require('mongoose');
-connect(mongourl, {
+var dburl = process.env.mongourl || mongourl; // config 수정
+connect(dburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });

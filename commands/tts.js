@@ -2,6 +2,8 @@
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time } = require('../config.json');
+const ytdl = require('ytdl-core');
+var checkyturl = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
 
 module.exports = {
     name: 'tts',
@@ -34,6 +36,10 @@ module.exports = {
             .setTitle(`먼저 봇을 음성에 넣고 사용해 주십시오.`)
             .setDescription(`${pp}join [voice channel id]`)
             .setColor('RANDOM');
+        const yterr = new MessageEmbed()
+            .setTitle(`\` 주소 오류 \``)
+            .setDescription(`영상을 찾을수 없습니다.`)
+            .setColor('RED');
 
         if (!args[0]) return message.channel.send(help).then(m => msgdelete(m, msg_time));
         var text = args.join(' ');
@@ -65,9 +71,24 @@ module.exports = {
                 lang = 'ko';
             }
 
+            var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=${lang}`;
+            var options = {
+                quality: 'highestaudio'
+            };
+            if (args[0].match(checkyturl)) {
+                try {
+                    url = ytdl(args[0]);
+                    options = {
+                        quality: 'highestaudio',
+                        volume: 0.05
+                    };
+                } catch(e) {
+                    return message.channel.send(yterr).then(m => msgdelete(m, msg_time));
+                }
+            }
             const broadcast = client.voice.createBroadcast();
             channel.join().then(connection => {
-                broadcast.play(`http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=${lang}`);
+                broadcast.play(url, options);
                 connection.play(broadcast);
             });
         } catch (error) {

@@ -9,13 +9,13 @@ const { join } = require('path');
 const config = require('./config.json');
 const db = require('quick.db');
 
-const { dbset } = require('../functions.js');
+const { dbset } = require('./functions.js');
 const { connect } = require('mongoose');
 connect(mongourl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
-const Data = require('../modules/data.js');
+const Data = require('./modules/data.js');
 
 client.config = config;
 client.commands = new Discord.Collection();

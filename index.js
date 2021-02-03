@@ -3,11 +3,19 @@
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
-const { token, default_prefix, msg_time, help_time, textchannel } = require('./config.json');
+const { token, default_prefix, msg_time, help_time, textchannel, mongourl } = require('./config.json');
 const { readdirSync } = require('fs');
 const { join } = require('path');
 const config = require('./config.json');
 const db = require('quick.db');
+
+const { dbset } = require('../functions.js');
+const { connect } = require('mongoose');
+connect(mongourl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+const Data = require('../modules/data.js');
 
 client.config = config;
 client.commands = new Discord.Collection();

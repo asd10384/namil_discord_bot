@@ -1,7 +1,7 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
-const { default_prefix, msg_time, help_time, drole } = require('../config.json');
+const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');
 
 const { dbset } = require('../functions.js');
 const { connect } = require('mongoose');
@@ -10,6 +10,23 @@ connect(mongourl, {
     useUnifiedTopology: true,
 });
 const Data = require('../modules/data.js');
+
+/*
+Data.findOne({
+    userID: user.id
+}, (err, data) => {
+    if (err) console.log(err);
+    if (!data) {
+        dbset(user, 0);
+        var money = 0;
+    } else {
+        var money = data.money;
+    }
+    bal.setTitle(`\` ${user.username} \`님의 금액`)
+        .setDescription(`\` ${money} \`원`);
+    message.channel.send(bal).then(m => msgdelete(m, msg_time+2000));
+});
+*/
 
 module.exports = {
     name: '',

@@ -1,7 +1,7 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
-const { default_prefix, msg_time, help_time } = require('../config.json');
+const { default_prefix, msg_time, help_time, drole } = require('../config.json');
 
 module.exports = {
     name: '임베드',
@@ -19,6 +19,10 @@ module.exports = {
             pp = default_prefix;
         }
         
+        const per = new MessageEmbed()
+            .setTitle(`이 명령어를 사용할 권한이 없습니다.`)
+            .setColor('RED');
+        
         const help = new MessageEmbed()
             .setTitle(`임베드 명령어`)
             .setDescription(`
@@ -32,6 +36,11 @@ module.exports = {
                 (제목, 내용, 출처는 / 로 구분합니다.)
             `)
             .setColor('RANDOM');
+        
+        const colore = new MessageEmbed()
+            .setTitle(`임베드 색깔`)
+            .setColor('RANDOM');
+        
         const colorlist = [
             'DEFAULT',
             'RANDOM',
@@ -84,9 +93,8 @@ module.exports = {
             LUMINOUS_VIVID_PINK: 16580705,
             DARK_VIVID_PINK: 12320855
         };
-        const colore = new MessageEmbed()
-            .setTitle(`임베드 색깔`)
-            .setColor('RANDOM');
+
+        if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
 
         if (!(args[0])) return message.channel.send(help).then(m => msgdelete(m, msg_time+5000));
 

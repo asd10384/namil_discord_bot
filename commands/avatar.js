@@ -42,7 +42,7 @@ module.exports = {
 
         if (!message.mentions.users.first()) {
             message.member.roles.cache.forEach((role) => {
-                roles += role.name + '\n';
+                roles += `${role.name}\n`;
             });
             
             datelist = formatDate(message.member.joinedAt).split(/. /g);

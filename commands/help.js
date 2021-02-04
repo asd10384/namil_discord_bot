@@ -66,9 +66,10 @@ module.exports = {
             com5
         ];
 
+        var time = help_time + (pages.length * 1500);
         const emojiList = ["⏪", "⏩"];
-        const timeout = help_time - 5;
+        const timeout = time - 5;
         pagination(message, pages, emojiList, timeout)
-            .then(m => msgdelete(m, help_time));
+            .then(m => msgdelete(m, time));
     },
 };

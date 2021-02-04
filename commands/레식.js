@@ -95,7 +95,6 @@ module.exports = {
                                 kill: "",
                                 death: "",
                                 ss: "",
-                                sf: ""
                             },
                             op: {
                                 at: "",
@@ -140,7 +139,6 @@ module.exports = {
                                     list['stats']['kds']['death'] = kds[1];
                                 } else {
                                     list['stats']['kds']['ss'] = kds[1];
-                                    list['stats']['kds']['sf'] = kds[2];
                                 }
                             }
                             if (op) {
@@ -172,7 +170,6 @@ module.exports = {
                             \` 킬 \` : ${list['stats']['kds']['kill']}
                             \` 데스 \` : ${list['stats']['kds']['death']}
                             \` 명중 \` : ${list['stats']['kds']['ss']}
-                            \` 발포 \` : ${list['stats']['kds']['sf']}
 
                             \` 가장 많이 사용한 오퍼레이터 \`
                             \` 공격 \` : ${list['stats']['op']['at']}

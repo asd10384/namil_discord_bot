@@ -2,7 +2,7 @@
     "token": "",
     "default_prefix": ";",
     "msg_time": 10000,
-    "help_time": 30000,
+    "help_time": 35000,
     "textchannel": {
         "tts": "783671264493174824",
         "stock": [

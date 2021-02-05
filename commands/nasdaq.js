@@ -57,7 +57,7 @@ module.exports = {
                 if ((alltime % 5 == 0 && alltime >= 5) || alltime < 5) {
                     mm.setDescription(`예상시간 ${alltime}`);
                     m.edit(mm);
-                } else {
+                } else if (alltime < 0) {
                     for (i=0; i<tt_name.length; i++) {
                         name += tt_name[i];
                         all += tt_all[i];

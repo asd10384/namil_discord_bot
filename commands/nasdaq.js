@@ -29,7 +29,7 @@ module.exports = {
 
         const mm = new MessageEmbed()
             .setTitle(`\` 나스닥 정보 로딩중... \``)
-            .setFooter(`주식 명령어와는 상관없음`)
+            .setFooter(`5초마다 바뀝니다.`)
             .setColor("BLUE");
         const mm2 = new MessageEmbed()
             .setTitle(`\` 로딩완료! \``)
@@ -49,17 +49,25 @@ module.exports = {
             nasdaq_name(make_url(60,p));
             nasdaq_all(make_url(60,p));
         }
-        mm.setDescription("예상시간 15초");
+        var alltime = (allpage * 3) + 5;
+        mm.setDescription(`예상시간 ${alltime}초`);
         message.channel.send(mm).then(m => {
-            setTimeout(async function() {
-                for (i=0; i<tt_name.length; i++) {
-                    name += tt_name[i];
-                    all += tt_all[i];
+            var nasdaq_Interval = setInterval(async function() {
+                alltime--;
+                if ((alltime % 5 == 0 && alltime >= 5) || alltime < 5) {
+                    mm.setDescription(`예상시간 ${alltime}`);
+                    m.edit(mm);
+                } else {
+                    for (i=0; i<tt_name.length; i++) {
+                        name += tt_name[i];
+                        all += tt_all[i];
+                    }
+                    await db.set("db.stock.name.nasdaq", eval(`{[{${name.slice(0,-1)}}]}`));
+                    await db.set("db.stock.all.nasdaq", eval(`{[{${all.slice(0,-1)}}]}`));
+                    m.edit(mm2).then(m => msgdelete(m, 5000));
+                    return clearInterval(nasdaq_Interval);
                 }
-                await db.set("db.stock.name.nasdaq", eval(`{[{${name.slice(0,-1)}}]}`));
-                await db.set("db.stock.all.nasdaq", eval(`{[{${all.slice(0,-1)}}]}`));
-                m.edit(mm2).then(m => msgdelete(m, 5000));
-            }, 15000);
+            }, 1000);
         });
 
         function nasdaq_name(url) {

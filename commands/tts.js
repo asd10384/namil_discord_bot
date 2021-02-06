@@ -43,6 +43,7 @@ module.exports = {
 
         if (!args[0]) return message.channel.send(help).then(m => msgdelete(m, msg_time));
         var text = args.join(' ');
+        var options = {};
 
         text = text.replace(/\?/gi, '물음표') || text;
         text = text.replace(/\!/gi, '느낌표') || text;
@@ -72,17 +73,7 @@ module.exports = {
             }
 
             var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=${lang}`;
-            var options = {};
-            if (args[0].match(checkyturl)) {
-                try {
-                    url = ytdl(args[0], { bitrate: 512000 });
-                    options = {
-                        volume: 0.06
-                    };
-                } catch(e) {
-                    return message.channel.send(yterr).then(m => msgdelete(m, msg_time));
-                }
-            }
+            yt(args[0]);
             const broadcast = client.voice.createBroadcast();
             channel.join().then(connection => {
                 broadcast.play(url, options);
@@ -90,6 +81,18 @@ module.exports = {
             });
         } catch (error) {
             return message.channel.send(vcerr).then(m => msgdelete(m, msg_time));
+        }
+        function yt(utl) {
+            if (utl.match(checkyturl)) {
+                try {
+                    url = ytdl(utl, { bitrate: 512000 });
+                    options = {
+                        volume: 0.06
+                    };
+                } catch(e) {
+                    return message.channel.send(yterr).then(m => msgdelete(m, msg_time));
+                }
+            }
         }
     },
 };

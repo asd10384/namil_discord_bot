@@ -50,13 +50,20 @@ module.exports = {
             .setColor('RANDOM');
 
         const com5 = new MessageEmbed()
+            .setTitle('음악 명령어 모음 (추가예정)')
+            .addField(`\` ${pp}play [p] \``, '음악 재생')
+            .addField(`\` ${pp}skip [sk] \``, '음악 스킵')
+            .addField(`\` ${pp}stop [st] \``, '음악 중지')
+            .setColor('RANDOM');
+
+        const com6 = new MessageEmbed()
             .setTitle('음성 명령어 모음')
             .addField(`\` ${pp}tts [say,음성] \``, 'text to speech')
             .addField(`\` ${pp}join [j] \``, 'join voice channel')
             .addField(`\` ${pp}voice [vo] \``, 'change language')
             .setColor('RANDOM');
         
-        const com6 = new MessageEmbed()
+        const com7 = new MessageEmbed()
             .setTitle('관리자 명령어 모음')
             .addField(`\` ${pp}dm [디엠] \``, '디엠 보내기')
             .addField(`\` ${pp}message [channel id] [text] \``, '채팅채널에 채팅입력')
@@ -69,7 +76,8 @@ module.exports = {
             com3,
             com4,
             com5,
-            com6
+            com6,
+            com7
         ];
 
         var time = help_time + (pages.length * 1500);

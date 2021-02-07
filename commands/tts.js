@@ -61,6 +61,7 @@ module.exports = {
 
         text = text.replace(/ㄹㅇ/gi, '리얼') || text;
         text = text.replace(/ㅅㅂ/gi, '시바') || text;
+        text = text.replace(/ㄲㅂ/gi, '까비') || text;
 
         try {
             if (!!message.member.voice.channel) {

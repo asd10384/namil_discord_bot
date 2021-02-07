@@ -59,6 +59,9 @@ module.exports = {
         text = text.replace(/\[/gi, '여는대괄호') || text;
         text = text.replace(/\]/gi, '닫는대괄호') || text;
 
+        text = text.replace(/ㄹㅇ/gi, '리얼') || text;
+        text = text.replace(/ㅅㅂ/gi, '시바') || text;
+
         try {
             if (!!message.member.voice.channel) {
                 var channel = message.member.voice.channel;

@@ -25,6 +25,7 @@ module.exports = {
                     수량: 0
                 }
             ],
+            tts: true
         });
         return newData.save().catch(err => console.log(err));
     },

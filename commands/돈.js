@@ -88,7 +88,6 @@ module.exports = {
         var muser = message.guild.members.cache.get(args[0].replace(/[^0-9]/g, ''));
         if (muser) {
             var user = muser.user;
-            var money = 0;
 
             Data.findOne({
                 userID: user.id

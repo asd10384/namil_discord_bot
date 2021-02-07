@@ -6,7 +6,8 @@ const dataSchema = Schema({
     lb: String,
     money: Number,
     daily: String,
-    stock: Array
+    stock: Array,
+    tts: Boolean
 });
 
 module.exports = model('Data', dataSchema);

@@ -99,7 +99,7 @@ client.on('message', async message => {
                 }, msg_time);
             });
         }
-    } else if (message.channel.id === textchannel['tts']) {
+    } else if (textchannel['tts'].includes(message.channel.id)) {
         try {
             var args = message.content.trim().split(/ +/g);
         } catch(error) {

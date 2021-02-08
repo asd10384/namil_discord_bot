@@ -53,7 +53,7 @@ module.exports = {
             .setColor('RED');
 
         if (!args[0]) return message.channel.send(help).then(m => msgdelete(m, msg_time));
-        if (args[0] == 'ban' || args[0] == '밴') {
+        if (args[0] == 'ban' || args[0] == '밴' || args[0] == '뮤트') {
             if (!(!!message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
             if (args[1]) {
                 var muser = message.guild.members.cache.get(args[1].replace(/[^0-9]/g, ''));
@@ -64,18 +64,18 @@ module.exports = {
                     }, (err, data) => {
                         if (err) console.log(err);
                         if (!data) {
-                            dbset(user, 0);
+                            dbset(user);
                             var ttsboolen = true;
                         } else {
                             var ttsboolen = data.tts;
+                            data.tts = false;
+                            data.save().catch(err => console.log(err));
                         }
                         if (ttsboolen == false) {
                             ttscheck.setTitle(`\` ${user.username} \`님의 TTS 설정`)
                                 .setDescription(`이미 밴 상태입니다.`);
                             return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
                         }
-                        data.tts = false;
-                        data.save().catch(err => console.log(err));
                         var dd = new Date();
                         var d = `${z(dd.getFullYear())}년${z(dd.getMonth())}월${z(dd.getDate())}일 ${z(dd.getHours())}시${z(dd.getMinutes())}분${z(dd.getSeconds())}초`;
                         ttscheck.setTitle(`\` ${user.username} \`님의 TTS 설정`)
@@ -92,7 +92,7 @@ module.exports = {
                 .setDescription(`${pp}tts ban [player]`);
             return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
         }
-        if (args[0] == 'unban' || args[0] == '언벤' || args[0] == '풀기') {
+        if (args[0] == 'unban' || args[0] == '언밴' || args[0] == '언벤' || args[0] == '해제') {
             if (!(!!message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
             if (args[1]) {
                 var muser = message.guild.members.cache.get(args[1].replace(/[^0-9]/g, ''));
@@ -107,14 +107,14 @@ module.exports = {
                             var ttsboolen = true;
                         } else {
                             var ttsboolen = data.tts;
+                            data.tts = true;
+                            data.save().catch(err => console.log(err));
                         }
                         if (ttsboolen == true) {
                             ttscheck.setTitle(`\` ${user.username} \`님의 TTS 설정`)
                                 .setDescription(`이미 언벤 상태입니다.`);
                             return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
                         }
-                        data.tts = true;
-                        data.save().catch(err => console.log(err));
                         var dd = new Date();
                         var d = `${z(dd.getFullYear())}년${z(dd.getMonth())}월${z(dd.getDate())}일 ${z(dd.getHours())}시${z(dd.getMinutes())}분${z(dd.getSeconds())}초`;
                         ttscheck.setTitle(`\` ${user.username} \`님의 TTS 설정`)

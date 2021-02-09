@@ -1,7 +1,7 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
-const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');
+const { default_prefix, msg_time, help_time, drole, mongourl, textchannel } = require('../config.json');
 const ytdl = require('ytdl-core');
 var checkyturl = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
 
@@ -80,7 +80,11 @@ module.exports = {
                         var d = `${z(dd.getFullYear())}년${z(dd.getMonth())}월${z(dd.getDate())}일 ${z(dd.getHours())}시${z(dd.getMinutes())}분${z(dd.getSeconds())}초`;
                         ttscheck.setTitle(`\` ${user.username} \`님의 TTS 설정`)
                             .setDescription(`${d}\n이후로 \` 밴 \` 되셨습니다.`);
-                        return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
+                        return message.channel.send(ttscheck).then(m => {
+                            if (textchannel['tts'].includes(message.channel.id)) {
+                                msgdelete(m, msg_time+3000);
+                            }
+                        });
                     });
                     return ;
                 }
@@ -119,7 +123,11 @@ module.exports = {
                         var d = `${z(dd.getFullYear())}년${z(dd.getMonth())}월${z(dd.getDate())}일 ${z(dd.getHours())}시${z(dd.getMinutes())}분${z(dd.getSeconds())}초`;
                         ttscheck.setTitle(`\` ${user.username} \`님의 TTS 설정`)
                             .setDescription(`${d}\n이후로 \` 언밴 \` 되셨습니다.`);
-                        return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
+                        return message.channel.send(ttscheck).then(m => {
+                            if (textchannel['tts'].includes(message.channel.id)) {
+                                msgdelete(m, msg_time+3000);
+                            }
+                        });
                     });
                     return ;
                 }

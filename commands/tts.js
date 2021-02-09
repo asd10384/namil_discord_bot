@@ -207,6 +207,7 @@ module.exports = {
             if (utl.match(checkyturl)) {
                 try {
                     url = ytdl(utl, { bitrate: 512000 });
+                    message.delete();
                     options = {
                         volume: 0.06
                     };

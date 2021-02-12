@@ -51,7 +51,7 @@ module.exports = {
         
         if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
         
-        return message.guild.channels.create(`\:musical_note\:음악퀴즈`, { // ${client.user.username}-음악퀴즈채널
+        return message.guild.channels.create(`🎵음악퀴즈`, { // ${client.user.username}-음악퀴즈채널
             type: 'text',
             topic: `정답은 채팅으로 치시면 됩니다.`
         }).then(c => {

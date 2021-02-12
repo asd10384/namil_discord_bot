@@ -195,7 +195,7 @@ module.exports = {
             if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
             if (args[1]) {
                 var channelid = await db.get('db.music.channelid');
-                if (!channelid === args[1]) {
+                if (!(channelid == args[1])) {
                     try {
                         client.channels.cache.get(args[1]).delete();
                     } catch(err) {}

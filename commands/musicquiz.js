@@ -66,13 +66,14 @@ module.exports = {
             .setTitle(`명령어`)
             .setDescription(`
                 \` 명령어 \`
-                ${pp}음악퀴즈 시작 [숫자] : [숫자]곡만큼 음악퀴즈를 시작합니다.
+                ${pp}음악퀴즈 시작 <숫자> : <숫자>곡만큼 음악퀴즈를 시작합니다.
                 ${pp}음악퀴즈 중지 : 진행중인 음악퀴즈를 멈춥니다.
                 ${pp}음악퀴즈 스킵 : 현재 곡을 스킵합니다.
                 ${pp}음악퀴즈 초기화 : 앞서나왔던곡들도 다시 나오도록 초기화 합니다.
 
                 \` 관리자 명령어 \`
                 ${pp}음악퀴즈 기본설정 : 텍스트 채널을 다시 생성합니다.
+                ${pp}음악퀴즈 오류수정 [오류확인] : 텍스트 채널을 다시 생성합니다.
             `)
             .setColor('RED');
         
@@ -191,7 +192,7 @@ module.exports = {
             var command = client.commands.get('musicquizset');
             return command.run(client, message, args);
         }
-        if (args[0] == '오류확인') {
+        if (args[0] == '오류수정' || args[0] == '오류확인') {
             if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
             if (args[1]) {
                 var channelid = await db.get('db.music.channelid');

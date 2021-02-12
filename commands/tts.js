@@ -200,6 +200,9 @@ module.exports = {
                     yt(args[0]);
                     const broadcast = client.voice.createBroadcast();
                     channel.join().then(connection => {
+                        options = {
+                            volume: 10
+                        };
                         broadcast.play(url, options);
                         connection.play(broadcast);
                     });

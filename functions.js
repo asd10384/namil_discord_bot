@@ -88,9 +88,7 @@ module.exports = {
             c.messages.fetch(npid).then(m => {
                 m.edit(np);
             });
-        } catch(err) {
-            return console.log(12);
-        }
+        } catch(err) {}
 
         const broadcast = client.voice.createBroadcast();
         channel.join().then(connection => {

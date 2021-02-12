@@ -200,6 +200,7 @@ module.exports = {
                     try {
                         client.channels.cache.get(args[1]).delete();
                     } catch(err) {}
+                    play_end(client);
                     var command = client.commands.get('musicquizset');
                     command.run(client, message, args);
                     return message.channel.send(`오류가 발견되어 채널을 다시 생성합니다.`).then(m => msgdelete(m, 6500));

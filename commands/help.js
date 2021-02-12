@@ -50,10 +50,9 @@ module.exports = {
             .setColor('RANDOM');
 
         const com5 = new MessageEmbed()
-            .setTitle('음악 명령어 모음 (추가예정)')
-            .addField(`\` ${pp}play [p] \``, '음악 재생')
-            .addField(`\` ${pp}skip [sk] \``, '음악 스킵')
-            .addField(`\` ${pp}stop [st] \``, '음악 중지')
+            .setTitle('퀴즈 명령어 모음')
+            .addField(`\` ${pp}musicset \``, '음악퀴즈 도움말')
+            .addField(`\` ${pp}음악퀴즈 \``, '음악퀴즈 도움말')
             .setColor('RANDOM');
 
         const com6 = new MessageEmbed()

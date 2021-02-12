@@ -70,6 +70,9 @@ module.exports = {
                 ${pp}음악퀴즈 중지 : 진행중인 음악퀴즈를 멈춥니다.
                 ${pp}음악퀴즈 스킵 : 현재 곡을 스킵합니다.
                 ${pp}음악퀴즈 초기화 : 앞서나왔던곡들도 다시 나오도록 초기화 합니다.
+
+                \` 관리자 명령어 \`
+                ${pp}음악퀴즈 기본설정 : 텍스트 채널을 다시 생성합니다.
             `)
             .setColor('RED');
         
@@ -90,6 +93,14 @@ module.exports = {
         if (args[0] == '시작' || args[0] == 'start') {
             if (args[1]) {
                 if (!isNaN(args[1])) {
+                    if (args[1] > 50) {
+                        emerr.setDescription(`한번에 최대 50곡까지 가능합니다.`);
+                        return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
+                    }
+                    if (args[1] < 2) {
+                        emerr.setDescription(`최소 2곡이상만 가능합니다.`);
+                        return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
+                    }
                     await db.set('db.music.voicechannel', voiceChannel.id);
                     play_set(client);
                     var url = `http://ytms.netlify.app`;
@@ -120,33 +131,35 @@ module.exports = {
                             var nl = [];
                             var vl = [];
                             var ll = [];
-                            var il = [];
+                            var e = false;
+                            var tt = '';
                             for (i=0; i<args[1];i++) {
                                 if (args[1] > name.length-ect.length) {
                                     emerr.setDescription(`제외된 곡이 너무 많습니다.\n${pp}음악퀴즈 초기화 를 입력해서 제외된 곡을 없애주세요.`);
                                     message.channel.send(emerr).then(m => msgdelete(m, msg_time));
                                     play_end(client);
+                                    e = true;
                                     break;
                                 }
-                                var r = Math.floor((Math.random() * parseInt(name.length / 10)) + name.length % 10);
+                                var r = Math.floor(Math.random() * (parseInt(name.length+1)));
                                 if (rl.includes(r) || ect.includes(name[r]) || name[r] == '') {
                                     i--;
                                     continue;
                                 }
-                                // console.log(`${i+1}. ${vocal[r]}-${name[r]}`);
+                                // console.log(`${i+1}. ${vocal[r]}-${name[r]}  [${r}]`);
+                                tt += `${i+1}. ${vocal[r]}-${name[r]}  [${r}]\n`;
                                 rl.push(r);
                                 ect.push(name[r]);
                                 nl.push(name[r]);
                                 vl.push(vocal[r]);
                                 ll.push(link[r]);
-                                var songInfo = await ytdl.getInfo(link[r]);
-                                il.push(songInfo.player_response.videoDetails.thumbnail.thumbnails[4].url);
                             }
+                            if (e) return ;
+                            console.log(tt);
                             await db.set('db.music.ect', ect);
                             await db.set('db.music.name', nl);
                             await db.set('db.music.vocal', vl);
                             await db.set('db.music.link', ll);
-                            await db.set('db.music.img', il);
                             await db.set('db.music.name', nl);
                             await db.set('db.music.count', 0);
 
@@ -171,7 +184,11 @@ module.exports = {
             return play_end(client);
         }
         if (args[0] == '스킵' || args[0] == 'skip') {
-            return play_anser(client, message);
+            return play_anser(message, client);
+        }
+        if (args[0] == '기본설정') {
+            var command = client.commands.get('musicquizset');
+            return command.run(client, message, args);
         }
         return message.channel.send(help).then(m => msgdelete(m, msg_time));
     },

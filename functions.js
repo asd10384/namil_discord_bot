@@ -36,7 +36,7 @@ module.exports = {
     },
     play_set: async function play_set (client) {
         try {
-            var list = `음악퀴즈 준비중입니다. (노래 갯수에 따라 시간이 기하학적으로 늘어날수 있습니다.)`;
+            var list = `음악퀴즈 준비중입니다.`;
             var np = new MessageEmbed()
                 .setTitle(`**잠시뒤 음악퀴즈가 시작됩니다.**`)
                 .setDescription(`[유튜브 링크](http://youtube.com)`)
@@ -105,12 +105,11 @@ module.exports = {
             var name = await db.get('db.music.name')[count];
             var vocal = await db.get('db.music.vocal')[count];
             var link = await db.get('db.music.link')[count];
-            var img = await db.get('db.music.img')[count];
             var list = `음악퀴즈를 종료하시려면 \` ;음악퀴즈 종료 \`를 입력해 주세요.`;
             var np = new MessageEmbed()
                 .setTitle(`**정답 : ${name}**`)
                 .setDescription(`**[가수 : ${vocal}](${link})**\n정답자 : ${message.author.username}`)
-                .setImage(`${img}`)
+                .setImage(`https://i.ytimg.com/vi_webp/${link.replace('https://youtu.be/', '')}/maxresdefault.webp`)
                 .setFooter(`10초뒤에 다음곡으로 넘어갑니다.`)
                 .setColor('ORANGE');
             var channelid = db.get('db.music.channel');
@@ -140,7 +139,6 @@ module.exports = {
                 await db.set('db.music.name', []);
                 await db.set('db.music.vocal', []);
                 await db.set('db.music.link', 0);
-                await db.set('db.music.img', []);
                 await db.set('db.music.count', 0);
                 await db.set('db.music.start', 'x');
                 await db.set('db.music.tts', true);
@@ -205,7 +203,6 @@ module.exports = {
         await db.set('db.music.name', []);
         await db.set('db.music.vocal', []);
         await db.set('db.music.link', 0);
-        await db.set('db.music.img', []);
         await db.set('db.music.count', 0);
         await db.set('db.music.start', 'x');
         await db.set('db.music.tts', true);
@@ -227,6 +224,7 @@ module.exports = {
             c.messages.fetch(npid).then(m => {
                 m.edit(np);
             });
+            return ;
         } catch(err) {
             return ;
         }

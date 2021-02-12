@@ -30,7 +30,7 @@ Data.findOne({
 */
 
 module.exports = {
-    name: 'musicset',
+    name: 'musicquizset',
     aliases: ['음악퀴즈기본설정'],
     description: 'setting',
     async run (client, message, args) {

@@ -10,7 +10,6 @@ const Data = require('./modules/data.js');
 const ytdl = require('ytdl-core');
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
-const { get } = require('request');
 
 module.exports = {
     formatDate: function (date) {
@@ -127,8 +126,7 @@ module.exports = {
         }
         db.set('db.music.count', db.get('db.music.count')+1);
         setTimeout(async function() { // play 랑 똑같은 문구
-            var vchid = await db.get('db.music.voicechannel');
-            var channel = client.channels.cache.get(vchid);
+            var channel = client.channels.cache.get(await db.get('db.music.voicechannel'));
             db.set('db.music.tts', false);
             db.set('db.music.start', 'o');
             var count = db.get('db.music.count');
@@ -150,6 +148,9 @@ module.exports = {
                     .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
                     .setColor('ORANGE');
                 try {
+                    try {
+                        client.channels.cache.get(await db.get('db.music.voicechannel')).leave();
+                    } catch(err) {}
                     var channelid = db.get('db.music.channel');
                     var listid = db.get('db.music.listid');
                     var npid = db.get('db.music.npid');
@@ -214,6 +215,9 @@ module.exports = {
             .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
             .setColor('ORANGE');
         try {
+            try {
+                client.channels.cache.get(await db.get('db.music.voicechannel')).leave();
+            } catch(err) {}
             var channelid = db.get('db.music.channel');
             var listid = db.get('db.music.listid');
             var npid = db.get('db.music.npid');

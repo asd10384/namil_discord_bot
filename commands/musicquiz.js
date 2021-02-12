@@ -187,8 +187,26 @@ module.exports = {
             return play_anser(message, client);
         }
         if (args[0] == '기본설정') {
+            if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
             var command = client.commands.get('musicquizset');
             return command.run(client, message, args);
+        }
+        if (args[0] == '오류확인') {
+            if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+            if (args[1]) {
+                var channelid = await db.get('db.music.channelid');
+                if (!channelid === args[1]) {
+                    try {
+                        client.channels.cache.get(args[1]).delete();
+                    } catch(err) {}
+                    var command = client.commands.get('musicquizset');
+                    command.run(client, message, args);
+                    return message.channel.send(`오류가 발견되어 채널을 다시 생성합니다.`).then(m => msgdelete(m, 6500));
+                }
+                play_end(client);
+                return message.channel.send(`오류가 발견되지 않았습니다.`).then(m => msgdelete(m, 5500));
+            }
+            return message.channel.send(`${pp}음악퀴즈 오류확인 [음악퀴즈 채팅 채널 아이디]`);
         }
         return message.channel.send(help).then(m => msgdelete(m, msg_time));
     },

@@ -20,6 +20,7 @@ const Data = require('./modules/data.js');
 
 client.config = config;
 client.commands = new Discord.Collection();
+client.queue = new Map();
 
 const commandFiles = readdirSync(join(__dirname, 'commands')).filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
@@ -107,6 +108,20 @@ client.on('message', async message => {
         }
         const command = client.commands.get('tts');
         command.run(client, message, args);
+    } else if (message.channel.id === db.get('db.music.channel')) {
+        try {
+            var args = message.content.trim().split(/ +/g);
+        } catch(error) {
+            var args = message.content.trim().split(/ +/g);
+        }
+        msgdelete(20);
+        if (db.get('db.music.start') === 'o') {
+            const command = client.commands.get('musicanser');
+            command.run(client, message, args);
+        } else {
+            const command = client.commands.get('musicquiz');
+            command.run(client, message, args);
+        }
     }
     
     function msgdelete(time) {
@@ -115,6 +130,7 @@ client.on('message', async message => {
         }, time)
     }
 });
+
 // process.env.token
 client.login(process.env.token);
 //client.login('testNzk2OTIyNjEwMTUwNjcwMzc2.X_e-BA.ebnnX0csj-WA_eKsgw-OUO2vCqU');

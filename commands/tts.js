@@ -51,6 +51,10 @@ module.exports = {
             .setTitle(`\` 주소 오류 \``)
             .setDescription(`영상을 찾을수 없습니다.`)
             .setColor('RED');
+        const music = new MessageEmbed()
+            .setTitle(`\` 재생 오류 \``)
+            .setDescription(`현재 노래퀴즈가 진행중입니다.\n노래퀴즈가 끝나고 사용해주세요.`)
+            .setColor('RED');
 
         if (!args[0]) return message.channel.send(help).then(m => msgdelete(m, msg_time));
         if (args[0] == 'ban' || args[0] == '밴' || args[0] == '뮤트') {
@@ -178,28 +182,32 @@ module.exports = {
             text = text.replace(/ㅅㄱ/gi, '수고') || text;
             text = text.replace(/ㄴㅇㅅ/gi, '나이스') || text;
     
-            try {
-                if (!!message.member.voice.channel) {
-                    var channel = message.member.voice.channel;
-                } else if (!!message.guild.me.voice.channel) {
-                    var channel = message.guild.voice.channel;
+            if (db.get('db.music.tts')) {
+                try {
+                    if (!!message.member.voice.channel) {
+                        var channel = message.member.voice.channel;
+                    } else if (!!message.guild.me.voice.channel) {
+                        var channel = message.guild.voice.channel;
+                    }
+        
+                    var lang = db.get('db.tts.lang');
+                    if (!(!!lang)) {
+                        db.set('db.tts.lang', 'ko');
+                        lang = 'ko';
+                    }
+        
+                    var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=${lang}`;
+                    yt(args[0]);
+                    const broadcast = client.voice.createBroadcast();
+                    channel.join().then(connection => {
+                        broadcast.play(url, options);
+                        connection.play(broadcast);
+                    });
+                } catch (error) {
+                    return message.channel.send(vcerr).then(m => msgdelete(m, msg_time));
                 }
-    
-                var lang = db.get('db.tts.lang');
-                if (!(!!lang)) {
-                    db.set('db.tts.lang', 'ko');
-                    lang = 'ko';
-                }
-    
-                var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=${lang}`;
-                yt(args[0]);
-                const broadcast = client.voice.createBroadcast();
-                channel.join().then(connection => {
-                    broadcast.play(url, options);
-                    connection.play(broadcast);
-                });
-            } catch (error) {
-                return message.channel.send(vcerr).then(m => msgdelete(m, msg_time));
+            } else {
+                return message.channel.send(music).then(m => msgdelete(m, msg_time));
             }
         });
         

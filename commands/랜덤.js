@@ -78,7 +78,7 @@ module.exports = {
         function rdc(num = 2) {
             var r = Math.floor(Math.random() * num) + 1;
             if (r == (null || undefined)) {
-                return rd(num);
+                return rdc(num);
             }
             return r;
         }

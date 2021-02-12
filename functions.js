@@ -67,7 +67,7 @@ module.exports = {
         }
         var url = ytdl(link, { bitrate: 512000 });
         var options = {
-            volume: 1
+            volume: 0.08
         };
         
         try {
@@ -168,7 +168,7 @@ module.exports = {
             }
             var url = ytdl(link, { bitrate: 512000 });
             var options = {
-                volume: 1
+                volume: 0.08
             };
             
             try {

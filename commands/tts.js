@@ -201,7 +201,7 @@ module.exports = {
                     const broadcast = client.voice.createBroadcast();
                     channel.join().then(connection => {
                         options = {
-                            volume: 10
+                            volume: 1
                         };
                         broadcast.play(url, options);
                         connection.play(broadcast);
@@ -220,7 +220,7 @@ module.exports = {
                     url = ytdl(utl, { bitrate: 512000 });
                     message.delete();
                     options = {
-                        volume: 0.06
+                        volume: 0.08
                     };
                 } catch(e) {
                     return message.channel.send(yterr).then(m => msgdelete(m, msg_time));

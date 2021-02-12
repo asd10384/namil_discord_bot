@@ -1,7 +1,7 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
-const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');
+const { default_prefix, msg_time, help_time, drole, mongourl, textchannel } = require('../config.json');
 
 const { dbset } = require('../functions.js');
 const { connect } = require('mongoose');
@@ -53,7 +53,9 @@ module.exports = {
         
         return message.guild.channels.create(`🎵음악퀴즈`, { // ${client.user.username}-음악퀴즈채널
             type: 'text',
-            topic: `정답은 채팅으로 치시면 됩니다.`
+            topic: `정답은 채팅으로 치시면 됩니다.`,
+            parent: textchannel.category,
+            position: -1
         }).then(c => {
             db.set('db.music.channel', c.id);
             var list = `음성 채널에 참여한 후 \` ;음악퀴즈 시작 \`를 입력해 음악퀴즈를 시작하세요.`;

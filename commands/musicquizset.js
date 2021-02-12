@@ -55,7 +55,7 @@ module.exports = {
             type: 'text',
             topic: `정답은 채팅으로 치시면 됩니다.`,
             parent: textchannel.category,
-            position: -1
+            position: 0
         }).then(c => {
             db.set('db.music.channel', c.id);
             var list = `음성 채널에 참여한 후 \` ;음악퀴즈 시작 \`를 입력해 음악퀴즈를 시작하세요.`;

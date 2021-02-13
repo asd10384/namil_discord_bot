@@ -102,7 +102,9 @@ module.exports = {
                         emerr.setDescription(`최소 2곡이상만 가능합니다.`);
                         return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
                     }
-                    await clearInterval(ontimer);
+                    try {
+                        await clearInterval(ontimer);
+                    } catch(err) {}
                     await db.set('db.music.voicechannel', voiceChannel.id);
                     play_set(client);
                     var url = `http://ytms.netlify.app`;

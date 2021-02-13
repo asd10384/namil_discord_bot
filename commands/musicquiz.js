@@ -3,7 +3,7 @@ const db = require('quick.db');
 const { MessageEmbed, Collection } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');
 
-const { dbset, play, play_anser, play_end, play_set } = require('../functions.js');
+const { dbset, play, play_anser, play_end, play_set, play_score } = require('../functions.js');
 const { connect, set } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
 connect(dburl, {
@@ -68,10 +68,10 @@ module.exports = {
                 \` 명령어 \`
                 ${pp}음악퀴즈 시작 <숫자> : <숫자>곡만큼 음악퀴즈를 시작합니다.
                 ${pp}음악퀴즈 중지 : 진행중인 음악퀴즈를 멈춥니다.
-                ${pp}음악퀴즈 스킵 : 현재 곡을 스킵합니다.
                 ${pp}음악퀴즈 초기화 : 앞서나왔던곡들도 다시 나오도록 초기화 합니다.
 
                 \` 관리자 명령어 \`
+                ${pp}음악퀴즈 스킵 : 현재 곡을 스킵합니다.
                 ${pp}음악퀴즈 기본설정 : 텍스트 채널을 다시 생성합니다.
                 ${pp}음악퀴즈 오류수정 [오류확인] : 텍스트 채널을 다시 생성합니다.
             `)
@@ -181,14 +181,15 @@ module.exports = {
                     });
                     return ;
                 }
-                emerr.setDescription(`숫자를 입력해주세요.\n${pp}음악퀴즈 명령어`);
+                emerr.setDescription(`$시작 [곡 개수]\n숫자를 입력해주세요.\n${pp}음악퀴즈 명령어`);
                 return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
             }
-            emerr.setDescription(`숫자를 입력해주세요.\n${pp}음악퀴즈 명령어`);
+            emerr.setDescription(`시작 [곡 개수]\n숫자를 입력해주세요.\n${pp}음악퀴즈 명령어`);
             return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
         }
         if (args[0] == '초기화' || args[0] == 'reset') {
             await db.set('db.music.ect', []);
+            play_score(client);
             play_end(client);
             return message.channel.send('완료!').then(m => msgdelete(m, 3000));
         }
@@ -196,7 +197,8 @@ module.exports = {
             return play_end(client);
         }
         if (args[0] == '스킵' || args[0] == 'skip') {
-            return play_anser(message, client);
+            if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+            return play_anser(message, client, args);
         }
         if (args[0] == '기본설정') {
             if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));

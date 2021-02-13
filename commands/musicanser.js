@@ -51,7 +51,7 @@ module.exports = {
         
         // if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
 
-        var text = args.join(' ');
+        var text = args.join(' ').trim();
 
         var count = await db.get('db.music.count');
         var name = await db.get('db.music.name')[count];
@@ -59,7 +59,22 @@ module.exports = {
         var anser = `${vocal}-${name}`.trim().toLowerCase();
         
         if (text == anser) {
-            play_anser(message, client);
+            await db.set('db.music.user', {});
+            return play_anser(message, client, args);
+        }
+        if (text == '스킵' || text == 'skip') {
+            var user = await db.get('db.music.user');
+            if (!(user[message.member.user.id] == undefined)) {
+                user[s] = user[s] + 1;
+                if (user[s] >= 2) {
+                    await db.set('db.music.user', {});
+                    return play_anser(message, client, args);
+                }
+                return message.channel.send(`스킵하려면 한번 더 입력해주세요.`).then(m => msgdelete(m, 2000));
+            } else {
+                user[message.member.user.id] = 1;
+                return message.channel.send(`스킵하려면 한번 더 입력해주세요.`).then(m => msgdelete(m, 2000));
+            }
         }
     },
 };

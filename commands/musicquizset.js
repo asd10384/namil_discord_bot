@@ -58,7 +58,12 @@ module.exports = {
             position: 0
         }).then(c => {
             db.set('db.music.channel', c.id);
-            var list = `__**규칙**__
+            var score = new MessageEmbed()
+                .setTitle(`**[ 음악퀴즈 스코어 ]**`)
+                .setDescription(`**없음**\n\n스킵한 노래 : 없음`)
+                .setFooter(`스코어는 다음게임 전까지 사라지지 않습니다.`)
+                .setColor('ORANGE');
+            var list = `__**[ 규칙 ]**__
 **1.** 명령어는 \` ${pp}음악퀴즈 명령어 \` 로 확인하실수 있습니다.
 **2.** 정답은 채팅창에 그냥 입력하시면 됩니다.
 **3.** 정답은 가수-제목 순서로 쓰시면 됩니다. (중간에 - 도 입력해주세요.)
@@ -67,13 +72,16 @@ module.exports = {
 (띄어쓰기나 특수문자 ' 를 유의하여 적어주세요.)
 **4.** 오류나 수정사항은 hky4258@naver.com 으로 보내주세요.
 
-음성 채널에 참여한 후 \` ;음악퀴즈 시작 \`를 입력해 음악퀴즈를 시작하세요.`;
+음성 채널에 참여한 후 \` 시작 \`을 입력해 음악퀴즈를 시작하세요.`;
             var np = new MessageEmbed()
                 .setTitle(`**현재 음악퀴즈가 시작되지 않았습니다.**`)
                 .setDescription(`[노래목록 사이트](https://ytms.netlify.app)`)
                 .setImage(`https://cdn.hydra.bot/hydra_no_music.png`)
                 .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
                 .setColor('ORANGE');
+            c.send(score).then(m => {
+                db.set('db.music.scoreid', m.id);
+            });
             c.send(list).then(m => {
                 db.set('db.music.listid', m.id);
             });

@@ -56,7 +56,7 @@ module.exports = {
             return ;
         }
     },
-    play: async function play (client, channel) {
+    play: async function play (client, channel, message) {
         db.set('db.music.tts', false);
         db.set('db.music.start', 'o');
         var count = db.get('db.music.count');

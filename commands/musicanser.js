@@ -3,7 +3,7 @@ const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');
 
-const { play_anser } = require('../functions.js');
+const { play_anser, play_end } = require('../functions.js');
 const { connect } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
 connect(dburl, {
@@ -50,7 +50,7 @@ module.exports = {
             .setColor('RED');
         
         // if (!(message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
-        
+
         var text = args.join(' ');
 
         var count = await db.get('db.music.count');

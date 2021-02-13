@@ -3,7 +3,13 @@ const db = require('quick.db');
 const { MessageEmbed, Collection } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');
 
-const { dbset, play, play_anser, play_end, play_set, play_score } = require('../functions.js');
+const { dbset } = require('../functions.js');
+const { play } = require('../modules/music/play');
+const { play_anser } = require('../modules/music/play_anser');
+const { play_end } = require('../modules/music/play_end');
+const { play_set } = require('../modules/music/play_set');
+const { play_score } = require('../modules/music/play_score');
+
 const { connect, set } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
 connect(dburl, {
@@ -14,7 +20,6 @@ const Data = require('../modules/data.js');
 
 const request = require("request");
 const cheerio = require("cheerio");
-const ytdl = require('ytdl-core');
 const { readdirSync } = require('fs');
 const { join } = require('path');
 const queue = new Map();

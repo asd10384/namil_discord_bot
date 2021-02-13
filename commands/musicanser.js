@@ -3,7 +3,7 @@ const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');
 
-const { play_anser, play_end } = require('../functions.js');
+const { play_anser } = require('../modules/music/play_anser');
 const { connect } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
 connect(dburl, {
@@ -64,16 +64,18 @@ module.exports = {
         }
         if (text == '스킵' || text == 'skip') {
             var user = await db.get('db.music.user');
-            if (!(user[message.member.user.id] == undefined)) {
-                user[s] = user[s] + 1;
-                if (user[s] >= 2) {
+            var userid = message.member.user.id;
+            if (user[userid] == undefined) {
+                user[userid] = 1;
+                await db.set('db.music.user', user);
+                return message.channel.send(`스킵하려면 한번 더 입력해주세요.`).then(m => msgdelete(m, 2000));
+            } else {
+                user[userid] = user[userid] + 1;
+                if (user[userid] >= 2) {
                     await db.set('db.music.user', {});
                     return play_anser(message, client, args);
                 }
-                return message.channel.send(`스킵하려면 한번 더 입력해주세요.`).then(m => msgdelete(m, 2000));
-            } else {
-                user[message.member.user.id] = 1;
-                return message.channel.send(`스킵하려면 한번 더 입력해주세요.`).then(m => msgdelete(m, 2000));
+                return await db.set('db.music.user', user);
             }
         }
     },

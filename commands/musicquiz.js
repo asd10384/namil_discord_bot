@@ -3,7 +3,7 @@ const db = require('quick.db');
 const { MessageEmbed, Collection } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');
 
-const { dbset } = require('../functions.js');
+const { dbset } = require('../modules/functions');
 const { play } = require('../modules/music/play');
 const { play_anser } = require('../modules/music/play_anser');
 const { play_end } = require('../modules/music/play_end');

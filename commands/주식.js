@@ -5,7 +5,7 @@ const { default_prefix, msg_time, help_time, drole, mongourl } = require('../con
 const { readdirSync } = require('fs');
 const { join } = require('path');
 
-const { dbset } = require('../functions.js');
+const { dbset } = require('../modules/functions');
 const { connect } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
 connect(dburl, {

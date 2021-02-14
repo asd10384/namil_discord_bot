@@ -7,10 +7,6 @@ connect(mongourl, {
 });
 const Data = require('./modules/data.js');
 
-const ytdl = require('ytdl-core');
-const db = require('quick.db');
-const { MessageEmbed } = require('discord.js');
-
 module.exports = {
     formatDate: function (date) {
         return new Intl.DateTimeFormat("ko-KR").format(date);

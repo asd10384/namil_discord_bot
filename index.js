@@ -1,6 +1,4 @@
 
-// https://discord.com/api/oauth2/authorize?client_id=781679904303218718&permissions=8&scope=bot
-
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const { token, default_prefix, msg_time, help_time, textchannel, mongourl } = require('./config.json');
@@ -9,7 +7,7 @@ const { join } = require('path');
 const config = require('./config.json');
 const db = require('quick.db');
 
-const { dbset } = require('./functions.js');
+const { dbset } = require('./modules/functions');
 const { connect } = require('mongoose');
 var dburl = mongourl;
 connect(dburl, {

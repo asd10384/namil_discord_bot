@@ -5,7 +5,7 @@ const { default_prefix, msg_time, help_time, drole, mongourl, textchannel } = re
 const ytdl = require('ytdl-core');
 var checkyturl = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
 
-const { dbset } = require('../functions.js');
+const { dbset } = require('../modules/functions');
 const { connect } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
 connect(dburl, {

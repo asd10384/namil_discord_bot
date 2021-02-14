@@ -1,5 +1,5 @@
 
-const { formatDate } = require('../functions.js');
+const { formatDate } = require('../modules/functions');
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole } = require('../config.json');

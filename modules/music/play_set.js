@@ -2,6 +2,7 @@
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { play_score } = require('./play_score');
+const { play_end } = require('./play_end');
 
 module.exports = {
     play_set: async function play_set (client) {
@@ -19,16 +20,18 @@ module.exports = {
             var channelid = db.get('db.music.channel');
             var listid = db.get('db.music.listid');
             var npid = db.get('db.music.npid');
-            var c = client.channels.cache.get(channelid);
             await play_score(client);
-            c.messages.fetch(listid).then(m => {
-                m.edit(list);
-            });
-            c.messages.fetch(npid).then(m => {
-                m.edit(np);
-            });
+            try {
+                var c = client.channels.cache.get(channelid);
+                c.messages.fetch(listid).then(m => {
+                    m.edit(list);
+                });
+                c.messages.fetch(npid).then(m => {
+                    m.edit(np);
+                });
+            } catch(err) {}
         } catch(err) {
-            return ;
+            return play_end(client);
         }
     },
 }

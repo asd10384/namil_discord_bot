@@ -1,6 +1,7 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
+const { play_end } = require('./play_end');
 
 module.exports = {
     play_score: async function play_score (client) {
@@ -26,9 +27,13 @@ module.exports = {
             .setDescription(text)
             .setFooter(`스코어는 다음게임 전까지 사라지지 않습니다.`)
             .setColor('ORANGE');
-        var c = client.channels.cache.get(channelid);
-        c.messages.fetch(scoreid).then(m => {
-            m.edit(emscore);
-        });
+        try {
+            var c = client.channels.cache.get(channelid);
+            c.messages.fetch(scoreid).then(m => {
+                m.edit(emscore);
+            });   
+        } catch(err) {
+            return await play_end(client);
+        }
     },
 }

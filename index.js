@@ -112,7 +112,7 @@ client.on('message', async message => {
         } catch(error) {
             var args = message.content.trim().split(/ +/g);
         }
-        msgdelete(20);
+        msgdelete(30);
         if (db.get('db.music.start') === 'o') {
             const command = client.commands.get('musicanser');
             command.run(client, message, args);
@@ -125,7 +125,7 @@ client.on('message', async message => {
     function msgdelete(time) {
         setTimeout(function() {
             message.delete();
-        }, time)
+        }, time);
     }
 });
 

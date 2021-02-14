@@ -2,6 +2,7 @@
 const ytdl = require('ytdl-core');
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
+const { play_end } = require('./play_end');
 
 module.exports = {
     play: async function play (client, channel, message) {
@@ -12,7 +13,7 @@ module.exports = {
         var link = db.get('db.music.link')[count];
         if (link == undefined || link == null) {
             channel.leave();
-            return this.play_end(client);
+            return await play_end(client);
         }
         var url = ytdl(link, { bitrate: 512000 });
         var options = {
@@ -30,19 +31,22 @@ module.exports = {
             var channelid = db.get('db.music.channel');
             var listid = db.get('db.music.listid');
             var npid = db.get('db.music.npid');
-            var c = client.channels.cache.get(channelid);
-            c.messages.fetch(listid).then(m => {
-                m.edit(list);
+            try {
+                var c = client.channels.cache.get(channelid);
+                c.messages.fetch(listid).then(m => {
+                    m.edit(list);
+                });
+                c.messages.fetch(npid).then(m => {
+                    m.edit(np);
+                });
+            } catch(err) {}
+            const broadcast = client.voice.createBroadcast();
+            channel.join().then(connection => {
+                broadcast.play(url, options);
+                connection.play(broadcast);
             });
-            c.messages.fetch(npid).then(m => {
-                m.edit(np);
-            });
-        } catch(err) {}
-
-        const broadcast = client.voice.createBroadcast();
-        channel.join().then(connection => {
-            broadcast.play(url, options);
-            connection.play(broadcast);
-        });
+        } catch(err) {
+            await play_end(client);
+        }
     },
 }

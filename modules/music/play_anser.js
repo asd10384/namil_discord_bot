@@ -30,11 +30,13 @@ module.exports = {
             var name = await db.get('db.music.name')[count];
             var vocal = await db.get('db.music.vocal')[count];
             var link = await db.get('db.music.link')[count];
+            var chack = /(?:http:\/\/|https:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?/gi;
+            var yturl = link.replace(chack, '');
             var list = `음악퀴즈를 종료하시려면 \` ;음악퀴즈 종료 \`를 입력해 주세요.`;
             var np = new MessageEmbed()
                 .setTitle(`**정답 : ${name}**`)
                 .setDescription(`**[가수 : ${vocal}](${link})**\n정답자 : ${message.author.username}`)
-                .setImage(`https://i.ytimg.com/vi_webp/${link.replace('https://youtu.be/', '')}/maxresdefault.webp`)
+                .setImage(`http://img.youtube.com/vi/${yturl}/maxresdefault.jpg`)
                 .setFooter(`10초뒤에 다음곡으로 넘어갑니다.`)
                 .setColor('ORANGE');
             var channelid = db.get('db.music.channel');

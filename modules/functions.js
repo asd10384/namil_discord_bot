@@ -1,11 +1,11 @@
 
-const { mongourl } = require('./config.json');
+const { mongourl } = require('../config.json');
 const { connect } = require('mongoose');
 connect(mongourl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
-const Data = require('./modules/data.js');
+const Data = require('./data.js');
 
 module.exports = {
     formatDate: function (date) {

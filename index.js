@@ -112,11 +112,12 @@ client.on('message', async message => {
         } catch(error) {
             var args = message.content.trim().split(/ +/g);
         }
-        msgdelete(30);
         if (db.get('db.music.start') === 'o') {
+            msgdelete(75);
             const command = client.commands.get('musicanser');
             command.run(client, message, args);
         } else {
+            msgdelete(30);
             const command = client.commands.get('musicquiz');
             command.run(client, message, args);
         }

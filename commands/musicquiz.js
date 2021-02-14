@@ -22,7 +22,6 @@ const request = require("request");
 const cheerio = require("cheerio");
 const { readdirSync } = require('fs');
 const { join } = require('path');
-const queue = new Map();
 
 /*
 Data.findOne({

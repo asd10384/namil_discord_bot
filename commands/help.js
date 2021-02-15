@@ -32,9 +32,7 @@ module.exports = {
         const com2 = new MessageEmbed()
             .setTitle('확인 명령어 모음')
             .addField(`\` ${pp}covid [코로나] \``, '국내 코로나 확인')
-            .addField(`\` ${pp}급식 [meal] \``, '남일고 급식확인')
             .addField(`\` ${pp}avatar [av,프로필] \``, '플레이어 정보 확인')
-            .addField(`\` ${pp}db [데이터베이스] \``, '데이터베이스 확인')
             .setColor('RANDOM');
         
         const com3 = new MessageEmbed()
@@ -45,24 +43,19 @@ module.exports = {
             .setColor('RANDOM');
 
         const com4 = new MessageEmbed()
-            .setTitle('전적검색 명령어 모음')
-            .addField(`\` ${pp}레식 [r6] \``, '레식 전적검색')
-            .setColor('RANDOM');
-
-        const com5 = new MessageEmbed()
             .setTitle('퀴즈 명령어 모음')
-            .addField(`\` ${pp}musicset \``, '음악퀴즈 도움말')
+            .addField(`\` ${pp}음악퀴즈 기본설정 \``, '음악퀴즈 채널 만들기')
             .addField(`\` ${pp}음악퀴즈 \``, '음악퀴즈 도움말')
             .setColor('RANDOM');
 
-        const com6 = new MessageEmbed()
+        const com5 = new MessageEmbed()
             .setTitle('음성 명령어 모음')
+            .addField(`\` ${pp}ttsset \``, 'tts채널 만들기')
             .addField(`\` ${pp}tts [say,음성] \``, 'text to speech')
             .addField(`\` ${pp}join [j] \``, 'join voice channel')
-            .addField(`\` ${pp}voice [vo] \``, 'change language')
             .setColor('RANDOM');
         
-        const com7 = new MessageEmbed()
+        const com6 = new MessageEmbed()
             .setTitle('관리자 명령어 모음')
             .addField(`\` ${pp}dm [디엠] \``, '디엠 보내기')
             .addField(`\` ${pp}message [channel id] [text] \``, '채팅채널에 채팅입력')
@@ -76,7 +69,6 @@ module.exports = {
             com4,
             com5,
             com6,
-            com7
         ];
 
         var time = help_time + (pages.length * 1500);

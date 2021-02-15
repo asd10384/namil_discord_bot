@@ -7,18 +7,18 @@ const { join } = require('path');
 const config = require('./config.json');
 const db = require('quick.db');
 
-const { dbset } = require('./modules/functions');
+const { dbset, dbset_music } = require('./modules/functions');
 const { connect } = require('mongoose');
 var dburl = mongourl;
 connect(dburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
-const Data = require('./modules/data.js');
+const Data = require('./modules/data');
+const mData = require('./modules/music_data');
 
 client.config = config;
 client.commands = new Discord.Collection();
-client.queue = new Map();
 
 const commandFiles = readdirSync(join(__dirname, 'commands')).filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
@@ -74,54 +74,75 @@ client.on('message', async message => {
         await db.set(`db.prefix.${message.member.id}`, default_prefix);
         prefix = default_prefix;
     }
-    if (message.content.startsWith(prefix)) {
-        const args = message.content.slice(prefix.length).trim().split(/ +/g);
-        const commandName = args.shift().toLowerCase();
-        
-        const command = client.commands.get(commandName) ||
-        client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
-
-        try {
-            command.run(client, message, args);
-            if (!(textchannel['stock'].includes(message.channel.id))) {
-                msgdelete(20);
-            }
-        } catch(error) {
-            msgdelete(20);
-            const embed = new Discord.MessageEmbed()
-                .setColor('DARK_RED')
-                .setDescription(`\` ${commandName} \` 이라는 명령어를 찾을수 없습니다.`)
-                .setFooter(` ${prefix}help 를 입력해 명령어를 확인해 주세요.`);
-            message.channel.send(embed).then(m => {
-                setTimeout(function() {
+    mData.findOne({
+        serverid: message.guild.id
+    }, async function (err, data) {
+        if (err) console.log(err);
+        if (!data) {
+            await dbset_music(message);
+            msgdelete(50);
+            return message.channel.send(`다시 시도해주세요.`).then(m => {
+                setTimeout(() => {
                     m.delete();
-                }, msg_time);
+                }, 1500);
             });
-        }
-    } else if (textchannel['tts'].includes(message.channel.id)) {
-        try {
-            var args = message.content.trim().split(/ +/g);
-        } catch(error) {
-            var args = message.content.trim().split(/ +/g);
-        }
-        const command = client.commands.get('tts');
-        command.run(client, message, args);
-    } else if (message.channel.id === db.get('db.music.channel')) {
-        try {
-            var args = message.content.trim().split(/ +/g);
-        } catch(error) {
-            var args = message.content.trim().split(/ +/g);
-        }
-        if (db.get('db.music.start') === 'o') {
-            msgdelete(75);
-            const command = client.commands.get('musicanser');
-            command.run(client, message, args);
         } else {
-            msgdelete(30);
-            const command = client.commands.get('musicquiz');
-            command.run(client, message, args);
+            var ttsid = data.ttsid;
+            if (ttsid == null || ttsid == undefined) {
+                ttsid = '123';
+            }
+            var musicquizid = data.channelid;
+            if (musicquizid == null || musicquizid == undefined) {
+                musicquizid = '123';
+            }
+            if (message.content.startsWith(prefix)) {
+                const args = message.content.slice(prefix.length).trim().split(/ +/g);
+                const commandName = args.shift().toLowerCase();
+                
+                const command = client.commands.get(commandName) ||
+                client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
+
+                try {
+                    command.run(client, message, args);
+                    msgdelete(20);
+                } catch(error) {
+                    msgdelete(20);
+                    const embed = new Discord.MessageEmbed()
+                        .setColor('DARK_RED')
+                        .setDescription(`\` ${commandName} \` 이라는 명령어를 찾을수 없습니다.`)
+                        .setFooter(` ${prefix}help 를 입력해 명령어를 확인해 주세요.`);
+                    message.channel.send(embed).then(m => {
+                        setTimeout(function() {
+                            m.delete();
+                        }, msg_time);
+                    });
+                }
+            } else if (ttsid == message.channel.id) {
+                try {
+                    var args = message.content.trim().split(/ +/g);
+                } catch(error) {
+                    var args = message.content.trim().split(/ +/g);
+                }
+                const command = client.commands.get('tts');
+                command.run(client, message, args);
+            } else if (musicquizid == message.channel.id) {
+                try {
+                    var args = message.content.trim().split(/ +/g);
+                } catch(error) {
+                    var args = message.content.trim().split(/ +/g);
+                }
+                if (data.start == true) {
+                    msgdelete(75);
+                    const command = client.commands.get('musicanser');
+                    command.run(client, message, args);
+                } else {
+                    msgdelete(30);
+                    const command = client.commands.get('musicquiz');
+                    command.run(client, message, args);
+                }
+            }
         }
-    }
+    });
     
     function msgdelete(time) {
         setTimeout(function() {

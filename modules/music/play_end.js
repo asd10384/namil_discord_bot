@@ -2,49 +2,70 @@
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 
-module.exports = {
-    play_end: async function play_end (client) {
-        await db.set('db.music.user', {});
-        await db.set('db.music.name', []);
-        await db.set('db.music.vocal', []);
-        await db.set('db.music.link', 0);
-        await db.set('db.music.count', 0);
-        await db.set('db.music.start', 'x');
-        await db.set('db.music.tts', true);
-        await db.set('db.music.score', {});
-        await db.set('db.music.skip', 0);
-        var list = `__**[ 규칙 ]**__
-**1.** 명령어는 \` ;음악퀴즈 명령어 \` 로 확인하실수 있습니다.
-**2.** 정답은 채팅창에 그냥 입력하시면 됩니다.
-**3.** 정답은 가수-제목 순서로 쓰시면 됩니다. (중간에 - 도 입력해주세요.)
-(제목 및 가수는 오피셜(멜론) 명칭을 사용했습니다.)
-(가수는 무조건 한글로 적어주세요.)
-(띄어쓰기나 특수문자 ' 를 유의하여 적어주세요.)
-**4.** 오류나 수정사항은 hky4258@naver.com 으로 보내주세요.
+const { mongourl } = require('../../config.json');
+const { dbset, dbset_music } = require('../functions');
+const { connect, set } = require('mongoose');
+var dburl = process.env.mongourl || mongourl; // config 수정
+connect(dburl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+const Data = require('../music_data');
 
-음성 채널에 참여한 후 \` 시작 \`을 입력해 음악퀴즈를 시작하세요.`;
-        var np = new MessageEmbed()
-            .setTitle(`**현재 음악퀴즈가 시작되지 않았습니다.**`)
-            .setDescription(`[유튜브 링크](http://youtube.com)`)
-            .setImage(`https://cdn.hydra.bot/hydra_no_music.png`)
-            .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
-            .setColor('ORANGE');
-        try {
+module.exports = {
+    play_end: async function play_end (client, message) {
+        Data.findOne({
+            serverid: message.guild.id
+        }, async function (err, data) {
+            if (err) console.log(err);
+            if (!data) {
+                await dbset_music(message);
+            }
+            // await data.save().catch(err => console.log(err));
+            
+            data.name = [];
+            data.vocal = [];
+            data.link = [];
+            data.count = 0;
+            data.start = false;
+            data.tts = true;
+            data.skip = 0;
+            await db.set(`db.music.${message.guild.id}.user`, {});
+            await db.set(`db.music.${message.guild.id}.score`, {});
+            await data.save().catch(err => console.log(err));
+            var list = `**[ 규칙 ]**
+    **1.** 명령어는 \` ;음악퀴즈 명령어 \` 로 확인하실수 있습니다.
+    **2.** 정답은 채팅창에 그냥 입력하시면 됩니다.
+    **3.** 정답은 가수-제목 순서로 쓰시면 됩니다. (중간에 - 도 입력해주세요.)
+    (제목 및 가수는 오피셜(멜론) 명칭을 사용했습니다.)
+    (가수는 무조건 한글로 적어주세요.)
+    (띄어쓰기나 특수문자 ' 를 유의하여 적어주세요.)
+    **4.** 오류나 수정사항은 hky4258@naver.com 으로 보내주세요.
+
+    음악퀴즈 도중 봇이 멈추거나 오류가 생겼다면
+    음악퀴즈를 종료하고 다시 시작해주세요. (;음악퀴즈 종료)
+
+    음성 채널에 참여한 후 \` 시작 \`을 입력해 음악퀴즈를 시작하세요.`;
+            var np = new MessageEmbed()
+                .setTitle(`**현재 음악퀴즈가 시작되지 않았습니다.**`)
+                .setDescription(`[유튜브 링크](http://youtube.com)`)
+                .setImage(`https://cdn.hydra.bot/hydra_no_music.png`)
+                .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
+                .setColor('ORANGE');
             try {
-                client.channels.cache.get(await db.get('db.music.voicechannel')).leave();
+                try {
+                    client.channels.cache.get(data.voicechannelid).leave();
+                } catch(err) {}
+                try {
+                    var c = client.channels.cache.get(data.channelid);
+                    c.messages.fetch(data.listid).then(m => {
+                        m.edit(list);
+                    });
+                    c.messages.fetch(data.npid).then(m => {
+                        m.edit(np);
+                    });
+                } catch(err) {}
             } catch(err) {}
-            var channelid = db.get('db.music.channel');
-            var listid = db.get('db.music.listid');
-            var npid = db.get('db.music.npid');
-            try {
-                var c = client.channels.cache.get(channelid);
-                c.messages.fetch(listid).then(m => {
-                    m.edit(list);
-                });
-                c.messages.fetch(npid).then(m => {
-                    m.edit(np);
-                });
-            } catch(err) {}
-        } catch(err) {}
+        });
     },
 }

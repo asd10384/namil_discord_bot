@@ -83,7 +83,7 @@ module.exports = {
             return;
         }
 
-        if (!(!!message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+        if (!(message.member.permissions.has(drole))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
 
         var muser = message.guild.members.cache.get(args[0].replace(/[^0-9]/g, ''));
         if (muser) {

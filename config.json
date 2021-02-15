@@ -4,22 +4,9 @@
     "msg_time": 10000,
     "help_time": 35000,
     "textchannel": {
-        "tts": [
-            "783671264493174824",
-            "801466204425551963"
-        ],
-        "stock": [
-            "769088330297114654",
-            "774576313959972874"
-        ],
-        "category": "457514742940958732"
     },
     "drole": [
-        "Server Creator",
-        "General management",
-        "Assistant management",
-        "SYSTEM BOT",
-        "역할"
+        "CREATE_INSTANT_INVITE"
     ],
     "mongourl": "mongodb://asd10384:tmdgks040466!!@asd10384-shard-00-00.l8u0o.mongodb.net:27017,asd10384-shard-00-01.l8u0o.mongodb.net:27017,asd10384-shard-00-02.l8u0o.mongodb.net:27017/<dbname>?ssl=true&replicaSet=atlas-11ibdz-shard-0&authSource=admin&retryWrites=true&w=majority",
     "youtubeapi": "AIzaSyBmX0L8kdmbg-_MXuq4PL2tqHbRXUuiAmU"

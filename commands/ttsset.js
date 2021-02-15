@@ -10,24 +10,7 @@ connect(dburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
-
-/*
-const Data = require('../modules/data');
-Data.findOne({
-    userID: user.id
-}, (err, data) => {
-    if (err) console.log(err);
-    if (!data) {
-        dbset(user, 0);
-        var money = 0;
-    } else {
-        var money = data.money;
-    }
-    bal.setTitle(`\` ${user.username} \`님의 금액`)
-        .setDescription(`\` ${money} \`원`);
-    message.channel.send(bal).then(m => msgdelete(m, msg_time+2000));
-});
-*/
+const Data = require('../modules/music_data');
 
 /*
 const Data = require('../modules/music_data');
@@ -43,9 +26,9 @@ Data.findOne({
 // await data.save().catch(err => console.log(err));
 
 module.exports = {
-    name: '',
-    aliases: [''],
-    description: '',
+    name: 'ttsset',
+    aliases: [],
+    description: 'tts채널 생성',
     async run (client, message, args) {
         function msgdelete(m, t) {
             setTimeout(function() {
@@ -64,6 +47,28 @@ module.exports = {
         
         if (!(message.member.permissions.has(drole))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
         
-        
+        Data.findOne({
+            serverid: message.guild.id
+        }, async function (err, data) {
+            if (err) console.log(err);
+            if (!data) {
+                await dbset_music(message);
+            }
+            setTimeout(async function() {
+                return message.guild.channels.create(`💬텍스트음성변환`, { // ${client.user.username}-음악퀴즈채널
+                    type: 'text',
+                    topic: `봇을 사용한뒤 ;leave 명령어를 입력해 내보내 주세요.`
+                }).then(c => {
+                    data.ttsid = c.id;
+                    data.save().catch(err => console.log(err));
+                    var tts = new MessageEmbed()
+                        .setTitle(`채팅을 읽어줍니다.`)
+                        .setDescription(`이 채팅방에 채팅을 치시면 봇이 읽어줍니다.\n다쓰고 난뒤에는 ;leave를 입력해 봇을 내보내주세요.`)
+                        .setFooter(`기본 명령어 : ;tts`)
+                        .setColor('ORANGE');
+                    c.send(tts);
+                });
+            }, 200);
+        });
     },
 };

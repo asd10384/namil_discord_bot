@@ -5,13 +5,14 @@ connect(mongourl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
-const Data = require('./data.js');
+const Data = require('./data');
+const mData = require('./music_data');
 
 module.exports = {
     formatDate: function (date) {
         return new Intl.DateTimeFormat("ko-KR").format(date);
     },
-    dbset: function (user, money = 0, daily = '없음') {
+    dbset: async function (user, money = 0, daily = '없음') {
         const newData = new Data({
             name: user.username,
             userID: user.id,
@@ -28,5 +29,26 @@ module.exports = {
             tts: true
         });
         return newData.save().catch(err => console.log(err));
+    },
+    dbset_music: async function (message) {
+        const newmData = new mData({
+            serverid: message.guild.id,
+            channelid: '',
+            voicechannelid: '',
+            listid: '',
+            npid: '',
+            scoreid: '',
+            ttsid: '',
+            name: [],
+            vocal: [],
+            link: [],
+            count: 0,
+            skip: 0,
+            start: false,
+            tts: true
+        });
+        await db.set(`db.music.${message.guild.id}.user`, {});
+        await db.set(`db.music.${message.guild.id}.score`, {});
+        return await newmData.save().catch(err => console.log(err));
     },
 };

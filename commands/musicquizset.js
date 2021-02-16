@@ -43,8 +43,6 @@ module.exports = {
             .setTitle(`이 명령어를 사용할 권한이 없습니다.`)
             .setColor('RED');
         
-        if (!(message.member.permissions.has(drole))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
-        
         Data.findOne({
             serverid: message.guild.id
         }, async function (err, data) {
@@ -52,6 +50,8 @@ module.exports = {
             if (!data) {
                 await dbset_music(message);
             }
+            if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>data.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+            
             await play_end(client, message);
             return message.guild.channels.create(`🎵음악퀴즈`, { // ${client.user.username}-음악퀴즈채널
                 type: 'text',

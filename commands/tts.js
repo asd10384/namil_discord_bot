@@ -66,7 +66,7 @@ module.exports = {
             }
             if (!args[0]) return message.channel.send(help).then(m => msgdelete(m, msg_time));
             if (args[0] == 'ban' || args[0] == '밴' || args[0] == '뮤트') {
-                if (!(!!message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+                if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>dataa.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
                 if (args[1]) {
                     var muser = message.guild.members.cache.get(args[1].replace(/[^0-9]/g, ''));
                     if (muser) {

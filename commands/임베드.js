@@ -3,6 +3,19 @@ const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole } = require('../config.json');
 
+const Data = require('../modules/music_data');
+/*
+Data.findOne({
+    serverid: message.guild.id
+}, async function (err, data) {
+    if (err) console.log(err);
+    if (!data) {
+        await dbset_music(message);
+    }
+});
+*/
+// await data.save().catch(err => console.log(err));
+
 module.exports = {
     name: '임베드',
     aliases: ['embed'],
@@ -94,59 +107,67 @@ module.exports = {
             DARK_VIVID_PINK: 12320855
         };
 
-        if (!(message.member.permissions.has(drole))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
-
-        if (!(args[0])) return message.channel.send(help).then(m => msgdelete(m, msg_time+5000));
-
-        if (args[0] === '색깔' || args[0] === 'color') {
-            let text = '';
-            for (i = 0; i < colorlist.length; i++) {
-                text += `${colorlist[i]}\n`;
+        Data.findOne({
+            serverid: message.guild.id
+        }, async function (err, data) {
+            if (err) console.log(err);
+            if (!data) {
+                await dbset_music(message);
             }
-            colore.setDescription(text);
-            return message.channel.send(colore).then(m => msgdelete(m, help_time));
-        }
+            if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>data.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
 
-        if (color[args[0].toUpperCase()]) {
-            if (!args[1]) {
-                const texthelp = new MessageEmbed()
-                    .setTitle(`제목을 입력해주세요.`)
-                    .setDescription(`사용법 : ${pp}임베드`)
-                    .setColor(`RANDOM`);
-                return message.channel.send(texthelp).then(m => msgdelete(m, msg_time));
+            if (!(args[0])) return message.channel.send(help).then(m => msgdelete(m, msg_time+5000));
+
+            if (args[0] === '색깔' || args[0] === 'color') {
+                let text = '';
+                for (i = 0; i < colorlist.length; i++) {
+                    text += `${colorlist[i]}\n`;
+                }
+                colore.setDescription(text);
+                return message.channel.send(colore).then(m => msgdelete(m, help_time));
             }
-            let text = args.slice(1).join(' ').split('/');
-            let c = color[args[0].toUpperCase()];
-            if (text[2]) {
+
+            if (color[args[0].toUpperCase()]) {
+                if (!args[1]) {
+                    const texthelp = new MessageEmbed()
+                        .setTitle(`제목을 입력해주세요.`)
+                        .setDescription(`사용법 : ${pp}임베드`)
+                        .setColor(`RANDOM`);
+                    return message.channel.send(texthelp).then(m => msgdelete(m, msg_time));
+                }
+                let text = args.slice(1).join(' ').split('/');
+                let c = color[args[0].toUpperCase()];
+                if (text[2]) {
+                    const embed1 = new MessageEmbed()
+                        .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
+                        .setColor(c)
+                        .setTitle(text[0])
+                        .setDescription(text[1])
+                        .setFooter(text[2]);
+                    return message.channel.send(embed1);
+                }
                 const embed1 = new MessageEmbed()
                     .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
                     .setColor(c)
                     .setTitle(text[0])
-                    .setDescription(text[1])
-                    .setFooter(text[2]);
+                    .setDescription(text[1]);
                 return message.channel.send(embed1);
-            }
-            const embed1 = new MessageEmbed()
-                .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
-                .setColor(c)
-                .setTitle(text[0])
-                .setDescription(text[1]);
-            return message.channel.send(embed1);
-        } else {
-            let text = args.join(' ').split('/');
-            if (text[2]) {
+            } else {
+                let text = args.join(' ').split('/');
+                if (text[2]) {
+                    const embed3 = new MessageEmbed()
+                        .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
+                        .setTitle(text[0])
+                        .setDescription(text[1])
+                        .setFooter(text[2]);
+                    return message.channel.send(embed3);
+                }
                 const embed3 = new MessageEmbed()
                     .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
                     .setTitle(text[0])
-                    .setDescription(text[1])
-                    .setFooter(text[2]);
+                    .setDescription(text[1]);
                 return message.channel.send(embed3);
             }
-            const embed3 = new MessageEmbed()
-                .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
-                .setTitle(text[0])
-                .setDescription(text[1]);
-            return message.channel.send(embed3);
-        }
+        });
     },
 };

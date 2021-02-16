@@ -27,6 +27,7 @@ module.exports = {
             .addField(`\` ${pp}setprefix [sp] \``, 'prefix 설정')
             .addField(`\` ${pp}타이머 [timer] \``, '타이머')
             .addField(`\` ${pp}임베드 [embed] \``, '임베드 제작')
+            .addField(`\` ${pp}랜덤 [random] \``, '랜덤')
             .setColor('RANDOM');
 
         const com2 = new MessageEmbed()
@@ -57,9 +58,9 @@ module.exports = {
         
         const com6 = new MessageEmbed()
             .setTitle('관리자 명령어 모음')
+            .addField(`\` ${pp}권한 \``, '명령어 권한 설정')
             .addField(`\` ${pp}dm [디엠] \``, '디엠 보내기')
             .addField(`\` ${pp}message [channel id] [text] \``, '채팅채널에 채팅입력')
-            .addField(`\` ${pp}랜덤 [random] \``, '랜덤')
             .setColor('RANDOM');
 
         const pages = [

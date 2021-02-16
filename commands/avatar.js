@@ -4,6 +4,19 @@ const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole } = require('../config.json');
 
+const Data = require('../modules/music_data');
+/*
+Data.findOne({
+    serverid: message.guild.id
+}, async function (err, data) {
+    if (err) console.log(err);
+    if (!data) {
+        await dbset_music(message);
+    }
+});
+*/
+// await data.save().catch(err => console.log(err));
+
 module.exports = {
     name: 'avater',
     aliases: ['av','프로필','아바타'],
@@ -41,66 +54,73 @@ module.exports = {
         var embed = new MessageEmbed()
             .setColor('RANDOM');
 
-        
-        var roles = '';
-        var datelist, date;
-        
-        if (!args[0]) {
-            var user = message.member;
-            user.roles.cache.forEach((role) => {
-                roles += `${role.name}\n`;
-            });
-            datelist = formatDate(user.joinedAt).split(/. /g);
-            date = `${datelist[0]}년 ${addzero(datelist[1])}월 ${addzero(datelist[2].slice(0,-1))}일`;
+        Data.findOne({
+            serverid: message.guild.id
+        }, async function (err, data) {
+            if (err) console.log(err);
+            if (!data) {
+                await dbset_music(message);
+            }
+            var roles = '';
+            var datelist, date;
+            
+            if (!args[0]) {
+                var user = message.member;
+                user.roles.cache.forEach((role) => {
+                    roles += `${role.name}\n`;
+                });
+                datelist = formatDate(user.joinedAt).split(/. /g);
+                date = `${datelist[0]}년 ${addzero(datelist[1])}월 ${addzero(datelist[2].slice(0,-1))}일`;
 
-            embed.setTitle(`\` ${user.user.username} \` 정보`)
-                .setThumbnail(user.user.displayAvatarURL())
-                .setDescription(`
-                    \` 태그 \`
-                    ${message.author.tag}
+                embed.setTitle(`\` ${user.user.username} \` 정보`)
+                    .setThumbnail(user.user.displayAvatarURL())
+                    .setDescription(`
+                        \` 태그 \`
+                        ${message.author.tag}
 
-                    \` 서버에 들어온 날짜 \`
-                    ${date}
-                    
-                    \` 아이디 \`
-                    ${message.author.id}
-                    
-                    \` 역할 \`
-                    ${roles}
-                `);
+                        \` 서버에 들어온 날짜 \`
+                        ${date}
+                        
+                        \` 아이디 \`
+                        ${message.author.id}
+                        
+                        \` 역할 \`
+                        ${roles}
+                    `);
 
-            return message.channel.send(embed).then(m => msgdelete(m, help_time + (parseInt(help_time/2))));
-        }
-        
-        var muser = message.guild.members.cache.get(args[0].replace(/[^0-9]/g, ''));
-        if (muser) {
-            if (!(message.member.permissions.has(drole))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
-            var user = muser;
-            var User = message.guild.members.cache.get(user.user.id);
-            user.roles.cache.forEach((role) => {
-                roles += `${role.name}\n`;
-            });
-            datelist = formatDate(user.joinedAt).split(/. /g);
-            date = `${datelist[0]}년 ${addzero(datelist[1])}월 ${addzero(datelist[2].slice(0,-1))}일`;
+                return message.channel.send(embed).then(m => msgdelete(m, help_time + (parseInt(help_time/2))));
+            }
+            
+            var muser = message.guild.members.cache.get(args[0].replace(/[^0-9]/g, ''));
+            if (muser) {
+                if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>data.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+                var user = muser;
+                var User = message.guild.members.cache.get(user.user.id);
+                user.roles.cache.forEach((role) => {
+                    roles += `${role.name}\n`;
+                });
+                datelist = formatDate(user.joinedAt).split(/. /g);
+                date = `${datelist[0]}년 ${addzero(datelist[1])}월 ${addzero(datelist[2].slice(0,-1))}일`;
 
-            embed.setTitle(`\` ${user.user.username} \` 정보`)
-                .setThumbnail(User.user.displayAvatarURL())
-                .setDescription(`
-                    \` 태그 \`
-                    ${User.user.tag}
+                embed.setTitle(`\` ${user.user.username} \` 정보`)
+                    .setThumbnail(User.user.displayAvatarURL())
+                    .setDescription(`
+                        \` 태그 \`
+                        ${User.user.tag}
 
-                    \` 서버에 들어온 날짜 \`
-                    ${date}
-                    
-                    \` 아이디 \`
-                    ${User.user.id}
-                    
-                    \` 역할 \`
-                    ${roles}
-                `);
+                        \` 서버에 들어온 날짜 \`
+                        ${date}
+                        
+                        \` 아이디 \`
+                        ${User.user.id}
+                        
+                        \` 역할 \`
+                        ${roles}
+                    `);
 
-            return message.channel.send(embed).then(m => msgdelete(m, help_time + (parseInt(help_time/2))));
-        }
-        return message.channel.send(help).then(m => msgdelete(m, msg_time));
+                return message.channel.send(embed).then(m => msgdelete(m, help_time + (parseInt(help_time/2))));
+            }
+            return message.channel.send(help).then(m => msgdelete(m, msg_time));
+        });
     },
 };

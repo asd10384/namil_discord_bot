@@ -205,16 +205,16 @@ module.exports = {
                 return play_end(client, message);
             }
             if (args[0] == '스킵' || args[0] == 'skip') {
-                if (!(message.member.permissions.has(drole))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+                if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>data.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
                 return play_anser(message, client, args);
             }
             if (args[0] == '기본설정') {
-                if (!(message.member.permissions.has(drole))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+                if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>data.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
                 var command = client.commands.get('musicquizset');
                 return command.run(client, message, args);
             }
             if (args[0] == '오류수정' || args[0] == '오류확인') {
-                if (!(message.member.permissions.has(drole))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+                if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>data.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
                 if (args[1]) {
                     var channelid = data.channelid;
                     if (!(channelid == args[1])) {

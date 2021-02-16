@@ -29,13 +29,13 @@ Data.findOne({
 });
 */
 
+const mData = require('../modules/music_data');
 /*
-const Data = require('../modules/music_data');
-Data.findOne({
+mData.findOne({
     serverid: message.guild.id
-}, async function (err, data) {
+}, async function (err, dataa) {
     if (err) console.log(err);
-    if (!data) {
+    if (!dataa) {
         await dbset_music(message);
     }
 });
@@ -62,8 +62,16 @@ module.exports = {
             .setTitle(`이 명령어를 사용할 권한이 없습니다.`)
             .setColor('RED');
         
-        if (!(message.member.permissions.has(drole))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
-        
-        
+        mData.findOne({
+            serverid: message.guild.id
+        }, async function (err, dataa) {
+            if (err) console.log(err);
+            if (!dataa) {
+                await dbset_music(message);
+            }
+            if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>dataa.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+
+
+        });
     },
 };

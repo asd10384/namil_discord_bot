@@ -14,7 +14,8 @@ const dataSchema = Schema({
     count: Number,
     skip: Number,
     start: Boolean,
-    tts: Boolean
+    tts: Boolean,
+    role: Array
 });
 
 module.exports = model('music_Data', dataSchema);

@@ -10,8 +10,8 @@ connect(dburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
-const Data = require('../modules/music_data');
 
+const Data = require('../modules/music_data');
 /*
 const Data = require('../modules/music_data');
 Data.findOne({
@@ -45,8 +45,6 @@ module.exports = {
             .setTitle(`이 명령어를 사용할 권한이 없습니다.`)
             .setColor('RED');
         
-        if (!(message.member.permissions.has(drole))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
-        
         Data.findOne({
             serverid: message.guild.id
         }, async function (err, data) {
@@ -54,6 +52,8 @@ module.exports = {
             if (!data) {
                 await dbset_music(message);
             }
+            if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>data.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+            
             setTimeout(async function() {
                 return message.guild.channels.create(`💬텍스트음성변환`, { // ${client.user.username}-음악퀴즈채널
                     type: 'text',

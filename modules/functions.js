@@ -45,7 +45,8 @@ module.exports = {
             count: 0,
             skip: 0,
             start: false,
-            tts: true
+            tts: true,
+            role: []
         });
         await db.set(`db.music.${message.guild.id}.user`, {});
         await db.set(`db.music.${message.guild.id}.score`, {});

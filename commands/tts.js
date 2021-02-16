@@ -31,6 +31,9 @@ module.exports = {
             pp = default_prefix;
         }
         
+        const per = new MessageEmbed()
+            .setTitle(`이 명령어를 사용할 권한이 없습니다.`)
+            .setColor('RED');
         const help = new MessageEmbed()
             .setTitle(`\` 명령어 \``)
             .setDescription(`
@@ -109,7 +112,7 @@ module.exports = {
                 return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
             }
             if (args[0] == 'unban' || args[0] == '언밴' || args[0] == '언벤' || args[0] == '해제') {
-                if (!(!!message.member.roles.cache.some(r => drole.includes(r.name)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
+                if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>dataa.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
                 if (args[1]) {
                     var muser = message.guild.members.cache.get(args[1].replace(/[^0-9]/g, ''));
                     if (muser) {

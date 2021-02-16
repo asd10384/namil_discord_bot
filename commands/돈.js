@@ -123,6 +123,7 @@ module.exports = {
                         .setDescription(`\` ${money} \`원`);
                     return message.channel.send(bal).then(m => msgdelete(m, msg_time+2000));
                 });
+                return ;
             }
             if (args[0] == ('give', '추가', '지급', '주기')) {
                 if (!(args[1] || args[2])) return message.channel.send(help_give).then(m => msgdelete(m, msg_time));

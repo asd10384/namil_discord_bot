@@ -106,6 +106,9 @@ client.on('message', async message => {
                     command.run(client, message, args);
                     msgdelete(20);
                 } catch(error) {
+                    if (commandName == '' || commandName == ';' || commandName == undefined || commandName == null) {
+                        return ;
+                    }
                     msgdelete(20);
                     const embed = new Discord.MessageEmbed()
                         .setColor('DARK_RED')

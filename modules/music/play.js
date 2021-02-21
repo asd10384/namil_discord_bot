@@ -39,11 +39,21 @@ module.exports = {
                 volume: 0.08
             };
             
+            var anser = '';
+            try {
+                var anl = data.anser_list;
+                anser = anl[data.anser];
+            } catch(err) {
+                data.anser = 0;
+                await data.save().catch(err => console.log(err));
+                anser = '제목';
+            }
+
             try {
                 var list = `음악퀴즈를 종료하시려면 \` ;음악퀴즈 종료 \`를 입력해주세요.\n음악을 스킵하시려면 \` 스킵 \`을 입력해 주세요.`;
                 var np = new MessageEmbed()
                     .setTitle(`**정답 : ???**`)
-                    .setDescription(`채팅창에 가수-제목 순서로 적어주세요.`)
+                    .setDescription(`채팅창에 ${anser} 형식으로 적어주세요.`)
                     .setImage(`https://ytms.netlify.app/question_mark.png`)
                     .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
                     .setColor('ORANGE');

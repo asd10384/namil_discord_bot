@@ -55,15 +55,28 @@ module.exports = {
             if (!data) {
                 await dbset_music(message);
             }
-            var text = args.join(' ').trim();
+            var text = args.join(' ').trim().toLowerCase();
 
             var count = data.count;
             var name = data.name[count];
             var vocal = data.vocal[count];
-            var anser = `${vocal}-${name}`.trim().toLowerCase();
             
+            var anl = data.anser_list;
+            var anser = ``;
+            if (anl[data.anser] == '제목') {
+                anser = `${name}`.trim().toLowerCase();
+            }
+            if (anl[data.anser] == '가수') {
+                anser = `${vocal}`.trim().toLowerCase();
+            }
+            if (anl[data.anser] == '제목-가수') {
+                anser = `${name}-${vocal}`.trim().toLowerCase();
+            }
+            if (anl[data.anser] == '가수-제목') {
+                anser = `${vocal}-${name}`.trim().toLowerCase();
+            }
+
             if (text == anser) {
-                await data.save().catch(err => console.log(err));
                 return play_anser(message, client, args);
             }
             if (text == '스킵' || text == 'skip') {

@@ -59,7 +59,6 @@ module.exports = {
             .setTitle(`오류`)
             .setColor('RED');
         const em = new MessageEmbed()
-            .setTitle(`설명`)
             .setColor('RED');
         const help = new MessageEmbed()
             .setTitle(`명령어`)
@@ -192,6 +191,56 @@ module.exports = {
                     return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
                 }
                 emerr.setDescription(`시작 [곡 개수]\n숫자를 입력해주세요.\n${pp}음악퀴즈 명령어`);
+                return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
+            }
+            if (args[0] == '설정' || args[0] == 'setting') {
+                if (!data.start) {
+                    if (args[1] == '정답') {
+                        var anser = data.anser;
+                        var anl = data.anser_list;
+                        if (args[2]) {
+                            if (args[2] == '확인') {
+                                em.setTitle(`현재 정답형식`)
+                                    .setDescription(`${anl[anser]}`);
+                                return message.channel.send(em).then(m => msgdelete(m, msg_time+3000));
+                            }
+                            if (anl.includes(args[2])) {
+                                if (!(anser == anl.indexOf(args[2]))) {
+                                    data.anser = anl.indexOf(args[2]);
+                                    await data.save().catch(err => console.log(err));
+                                    em.setTitle(`\` 정답 형식을 성공적으로 바꿨습니다. \``)
+                                        .setDescription(`${anl[anser]} => ${anl[anl.indexOf(args[2])]}`);
+                                    return message.channel.send(em).then(m => msgdelete(m, msg_time+3000));
+                                }
+                                emerr.setDescription(`이미 ${anl[anser]} 형식으로 되어있습니다.`);
+                                return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
+                            }
+                        }
+                        var text = '';
+                        for (s in anl) {
+                            text += `${s}, `;
+                        }
+                        em.setTitle(`\` 음악퀴즈 설정 정답 명령어 \``)
+                            .setDescription(`
+                                \` 명령어 \`
+                                ${pp}음악퀴즈 설정 정답 명령어 : 현재 정답 명령어 확인
+    
+                                ${pp}음악퀴즈 설정 정답 확인 : 현재 정답 형식 확인
+                                ${pp}음악퀴즈 설정 정답 [정답형식] : 정답형식으로 정답형식을 설정
+                                (정답형식은 ${text.slice(0,-2)})
+                            `);
+                        return message.channel.send(em).then(m => msgdelete(m, msg_time));
+                    }
+                    em.setTitle(`\` 음악퀴즈 설정 명령어 \``)
+                        .setDescription(`
+                            \` 명령어 \`
+                            ${pp}음악퀴즈 설정 명령어 : 음악퀴즈 설정 명령어 확인
+    
+                            ${pp}음악퀴즈 설정 정답 : 음악퀴즈 정답형식 변경
+                        `);
+                    return message.channel.send(em).then(m => msgdelete(m, msg_time));
+                }
+                emerr.setDescription(`현재 노래퀴즈가 진행중입니다.\n\` ;음악퀴즈 종료\` 로 음악퀴즈를 종료한뒤 명령어를 사용해주세요.`);
                 return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
             }
             if (args[0] == '초기화' || args[0] == 'reset') {

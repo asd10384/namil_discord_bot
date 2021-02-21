@@ -15,7 +15,9 @@ const dataSchema = Schema({
     skip: Number,
     start: Boolean,
     tts: Boolean,
-    role: Array
+    role: Array,
+    anser_list: Array,
+    anser: Number
 });
 
 module.exports = model('music_Data', dataSchema);

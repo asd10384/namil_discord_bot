@@ -46,7 +46,9 @@ module.exports = {
             skip: 0,
             start: false,
             tts: true,
-            role: []
+            role: [],
+            anser_list: ['제목', '가수', '제목-가수', '가수-제목'],
+            anser: 0
         });
         await db.set(`db.music.${message.guild.id}.user`, {});
         await db.set(`db.music.${message.guild.id}.score`, {});

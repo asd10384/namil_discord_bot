@@ -58,7 +58,6 @@ module.exports = {
                 topic: `정답은 채팅으로 치시면 됩니다.`
             }).then(c => {
                 data.channelid = c.id;
-                data.save().catch(err => console.log(err));
                 var score = new MessageEmbed()
                     .setTitle(`**[ 음악퀴즈 스코어 ]**`)
                     .setDescription(`**없음**\n\n스킵한 노래 : 없음`)

@@ -1,4 +1,6 @@
 
+const db = require('quick.db');
+
 const { mongourl } = require('../config.json');
 const { connect } = require('mongoose');
 connect(mongourl, {

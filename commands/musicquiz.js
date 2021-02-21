@@ -218,7 +218,7 @@ module.exports = {
                         }
                         var text = '';
                         for (s in anl) {
-                            text += `${s}, `;
+                            text += `${anl[s]}, `;
                         }
                         em.setTitle(`\` 음악퀴즈 설정 정답 명령어 \``)
                             .setDescription(`
@@ -229,7 +229,7 @@ module.exports = {
                                 ${pp}음악퀴즈 설정 정답 [정답형식] : 정답형식으로 정답형식을 설정
                                 (정답형식은 ${text.slice(0,-2)})
                             `);
-                        return message.channel.send(em).then(m => msgdelete(m, msg_time));
+                        return message.channel.send(em).then(m => msgdelete(m, help_time));
                     }
                     em.setTitle(`\` 음악퀴즈 설정 명령어 \``)
                         .setDescription(`
@@ -238,7 +238,7 @@ module.exports = {
     
                             ${pp}음악퀴즈 설정 정답 : 음악퀴즈 정답형식 변경
                         `);
-                    return message.channel.send(em).then(m => msgdelete(m, msg_time));
+                    return message.channel.send(em).then(m => msgdelete(m, help_time));
                 }
                 emerr.setDescription(`현재 노래퀴즈가 진행중입니다.\n\` ;음악퀴즈 종료\` 로 음악퀴즈를 종료한뒤 명령어를 사용해주세요.`);
                 return message.channel.send(emerr).then(m => msgdelete(m, msg_time));

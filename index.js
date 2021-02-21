@@ -80,12 +80,7 @@ client.on('message', async message => {
         if (err) console.log(err);
         if (!data) {
             await dbset_music(message);
-            msgdelete(50);
-            return message.channel.send(`다시 시도해주세요.`).then(m => {
-                setTimeout(() => {
-                    m.delete();
-                }, 1500);
-            });
+            return ;
         } else {
             var ttsid = data.ttsid;
             if (ttsid == null || ttsid == undefined) {

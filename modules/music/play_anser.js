@@ -28,7 +28,9 @@ module.exports = {
             
             try {
                 await data.save().catch(err => console.log(err));
+                var c_anser = '';
                 if (!(args[0] == '스킵' || args[0] == 'skip')) {
+                    c_anser = message.member.user.username;
                     var userid = await message.author.id;
                     var score = await db.get(`db.music.${message.guild.id}.score`);
                     if (score[userid]) {
@@ -38,6 +40,7 @@ module.exports = {
                     }
                     await db.set(`db.music.${message.guild.id}.score`, score);
                 } else {
+                    c_anser = '스킵하셨습니다.';
                     var skip = data.skip;
                     if (skip == undefined || skip == 0) {
                         skip = 1;
@@ -50,17 +53,15 @@ module.exports = {
                 var count = data.count;
                 var all_count = data.name.length;
                 var name = data.name[count];
-                if (!(args[0] == '스킵' || args[0] == 'skip')) {
-                    name = '스킵하셨습니다.';
-                }
                 var vocal = data.vocal[count];
                 var link = data.link[count];
                 var chack = /(?:http:\/\/|https:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?/gi;
                 var yturl = link.replace(chack, '').replace(/(?:&(.+))/gi, '');
                 var list = `음악퀴즈를 종료하시려면 \` ;음악퀴즈 종료 \`를 입력해 주세요.`;
                 var np = new MessageEmbed()
-                    .setTitle(`**[정답 : ${name}](${link})**`)
-                    .setDescription(`**가수 : ${vocal}**\n**정답자 : ${message.author.username}**\n**곡 : ${count+1} / ${all_count}**`)
+                    .setTitle(`**정답 : ${name}**`)
+                    .setURL(`${link}`)
+                    .setDescription(`**가수 : ${vocal}**\n**정답자 : ${c_anser}**\n**곡 : ${count+1} / ${all_count}**`)
                     .setImage(`http://img.youtube.com/vi/${yturl}/sddefault.jpg`)
                     .setFooter(`10초뒤에 다음곡으로 넘어갑니다.`)
                     .setColor('ORANGE');

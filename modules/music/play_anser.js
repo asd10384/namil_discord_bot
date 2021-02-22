@@ -48,15 +48,19 @@ module.exports = {
                     await data.save().catch(err => console.log(err));
                 }
                 var count = data.count;
+                var all_count = data.name.length;
                 var name = data.name[count];
+                if (!(args[0] == '스킵' || args[0] == 'skip')) {
+                    name = '스킵하셨습니다.';
+                }
                 var vocal = data.vocal[count];
                 var link = data.link[count];
                 var chack = /(?:http:\/\/|https:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?/gi;
                 var yturl = link.replace(chack, '').replace(/(?:&(.+))/gi, '');
                 var list = `음악퀴즈를 종료하시려면 \` ;음악퀴즈 종료 \`를 입력해 주세요.`;
                 var np = new MessageEmbed()
-                    .setTitle(`**정답 : ${name}**`)
-                    .setDescription(`**[가수 : ${vocal}](${link})**\n정답자 : ${message.author.username}`)
+                    .setTitle(`**[정답 : ${name}](${link})**`)
+                    .setDescription(`**가수 : ${vocal}**\n**정답자 : ${message.author.username}**\n**곡 : ${count+1} / ${all_count}**`)
                     .setImage(`http://img.youtube.com/vi/${yturl}/sddefault.jpg`)
                     .setFooter(`10초뒤에 다음곡으로 넘어갑니다.`)
                     .setColor('ORANGE');
@@ -90,6 +94,7 @@ module.exports = {
                         var c = message.member.voice.channel.id;
                     }
                 }
+                await db.set(`db.music.${message.guild.id}.user`, {});
                 return await play(client, c, message);
             }, 10000);
         });

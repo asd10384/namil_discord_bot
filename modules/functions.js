@@ -44,6 +44,7 @@ module.exports = {
             name: [],
             vocal: [],
             link: [],
+            ect: [],
             count: 0,
             skip: 0,
             start: false,

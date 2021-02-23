@@ -99,19 +99,21 @@ client.on('message', async message => {
 
                 try {
                     command.run(client, message, args);
-                    msgdelete(20);
+                    msgdelete(125);
                 } catch(error) {
                     if (commandName == '' || commandName == ';' || commandName == undefined || commandName == null) {
                         return ;
                     }
-                    msgdelete(20);
+                    msgdelete(125);
                     const embed = new Discord.MessageEmbed()
                         .setColor('DARK_RED')
                         .setDescription(`\` ${commandName} \` 이라는 명령어를 찾을수 없습니다.`)
                         .setFooter(` ${prefix}help 를 입력해 명령어를 확인해 주세요.`);
                     message.channel.send(embed).then(m => {
                         setTimeout(function() {
-                            m.delete();
+                            try {
+                                m.delete();
+                            } catch(err) {}
                         }, msg_time);
                     });
                 }
@@ -130,11 +132,11 @@ client.on('message', async message => {
                     var args = message.content.trim().split(/ +/g);
                 }
                 if (data.start == true) {
-                    msgdelete(75);
+                    msgdelete(125);
                     const command = client.commands.get('musicanser');
                     command.run(client, message, args);
                 } else {
-                    msgdelete(30);
+                    msgdelete(125);
                     const command = client.commands.get('musicquiz');
                     command.run(client, message, args);
                 }
@@ -144,7 +146,9 @@ client.on('message', async message => {
     
     function msgdelete(time) {
         setTimeout(function() {
-            message.delete();
+            try {
+                message.delete();
+            } catch(err) {}
         }, time);
     }
 });

@@ -167,7 +167,13 @@ module.exports = {
                     var ttsboolen = data.tts;
                 }
                 if (ttsboolen == false) {
-                    return ;
+                    try {
+                        setTimeout(() => {
+                            return message.delete();
+                        }, 50);
+                    } catch(err) {
+                        return ;
+                    }
                 }
                 var text = args.join(' ');
                 var options = {};

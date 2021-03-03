@@ -51,6 +51,7 @@ module.exports = {
             tts: true,
             role: [],
             anser_list: ['제목', '가수', '제목-가수', '가수-제목'],
+            anser_time: 10,
             anser: 0
         });
         await db.set(`db.music.${message.guild.id}.user`, {});

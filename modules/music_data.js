@@ -18,6 +18,7 @@ const dataSchema = Schema({
     tts: Boolean,
     role: Array,
     anser_list: Array,
+    anser_time: Number,
     anser: Number
 });
 

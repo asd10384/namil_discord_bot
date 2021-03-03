@@ -50,6 +50,7 @@ module.exports = {
                     data.skip = skip;
                     await data.save().catch(err => console.log(err));
                 }
+                var time = Number(data.anser_time);
                 var count = data.count;
                 var all_count = data.name.length;
                 var name = data.name[count];
@@ -63,7 +64,7 @@ module.exports = {
                     .setURL(`${link}`)
                     .setDescription(`**가수 : ${vocal}**\n**정답자 : ${c_anser}**\n**곡 : ${count+1} / ${all_count}**`)
                     .setImage(`http://img.youtube.com/vi/${yturl}/sddefault.jpg`)
-                    .setFooter(`10초뒤에 다음곡으로 넘어갑니다.`)
+                    .setFooter(`${time}초뒤에 다음곡으로 넘어갑니다.`)
                     .setColor('ORANGE');
                 var channelid = data.channelid;
                 var listid = data.listid;
@@ -97,7 +98,7 @@ module.exports = {
                 }
                 await db.set(`db.music.${message.guild.id}.user`, {});
                 return await play(client, c, message);
-            }, 10000);
+            }, time);
         });
     },
 }

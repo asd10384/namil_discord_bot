@@ -211,9 +211,7 @@ module.exports = {
                                     em.setTitle(`\` 정답 형식을 성공적으로 바꿨습니다. \``)
                                         .setDescription(`${anl[anser]} => ${anl[anl.indexOf(args[2])]}`);
                                     message.channel.send(em).then(m => msgdelete(m, msg_time+3000));
-                                    return setTimeout(() => {
-                                        play_end(client, message);
-                                    }, 300);
+                                    return await play_end(client, message);
                                 }
                                 emerr.setDescription(`이미 ${anl[anser]} 형식으로 되어있습니다.`);
                                 return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
@@ -246,7 +244,8 @@ module.exports = {
                                             await data.save().catch(err => console.log(err));
                                             em.setTitle(`\` 시간을 성공적으로 바꿨습니다. \``)
                                                 .setDescription(`${anser_time}초 => ${artime}초`);
-                                                return message.channel.send(em).then(m => msgdelete(m, msg_time+3000));
+                                                message.channel.send(em).then(m => msgdelete(m, msg_time+3000));
+                                                return await play_end(client, message);
                                         }
                                         emerr.setDescription(`이미 ${artime}초로 되어있습니다.`);
                                         return message.channel.send(emerr).then(m => msgdelete(m, msg_time));

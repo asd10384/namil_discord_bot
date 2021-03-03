@@ -236,8 +236,8 @@ module.exports = {
                             var anser_time = data.anser_time;
                             if (!isNaN(args[2])) {
                                 var artime = Number(args[2]);
-                                if (artime < 10) {
-                                    if (artime > 60) {
+                                if (artime >= 10) {
+                                    if (artime <= 60) {
                                         if (anser_time == artime) {
                                             data.anser_time = artime;
                                             await data.save().catch(err => console.log(err));
@@ -278,7 +278,7 @@ module.exports = {
                             ${pp}음악퀴즈 설정 명령어 : 음악퀴즈 설정 명령어 확인
     
                             ${pp}음악퀴즈 설정 정답 : 음악퀴즈 정답형식 변경
-                            ${pp}음악퀴즈 설정 정답 : 음악퀴즈 시간 변경
+                            ${pp}음악퀴즈 설정 시간 : 음악퀴즈 시간 변경
                         `);
                     return message.channel.send(em).then(m => msgdelete(m, help_time));
                 }

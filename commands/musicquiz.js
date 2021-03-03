@@ -238,7 +238,7 @@ module.exports = {
                                 var artime = Number(args[2]);
                                 if (artime >= 10) {
                                     if (artime <= 60) {
-                                        if (anser_time == artime) {
+                                        if (!(anser_time == artime)) {
                                             data.anser_time = artime;
                                             await data.save().catch(err => console.log(err));
                                             em.setTitle(`\` 시간을 성공적으로 바꿨습니다. \``)

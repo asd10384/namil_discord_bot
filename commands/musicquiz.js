@@ -245,7 +245,7 @@ module.exports = {
                                                 .setDescription(`${anser_time}초 => ${artime}초`);
                                                 return message.channel.send(em).then(m => msgdelete(m, msg_time+3000));
                                         }
-                                        emerr.setDescription(`이미 ${time}초로 되어있습니다.`);
+                                        emerr.setDescription(`이미 ${artime}초로 되어있습니다.`);
                                         return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
                                     }
                                     emerr.setDescription(`최대 60초까지 설정하실수 있습니다.`);

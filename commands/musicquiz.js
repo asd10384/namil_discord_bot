@@ -235,14 +235,14 @@ module.exports = {
                         if (args[2]) {
                             var anser_time = data.anser_time;
                             if (!isNaN(args[2])) {
-                                if (args[2] < 10) {
-                                    if (args[2] > 60) {
-                                        var time = Number(args[2]);
-                                        if (anser_time == time) {
-                                            data.anser_time = time;
+                                var artime = Number(args[2]);
+                                if (artime < 10) {
+                                    if (artime > 60) {
+                                        if (anser_time == artime) {
+                                            data.anser_time = artime;
                                             await data.save().catch(err => console.log(err));
                                             em.setTitle(`\` 시간을 성공적으로 바꿨습니다. \``)
-                                                .setDescription(`${anser_time}초 => ${time}초`);
+                                                .setDescription(`${anser_time}초 => ${artime}초`);
                                                 return message.channel.send(em).then(m => msgdelete(m, msg_time+3000));
                                         }
                                         emerr.setDescription(`이미 ${time}초로 되어있습니다.`);
@@ -278,6 +278,7 @@ module.exports = {
                             ${pp}음악퀴즈 설정 명령어 : 음악퀴즈 설정 명령어 확인
     
                             ${pp}음악퀴즈 설정 정답 : 음악퀴즈 정답형식 변경
+                            ${pp}음악퀴즈 설정 정답 : 음악퀴즈 시간 변경
                         `);
                     return message.channel.send(em).then(m => msgdelete(m, help_time));
                 }

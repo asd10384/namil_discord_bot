@@ -50,7 +50,7 @@ module.exports = {
     음성 채널에 참여한 후 \` 시작 \`을 입력해 음악퀴즈를 시작하세요.`;
             var np = new MessageEmbed()
                 .setTitle(`**현재 음악퀴즈가 시작되지 않았습니다.**`)
-                .setDescription(`정답형식 : ${anser} , 다음곡시간 : ${time}초`)
+                .setDescription(`\` ;음악퀴즈 설정 \`\n정답형식 : ${anser}\n다음곡시간 : ${time}초`)
                 .setImage(`https://cdn.hydra.bot/hydra_no_music.png`)
                 .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
                 .setColor('ORANGE');

@@ -33,6 +33,8 @@ module.exports = {
             await db.set(`db.music.${message.guild.id}.user`, {});
             await db.set(`db.music.${message.guild.id}.score`, {});
             await data.save().catch(err => console.log(err));
+            var anser = data.anser_list[data.anser];
+            var time = data.anser_time;
             var list = `**[ 규칙 ]**
     **1.** 명령어는 \` ;음악퀴즈 명령어 \` 로 확인하실수 있습니다.
     **2.** 정답은 채팅창에 그냥 입력하시면 됩니다.
@@ -48,7 +50,7 @@ module.exports = {
     음성 채널에 참여한 후 \` 시작 \`을 입력해 음악퀴즈를 시작하세요.`;
             var np = new MessageEmbed()
                 .setTitle(`**현재 음악퀴즈가 시작되지 않았습니다.**`)
-                .setDescription(`[유튜브 링크](http://youtube.com)`)
+                .setDescription(`정답형식 : ${anser} , 다음곡시간 : ${time}초`)
                 .setImage(`https://cdn.hydra.bot/hydra_no_music.png`)
                 .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
                 .setColor('ORANGE');

@@ -58,6 +58,8 @@ module.exports = {
                 topic: `정답은 채팅으로 치시면 됩니다.`
             }).then(c => {
                 data.channelid = c.id;
+                var anser = data.anser_list[data,anser];
+                var time = data.time;
                 var score = new MessageEmbed()
                     .setTitle(`**[ 음악퀴즈 스코어 ]**`)
                     .setDescription(`**없음**\n\n스킵한 노래 : 없음`)
@@ -78,7 +80,7 @@ module.exports = {
     음성 채널에 참여한 후 \` 시작 \`을 입력해 음악퀴즈를 시작하세요.`;
                 var np = new MessageEmbed()
                     .setTitle(`**현재 음악퀴즈가 시작되지 않았습니다.**`)
-                    .setDescription(`[노래목록 사이트](https://ytms.netlify.app)`)
+                    .setDescription(`정답형식 : ${anser} , 다음곡시간 : ${time}초`)
                     .setImage(`https://cdn.hydra.bot/hydra_no_music.png`)
                     .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
                     .setColor('ORANGE');

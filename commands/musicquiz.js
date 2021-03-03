@@ -210,7 +210,10 @@ module.exports = {
                                     await data.save().catch(err => console.log(err));
                                     em.setTitle(`\` 정답 형식을 성공적으로 바꿨습니다. \``)
                                         .setDescription(`${anl[anser]} => ${anl[anl.indexOf(args[2])]}`);
-                                    return message.channel.send(em).then(m => msgdelete(m, msg_time+3000));
+                                    message.channel.send(em).then(m => msgdelete(m, msg_time+3000));
+                                    return setTimeout(() => {
+                                        play_end(client, message);
+                                    }, 300);
                                 }
                                 emerr.setDescription(`이미 ${anl[anser]} 형식으로 되어있습니다.`);
                                 return message.channel.send(emerr).then(m => msgdelete(m, msg_time));

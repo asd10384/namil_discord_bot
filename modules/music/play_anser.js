@@ -15,6 +15,9 @@ connect(dburl, {
 });
 const Data = require('../music_data');
 
+exports.pa = async function (message, client, args) {
+    
+}
 module.exports = {
     play_anser: async function play_anser (message, client, args) {
         Data.findOne({
@@ -98,7 +101,7 @@ module.exports = {
                 }
                 await db.set(`db.music.${message.guild.id}.user`, {});
                 return await play(client, c, message);
-            }, time);
+            }, time * 1000);
         });
     },
 }

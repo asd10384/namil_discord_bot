@@ -154,5 +154,4 @@ client.on('message', async message => {
 });
 
 // process.env.token
-client.login(process.env.token);
-//client.login('testNzk2OTIyNjEwMTUwNjcwMzc2.X_e-BA.ebnnX0csj-WA_eKsgw-OUO2vCqU');
+client.login(process.env.token || token || 'testNzk2OTIyNjEwMTUwNjcwMzc2.X_e-BA.ebnnX0csj-WA_eKsgw-OUO2vCqU');

@@ -177,6 +177,19 @@ module.exports = {
                 var text = args.join(' ');
                 var options = {};
         
+                var url = '없음';
+                if (text.match(checkyturl)) {
+                    try {
+                        url = ytdl(text, { bitrate: 512000 });
+                        options = {
+                            volume: 0.08
+                        };
+                        message.delete();
+                    } catch(e) {
+                        return message.channel.send(yterr).then(m => msgdelete(m, msg_time));
+                    }
+                }
+
                 text = text.replace(/\?/gi, '물음표') || text;
                 text = text.replace(/\!/gi, '느낌표') || text;
                 text = text.replace(/\~/gi, '물결표') || text;
@@ -205,18 +218,9 @@ module.exports = {
                         } else if (!!message.guild.me.voice.channel) {
                             var channel = message.guild.voice.channel;
                         }
-            
-                        var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=ko`;
-                        if (text.match(checkyturl)) {
-                            try {
-                                url = ytdl(text, { bitrate: 512000 });
-                                options = {
-                                    volume: 0.08
-                                };
-                                message.delete();
-                            } catch(e) {
-                                return message.channel.send(yterr).then(m => msgdelete(m, msg_time));
-                            }
+
+                        if (url == '없음') {
+                            var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=ko`;
                         }
                         const broadcast = client.voice.createBroadcast();
                         channel.join().then(connection => {

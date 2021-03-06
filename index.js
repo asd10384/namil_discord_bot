@@ -132,11 +132,11 @@ client.on('message', async message => {
                     var args = message.content.trim().split(/ +/g);
                 }
                 if (data.start == true) {
-                    msgdelete(125);
+                    msgdelete(100);
                     const command = client.commands.get('musicanser');
                     command.run(client, message, args);
                 } else {
-                    msgdelete(125);
+                    msgdelete(500);
                     const command = client.commands.get('musicquiz');
                     command.run(client, message, args);
                 }

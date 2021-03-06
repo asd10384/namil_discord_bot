@@ -171,9 +171,8 @@ module.exports = {
                         setTimeout(() => {
                             return message.delete();
                         }, 50);
-                    } catch(err) {
-                        return ;
-                    }
+                    } catch(err) {}
+                    return ;
                 }
                 var text = args.join(' ');
                 var options = {};
@@ -208,7 +207,17 @@ module.exports = {
                         }
             
                         var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=ko`;
-                        yt(args[0]);
+                        if (text.match(checkyturl)) {
+                            try {
+                                url = ytdl(utl, { bitrate: 512000 });
+                                options = {
+                                    volume: 0.08
+                                };
+                                message.delete();
+                            } catch(e) {
+                                return message.channel.send(yterr).then(m => msgdelete(m, msg_time));
+                            }
+                        }
                         const broadcast = client.voice.createBroadcast();
                         channel.join().then(connection => {
                             broadcast.play(url, options);
@@ -222,19 +231,6 @@ module.exports = {
                 }
             });
             
-            function yt(utl) {
-                if (utl.match(checkyturl)) {
-                    try {
-                        url = ytdl(utl, { bitrate: 512000 });
-                        message.delete();
-                        options = {
-                            volume: 0.08
-                        };
-                    } catch(e) {
-                        return message.channel.send(yterr).then(m => msgdelete(m, msg_time));
-                    }
-                }
-            }
             function z(num) {
                 return num < 10 ? "0" + num : num;
             }

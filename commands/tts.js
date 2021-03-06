@@ -181,7 +181,7 @@ module.exports = {
                 var url = '없음';
                 if (text.match(checkyturl)) {
                     try {
-                        url = ytdl(`https://youtu.be/${text.replace(checkytid)}`, { bitrate: 512000 });
+                        url = ytdl(`https://youtu.be/${text.replace(checkytid, '')}`, { bitrate: 512000 });
                         options = {
                             volume: 0.08
                         };

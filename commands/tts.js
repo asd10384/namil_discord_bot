@@ -209,7 +209,7 @@ module.exports = {
                         var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=ko`;
                         if (text.match(checkyturl)) {
                             try {
-                                url = ytdl(utl, { bitrate: 512000 });
+                                url = ytdl(text, { bitrate: 512000 });
                                 options = {
                                     volume: 0.08
                                 };

@@ -27,13 +27,16 @@ module.exports = {
             // await data.save().catch(err => console.log(err));
             
             try {
-                try {
-                    var c = client.channels.cache.get(data.channelid);
-                    c.messages.fetch().then(msg => {
-                        c.bulkDelete(msg.size-3);
+                var c = client.channels.cache.get(data.channelid);
+                c.messages.fetch().then(msg => {
+                    msg.forEach(m => {
+                        if (!(m.id === data.scoreid || m.id === data.listid || m.id === data.npid)) {
+                            m.delete();
+                        }
                     });
-                } catch(err) {}
-
+                });
+            } catch(err) {}
+            try {
                 await data.save().catch(err => console.log(err));
                 var c_anser = '';
                 if (!(args[0] == '스킵' || args[0] == 'skip')) {
@@ -89,17 +92,10 @@ module.exports = {
                     });
                 } catch(err) {}
             } catch(err) {
-                try {
-                    var c = client.channels.cache.get(data.channelid);
-                    c.messages.fetch().then(msg => {
-                        c.bulkDelete(msg.size-3);
-                    });
-                } catch(err) {}
                 return await play_end(client, message);
             }
             data.count = data.count + 1;
             await data.save().catch(err => console.log(err));
-
             setTimeout(async function() {
                 try {
                     var c = client.channels.cache.get(data.voicechannelid);

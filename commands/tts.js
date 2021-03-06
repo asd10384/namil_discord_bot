@@ -4,6 +4,7 @@ const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole, mongourl, textchannel } = require('../config.json');
 const ytdl = require('ytdl-core');
 var checkyturl = /(?:http:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+)/;
+var checkytid = /(?:http:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?/gi;
 
 const { dbset, dbset_music } = require('../modules/functions');
 const { connect } = require('mongoose');
@@ -180,7 +181,7 @@ module.exports = {
                 var url = '없음';
                 if (text.match(checkyturl)) {
                     try {
-                        url = ytdl(text, { bitrate: 512000 });
+                        url = ytdl(`https://youtu.be/${text.replace(checkytid)}`, { bitrate: 512000 });
                         options = {
                             volume: 0.08
                         };

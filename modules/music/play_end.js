@@ -33,6 +33,7 @@ module.exports = {
             await db.set(`db.music.${message.guild.id}.user`, {});
             await db.set(`db.music.${message.guild.id}.score`, {});
             await data.save().catch(err => console.log(err));
+            
             var anser = data.anser_list[data.anser];
             var time = data.anser_time;
             var list = `**[ 규칙 ]**

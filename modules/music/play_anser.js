@@ -15,9 +15,6 @@ connect(dburl, {
 });
 const Data = require('../music_data');
 
-exports.pa = async function (message, client, args) {
-    
-}
 module.exports = {
     play_anser: async function play_anser (message, client, args) {
         Data.findOne({
@@ -29,6 +26,16 @@ module.exports = {
             }
             // await data.save().catch(err => console.log(err));
             
+            try {
+                var c = client.channels.cache.get(data.channelid);
+                c.messages.fetch().then(msg => {
+                    msg.forEach(m => {
+                        if (!(m.id === data.scoreid || m.id === data.listid || m.id === data.npid)) {
+                            m.delete();
+                        }
+                    });
+                });
+            } catch(err) {}
             try {
                 await data.save().catch(err => console.log(err));
                 var c_anser = '';

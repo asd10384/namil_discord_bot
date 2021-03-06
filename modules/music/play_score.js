@@ -44,11 +44,9 @@ module.exports = {
                 .setDescription(text)
                 .setFooter(`스코어는 다음게임 전까지 사라지지 않습니다.`)
                 .setColor('ORANGE');
-            var channelid = data.channelid;
-            var scoreid = data.scoreid;
             try {
-                var c = client.channels.cache.get(channelid);
-                c.messages.fetch(scoreid).then(m => {
+                var c = client.channels.cache.get(data.channelid);
+                c.messages.fetch(data.scoreid).then(m => {
                     m.edit(emscore);
                 });   
             } catch(err) {

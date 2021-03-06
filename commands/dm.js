@@ -82,7 +82,7 @@ module.exports = {
                 });
             
             function nick(id) {
-                return message.guild.members.cache.get(id).nickname;
+                return client.users.cache.get(id).username;
             }
         });
     },

@@ -111,6 +111,7 @@ module.exports = {
                 await db.set(`db.music.${message.guild.id}.user`, []);
                 await db.set(`db.music.${message.guild.id}.hint`, []);
                 await db.set(`db.music.${message.guild.id}.hintget`, false);
+                await db.set(`db.music.${message.guild.id}.skipget`, false);
                 return await play(client, c, message);
             }, time * 1000);
         });

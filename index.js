@@ -1,11 +1,14 @@
 
 const Discord = require('discord.js');
-const client = new Discord.Client();
+const client = new Discord.Client({partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER']});
 const { token, default_prefix, msg_time, help_time, textchannel, mongourl } = require('./config.json');
 const { readdirSync } = require('fs');
 const { join } = require('path');
 const config = require('./config.json');
 const db = require('quick.db');
+
+const { play_hint } = require('./modules/music/play_hint');
+const { play_skip } = require('./modules/music/play_skip');
 
 const { dbset, dbset_music } = require('./modules/functions');
 const { connect } = require('mongoose');
@@ -98,8 +101,8 @@ client.on('message', async message => {
                 client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
 
                 try {
-                    command.run(client, message, args);
-                    msgdelete(125);
+                    await command.run(client, message, args);
+                    msgdelete(300);
                 } catch(error) {
                     if (commandName == '' || commandName == ';' || commandName == undefined || commandName == null) {
                         return ;
@@ -142,7 +145,6 @@ client.on('message', async message => {
             }
         }
     });
-    
     function msgdelete(time) {
         setTimeout(function() {
             try {
@@ -151,6 +153,36 @@ client.on('message', async message => {
         }, time);
     }
 });
+
+client.on('messageReactionAdd', async (reaction, user) => {
+    if (reaction.message.partial) await reaction.message.fetch();
+    if (reaction.partial) await reaction.fetch();
+
+    if (user.bot) return;
+    if (!reaction.message.guild) return;
+
+    mData.findOne({
+        serverid: reaction.message.guild.id
+    }, async function (err, data) {
+        if (err) console.log(err);
+        if (!data) {
+            await dbset_music(reaction.message);
+            return ;
+        } else {
+            if (reaction.message.channel.id === data.channelid) {
+                if (reaction.emoji.name === '💡') {
+                    reaction.users.remove(user);
+                    return await play_hint(client, reaction.message, user.id);
+                }
+                if (reaction.emoji.name === '⏭️') {
+                    reaction.users.remove(user);
+                    return await play_skip(client, reaction.message, user.id);
+                }
+            }
+        }
+    });
+});
+
 
 // process.env.token
 client.login(process.env.token || token || 'testNzk2OTIyNjEwMTUwNjcwMzc2.X_e-BA.yEQ6nEkH5W5N6Vm3fsKMxEkxWyc');

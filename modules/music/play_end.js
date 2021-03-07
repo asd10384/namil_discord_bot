@@ -33,6 +33,7 @@ module.exports = {
             await db.set(`db.music.${message.guild.id}.user`, []);
             await db.set(`db.music.${message.guild.id}.hint`, []);
             await db.set(`db.music.${message.guild.id}.hintget`, false);
+            await db.set(`db.music.${message.guild.id}.skipget`, false);
             await db.set(`db.music.${message.guild.id}.score`, {});
             await data.save().catch(err => console.log(err));
             var anser = data.anser_list[data.anser];
@@ -76,6 +77,7 @@ module.exports = {
                     c.messages.fetch(data.npid).then(m => {
                         m.edit(np);
                     });
+                    
                 } catch(err) {}
             } catch(err) {}
         });

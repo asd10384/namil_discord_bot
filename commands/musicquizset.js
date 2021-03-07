@@ -52,14 +52,13 @@ module.exports = {
             }
             if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>data.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
             
-            await play_end(client, message);
             return message.guild.channels.create(`🎵음악퀴즈`, { // ${client.user.username}-음악퀴즈채널
                 type: 'text',
                 topic: `정답은 채팅으로 치시면 됩니다.`
-            }).then(c => {
+            }).then(async c => {
                 data.channelid = c.id;
-                var anser = data.anser_list[data,anser];
-                var time = data.time;
+                var anser = data.anser_list[data.anser];
+                var time = data.anser_time;
                 var score = new MessageEmbed()
                     .setTitle(`**[ 음악퀴즈 스코어 ]**`)
                     .setDescription(`**없음**\n\n스킵한 노래 : 없음`)
@@ -89,18 +88,23 @@ module.exports = {
                     .setImage(`https://cdn.hydra.bot/hydra_no_music.png`)
                     .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
                     .setColor('ORANGE');
-                c.send(score).then(m => {
+                c.send(score).then(async m => {
                     data.scoreid = m.id;
-                    data.save().catch(err => console.log(err));
+                    await data.save().catch(err => console.log(err));
                 });
-                c.send(list).then(m => {
+                c.send(list).then(async m => {
                     data.listid = m.id;
-                    data.save().catch(err => console.log(err));
+                    await data.save().catch(err => console.log(err));
                 });
-                c.send(np).then(m => {
+                c.send(np).then(async m => {
+                    m.react('💡');
+                    m.react('⏭️');
                     data.npid = m.id;
-                    data.save().catch(err => console.log(err));
+                    await data.save().catch(err => console.log(err));
                 });
+                setTimeout(async () => {
+                    await play_end(client, message);
+                }, 3000);
             });
         });
     },

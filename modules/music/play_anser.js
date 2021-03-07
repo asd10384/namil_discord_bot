@@ -27,16 +27,12 @@ module.exports = {
             // await data.save().catch(err => console.log(err));
             
             try {
-                var c = client.channels.cache.get(data.channelid);
-                c.messages.fetch().then(msg => {
-                    msg.forEach(m => {
-                        if (!(m.id === data.scoreid || m.id === data.listid || m.id === data.npid)) {
-                            m.delete();
-                        }
+                try {
+                    var c = client.channels.cache.get(data.channelid);
+                    c.messages.fetch().then(msg => {
+                        c.bulkDelete(msg.size-3);
                     });
-                });
-            } catch(err) {}
-            try {
+                } catch(err) {}
                 await data.save().catch(err => console.log(err));
                 var c_anser = '';
                 if (!(args[0] == '스킵' || args[0] == 'skip')) {
@@ -92,6 +88,12 @@ module.exports = {
                     });
                 } catch(err) {}
             } catch(err) {
+                try {
+                    var c = client.channels.cache.get(data.channelid);
+                    c.messages.fetch().then(msg => {
+                        c.bulkDelete(msg.size-3);
+                    });
+                } catch(err) {}
                 return await play_end(client, message);
             }
             data.count = data.count + 1;
@@ -106,7 +108,9 @@ module.exports = {
                         var c = message.member.voice.channel.id;
                     }
                 }
-                await db.set(`db.music.${message.guild.id}.user`, {});
+                await db.set(`db.music.${message.guild.id}.user`, []);
+                await db.set(`db.music.${message.guild.id}.hint`, []);
+                await db.set(`db.music.${message.guild.id}.hintget`, false);
                 return await play(client, c, message);
             }, time * 1000);
         });

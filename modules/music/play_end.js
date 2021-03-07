@@ -30,7 +30,9 @@ module.exports = {
             data.start = false;
             data.tts = true;
             data.skip = 0;
-            await db.set(`db.music.${message.guild.id}.user`, {});
+            await db.set(`db.music.${message.guild.id}.user`, []);
+            await db.set(`db.music.${message.guild.id}.hint`, []);
+            await db.set(`db.music.${message.guild.id}.hintget`, false);
             await db.set(`db.music.${message.guild.id}.score`, {});
             await data.save().catch(err => console.log(err));
             var anser = data.anser_list[data.anser];

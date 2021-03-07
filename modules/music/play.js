@@ -53,7 +53,7 @@ module.exports = {
             var count = data.count;
             var all_count = data.name.length;
             try {
-                var list = `음악퀴즈를 종료하시려면 \` ;음악퀴즈 종료 \`를 입력해주세요.\n음악을 스킵하시려면 \` 스킵 \`을 입력해 주세요.`;
+                var list = `음악퀴즈를 종료하시려면 \` ;음악퀴즈 종료 \`를 입력해주세요.\n힌트를 받으시려면 \` 힌트 \`를 입력해 주세요.\n음악을 스킵하시려면 \` 스킵 \`을 입력해 주세요.`;
                 var np = new MessageEmbed()
                     .setTitle(`**정답 : ???**`)
                     .setDescription(`**채팅창에 ${anser} 형식으로 적어주세요.**\n**곡 : ${count+1}/${all_count}**`)
@@ -142,7 +142,9 @@ module.exports = {
                         var c = message.member.voice.channel.id;
                     }
                 }
-                await db.set(`db.music.${message.guild.id}.user`, {});
+                await db.set(`db.music.${message.guild.id}.user`, []);
+                await db.set(`db.music.${message.guild.id}.hint`, []);
+                await db.set(`db.music.${message.guild.id}.hintget`, false);
                 return await play(client, c, message);
             }, time * 1000);
         }

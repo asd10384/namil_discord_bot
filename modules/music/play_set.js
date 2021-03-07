@@ -26,7 +26,9 @@ module.exports = {
             // await data.save().catch(err => console.log(err));
 
             try {
-                await db.set(`db.music.${message.guild.id}.user`, {});
+                await db.set(`db.music.${message.guild.id}.user`, []);
+                await db.set(`db.music.${message.guild.id}.hint`, []);
+                await db.set(`db.music.${message.guild.id}.hintget`, false);
                 await db.set(`db.music.${message.guild.id}.score`, {});
                 data.skip = 0;
                 await data.save().catch(err => console.log(err));

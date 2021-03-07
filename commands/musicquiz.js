@@ -291,8 +291,8 @@ module.exports = {
             if (args[0] == '초기화' || args[0] == 'reset') {
                 data.ect = [];
                 await data.save().catch(err => console.log(err));
-                play_score(client, message);
                 play_end(client, message);
+                play_score(client, message);
                 return message.channel.send('완료!').then(m => msgdelete(m, 3000));
             }
             if (args[0] == '종료' || args[0] == '중지' || args[0] == 'stop') {

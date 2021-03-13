@@ -1,8 +1,3 @@
-node_modules/
-
-package-lock.json
-
-json.sqlite
 
 # 파일 이름으로 제외
 # 파일명.파일확장자
@@ -15,4 +10,9 @@ json.sqlite
 # 
 # 동일 확장자인 파일 제외
 # *.파일확장자
-# 
+
+node_modules/
+
+package-lock.json
+
+json.sqlite

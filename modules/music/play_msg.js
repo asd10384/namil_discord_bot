@@ -3,7 +3,7 @@ const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 
 module.exports = {
-    msg_score: async function msg_score (client, message) {
+    msg_score: async function msg_score () {
         var score = new MessageEmbed()
             .setTitle(`**[ 음악퀴즈 스코어 ]**`)
             .setDescription(`**없음**\n\n스킵한 노래 : 없음`)
@@ -11,7 +11,7 @@ module.exports = {
             .setColor('ORANGE');
         return score;
     },
-    msg_list: async function msg_list (client, message) {
+    msg_list: async function msg_list () {
         var list = `**[ 규칙 ]**
 **1.** 명령어는 \` ;음악퀴즈 명령어 \` 로 확인하실수 있습니다.
 **2.** 정답은 채팅창에 그냥 입력하시면 됩니다.
@@ -29,14 +29,13 @@ module.exports = {
 음악퀴즈 도중 봇이 멈추거나 오류가 생겼다면
 음악퀴즈를 종료하고 다시 시작해주세요. (;음악퀴즈 종료)
 
-음악퀴즈 명령어는 \` ;음악퀴즈 명령어 \`을 입력해 확인하실수있습니다.
 음성 채널에 참여한 후 \` ;음악퀴즈 시작 \`을 입력해 음악퀴즈를 시작하세요.`;
         return list;
     },
-    msg_np: async function msg_np (client, message, anser, time) {
+    msg_np: async function msg_np (anser, time) {
         var np = new MessageEmbed()
             .setTitle(`**현재 음악퀴즈가 시작되지 않았습니다.**`)
-            .setDescription(`\` ;음악퀴즈 설정 \`\n정답형식 : ${anser}\n다음곡시간 : ${time}초`)
+            .setDescription(`\` ;음악퀴즈 명령어 \`\n\` ;음악퀴즈 설정 \`\n정답형식 : ${anser}\n다음곡시간 : ${time}초`)
             .setImage(`https://cdn.hydra.bot/hydra_no_music.png`)
             .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
             .setColor('ORANGE');

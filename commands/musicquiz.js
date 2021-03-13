@@ -1,9 +1,10 @@
 
 const db = require('quick.db');
 const { MessageEmbed, Collection } = require('discord.js');
-const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');
+const { default_prefix, msg_time, help_time, drole, mongourl, music_list } = require('../config.json');
 
 const { dbset, dbset_music } = require('../modules/functions');
+const { play_ready } = require('../modules/music/play_ready');
 const { play } = require('../modules/music/play');
 const { play_anser } = require('../modules/music/play_anser');
 const { play_end } = require('../modules/music/play_end');
@@ -17,8 +18,6 @@ connect(dburl, {
     useUnifiedTopology: true,
 });
 
-const request = require("request");
-const cheerio = require("cheerio");
 const { readdirSync } = require('fs');
 const { join } = require('path');
 
@@ -64,7 +63,8 @@ module.exports = {
             .setTitle(`명령어`)
             .setDescription(`
                 \` 명령어 \`
-                ${pp}음악퀴즈 시작 <숫자> : <숫자>곡만큼 음악퀴즈를 시작합니다.
+                ${pp}음악퀴즈 시작 <주제> <숫자> : <주제>의 곡들중 <숫자>곡만큼 음악퀴즈를 시작합니다.
+                (자세한내용은 ${pp}음악퀴즈 시작 으로 확인)
                 ${pp}음악퀴즈 설정 : 정답형식이나 시간을 설정할수 있습니다.
                 ${pp}음악퀴즈 중지 : 진행중인 음악퀴즈를 멈춥니다.
                 ${pp}음악퀴즈 초기화 : 앞서나왔던곡들도 다시 나오도록 초기화 합니다.
@@ -98,100 +98,30 @@ module.exports = {
                 emerr.setDescription(`음성채널에 들어간 뒤 사용해주세요.`);
                 return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
             }
+
+            if (args[0] == '주제') {
+                var text = '';
+                for (i=0; i<music_list.length; i++) {
+                    text += `**${i+1}.** ${music_list[i]['name'][0]}\n`;
+                }
+                em.setTitle(`\` 주제 확인 \``)
+                    .setDescription(`
+                        ${text}
+                        ${pp}음악퀴즈 시작 <주제> <곡수>
+                    `);
+                return message.channel.send(em).then(m => msgdelete(m, msg_time+3000));
+            }
             if (args[0] == '시작' || args[0] == 'start') {
                 if (args[1]) {
-                    if (!isNaN(args[1])) {
-                        if (args[1] > 50) {
-                            emerr.setDescription(`한번에 최대 50곡까지 가능합니다.`);
-                            return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
+                    for (i=0; i<music_list.length; i++) {
+                        if (music_list[i]['name'].includes(args[1])) {
+                            return play_ready(client, message, args, voiceChannel, emerr, music_list[i]);
                         }
-                        if (args[1] < 2) {
-                            emerr.setDescription(`최소 2곡이상만 가능합니다.`);
-                            return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
-                        }
-                        try {
-                            await clearInterval(ontimer);
-                        } catch(err) {}
-                        data.voicechannelid = voiceChannel.id;
-                        await data.save().catch(err => console.log(err));
-                        play_set(client, message);
-                        var url = `http://ytms.netlify.app`;
-                        request(url, async function (err, res, html) {
-                            if (!err) {
-                                var $ = cheerio.load(html);
-                                var name = [];
-                                var vocal = [];
-                                var link = [];
-                                $('body div.music div').each(function () {
-                                    var n = $(this).children('a.name').text().trim();
-                                    var v = $(this).children('a.vocal').text().trim();
-                                    var l = $(this).children('a.link').text().trim();
-                                    name.push(n);
-                                    vocal.push(v);
-                                    link.push(l);
-                                });
-                                if (args[1] > name.length) {
-                                    emerr.setDescription(`입력한 곡수가 너무 많습니다.\n최대 ${name.length}곡`);
-                                    play_end(client, message);
-                                    return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
-                                }
-                                var ect = data.ect;
-                                if (ect == undefined || ect == null) {
-                                    ect = [];
-                                }
-                                var rl = [];
-                                var nl = [];
-                                var vl = [];
-                                var ll = [];
-                                var e = false;
-                                var tt = '';
-                                for (i=0; i<args[1];i++) {
-                                    if (args[1] > name.length-ect.length) {
-                                        emerr.setDescription(`제외된 곡이 너무 많습니다.\n${pp}음악퀴즈 초기화 를 입력해서 제외된 곡을 없애주세요.`);
-                                        message.channel.send(emerr).then(m => msgdelete(m, msg_time));
-                                        play_end(client, message);
-                                        e = true;
-                                        break;
-                                    }
-                                    var r = Math.floor(Math.random() * (parseInt(name.length+1)));
-                                    if (rl.includes(r) || ect.includes(name[r]) || name[r] == '') {
-                                        i--;
-                                        continue;
-                                    }
-                                    // console.log(`${i+1}. ${vocal[r]}-${name[r]}  [${r}]`);
-                                    tt += `${i+1}. ${vocal[r]}-${name[r]}  [${r}]\n`;
-                                    rl.push(r);
-                                    ect.push(name[r]);
-                                    nl.push(name[r]);
-                                    vl.push(vocal[r]);
-                                    ll.push(link[r]);
-                                }
-                                if (e) return ;
-                                console.log(tt);
-                                data.ect = ect;
-                                data.name = nl;
-                                data.vocal = vl;
-                                data.link = ll;
-                                data.count = 0;
-                                data.start = true;
-                                await data.save().catch(err => console.log(err));
-                                play(client, voiceChannel, message);
-                            }
-                            setTimeout(async function() {
-                                var ontimer = await setInterval(async function() {
-                                    if (!(message.guild.me.voice.channel == data.voicechannelid)) {
-                                        await play_end(client, message);
-                                        return await clearInterval(ontimer);
-                                    }
-                                }, 100);
-                            }, 1000);
-                        });
-                        return ;
                     }
-                    emerr.setDescription(`$시작 [곡 개수]\n숫자를 입력해주세요.\n${pp}음악퀴즈 명령어`);
+                    emerr.setDescription(`시작 <주제>\n주제를 찾을수 없습니다.\n${pp}음악퀴즈 주제`);
                     return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
                 }
-                emerr.setDescription(`시작 [곡 개수]\n숫자를 입력해주세요.\n${pp}음악퀴즈 명령어`);
+                emerr.setDescription(`시작 <주제>\n주제를 입력해주세요.\n${pp}음악퀴즈 주제`);
                 return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
             }
             if (args[0] == '설정' || args[0] == 'setting') {
@@ -325,7 +255,9 @@ module.exports = {
                 }
                 return message.channel.send(`${pp}음악퀴즈 오류확인 [음악퀴즈 채팅 채널 아이디]`).then(m => msgdelete(m, 5500));
             }
-            return message.channel.send(help).then(m => msgdelete(m, msg_time));
+            if (args[0] == '명령어' || args[0] == '도움말' || args[0] == 'help') {
+                return message.channel.send(help).then(m => msgdelete(m, msg_time));
+            }
         });
     },
 };

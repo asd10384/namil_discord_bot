@@ -30,7 +30,9 @@ module.exports = {
                 try {
                     var c = client.channels.cache.get(data.channelid);
                     c.messages.fetch().then(msg => {
-                        c.bulkDelete(msg.size-3);
+                        if (msg.size > 3) {
+                            c.bulkDelete(msg.size-3);
+                        }
                     });
                 } catch(err) {}
                 await data.save().catch(err => console.log(err));
@@ -91,7 +93,9 @@ module.exports = {
                 try {
                     var c = client.channels.cache.get(data.channelid);
                     c.messages.fetch().then(msg => {
-                        c.bulkDelete(msg.size-3);
+                        if (msg.size > 3) {
+                            c.bulkDelete(msg.size-3);
+                        }
                     });
                 } catch(err) {}
                 return await play_end(client, message);

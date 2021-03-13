@@ -33,6 +33,14 @@ module.exports = {
             var link = data.link[count];
             if (link == undefined || link == null) {
                 channel.leave();
+                try {
+                    var c = client.channels.cache.get(data.channelid);
+                    c.messages.fetch().then(msg => {
+                        if (msg.size > 3) {
+                            c.bulkDelete(msg.size-3);
+                        }
+                    });
+                } catch(err) {}
                 return await play_end(client, message);
             }
             var url = ytdl(link, { bitrate: 512000, quality: 'highestaudio' });
@@ -53,7 +61,9 @@ module.exports = {
             var count = data.count;
             var all_count = data.name.length;
             try {
-                var list = `음악퀴즈를 종료하시려면 \` ;음악퀴즈 종료 \`를 입력해주세요.\n힌트를 받으시려면 \` 힌트 \`를 입력해 주세요.\n음악을 스킵하시려면 \` 스킵 \`을 입력해 주세요.`;
+                var list = `음악퀴즈를 종료하시려면 \` ;음악퀴즈 종료 \`를 입력해주세요.
+힌트를 받으시려면 \` 힌트 \`를 입력하거나 💡를 눌러주세요.
+음악을 스킵하시려면 \` 스킵 \`을 입력하거나 ⏭️를 눌러주세요.`;
                 var np = new MessageEmbed()
                     .setTitle(`**정답 : ???**`)
                     .setDescription(`**채팅창에 ${anser} 형식으로 적어주세요.**\n**곡 : ${count+1}/${all_count}**`)

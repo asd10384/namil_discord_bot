@@ -114,7 +114,7 @@ module.exports = {
             if (args[0] == '시작' || args[0] == 'start') {
                 if (args[1]) {
                     for (i=0; i<music_list.length; i++) {
-                        if (music_list[i]['name'].includes(args[1])) {
+                        if (music_list[i]['name'].includes(args[1].toUpperCase())) {
                             return play_ready(client, message, args, voiceChannel, emerr, music_list[i]);
                         }
                     }

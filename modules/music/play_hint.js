@@ -78,7 +78,7 @@ module.exports = {
                             }
                         }
                         em.setTitle(`힌트`)
-                            .setDescription(`${t}`);
+                            .setDescription(`${t.replace(/ /g, '　')}`);
                         return message.channel.send(em);
                     }
                     await db.set(`db.music.${message.guild.id}.hint`, hint);

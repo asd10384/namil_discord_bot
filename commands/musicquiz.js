@@ -4,12 +4,9 @@ const { MessageEmbed, Collection } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole, mongourl, music_list } = require('../config.json');
 
 const { dbset, dbset_music } = require('../modules/functions');
-const { play_ready } = require('../modules/music/play_ready');
-const { play } = require('../modules/music/play');
+const { play_start } = require('../modules/music/play_start');
 const { play_anser } = require('../modules/music/play_anser');
 const { play_end } = require('../modules/music/play_end');
-const { play_set } = require('../modules/music/play_set');
-const { play_score } = require('../modules/music/play_score');
 
 const { connect, set } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
@@ -63,15 +60,13 @@ module.exports = {
             .setTitle(`명령어`)
             .setDescription(`
                 \` 명령어 \`
-                ${pp}음악퀴즈 시작 <주제> <숫자> : <주제>의 곡들중 <숫자>곡만큼 음악퀴즈를 시작합니다.
-                (자세한내용은 ${pp}음악퀴즈 시작 으로 확인)
+                ${pp}음악퀴즈 시작 : 음악퀴즈를 시작합니다.
                 ${pp}음악퀴즈 설정 : 정답형식이나 시간을 설정할수 있습니다.
                 ${pp}음악퀴즈 중지 : 진행중인 음악퀴즈를 멈춥니다.
-                ${pp}음악퀴즈 초기화 : 앞서나왔던곡들도 다시 나오도록 초기화 합니다.
 
                 \` 관리자 명령어 \`
                 ${pp}음악퀴즈 기본설정 : 음악퀴즈 채널을 생성합니다.
-                ${pp}음악퀴즈 스킵 : 현재 곡을 스킵합니다.
+                ${pp}음악퀴즈 스킵 : 현재 곡을 강제로 스킵합니다.
                 ${pp}음악퀴즈 오류수정 [채널아이디] : 텍스트 채널을 다시 생성합니다.
             `)
             .setColor('RED');
@@ -99,30 +94,13 @@ module.exports = {
                 return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
             }
 
-            if (args[0] == '주제') {
-                var text = '';
-                for (i=0; i<music_list.length; i++) {
-                    text += `**${i+1}.** ${music_list[i]['name'][0]}\n`;
-                }
-                em.setTitle(`\` 주제 확인 \``)
-                    .setDescription(`
-                        ${text}
-                        ${pp}음악퀴즈 시작 <주제> <곡수>
-                    `);
-                return message.channel.send(em).then(m => msgdelete(m, msg_time+3000));
-            }
+            try {
+                data.voicechannelid = voiceChannel.id;
+                await data.save().catch(err => console.log(err));
+            } catch(err) {}
+
             if (args[0] == '시작' || args[0] == 'start') {
-                if (args[1]) {
-                    for (i=0; i<music_list.length; i++) {
-                        if (music_list[i]['name'].includes(args[1].toUpperCase())) {
-                            return play_ready(client, message, args, voiceChannel, emerr, music_list[i]);
-                        }
-                    }
-                    emerr.setDescription(`시작 <주제>\n주제를 찾을수 없습니다.\n${pp}음악퀴즈 주제`);
-                    return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
-                }
-                emerr.setDescription(`시작 <주제>\n주제를 입력해주세요.\n${pp}음악퀴즈 주제`);
-                return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
+                return await play_start(client, message, args, voiceChannel);
             }
             if (args[0] == '설정' || args[0] == 'setting') {
                 if (!data.start) {
@@ -217,13 +195,6 @@ module.exports = {
                 }
                 emerr.setDescription(`현재 노래퀴즈가 진행중입니다.\n\` ;음악퀴즈 종료\` 로 음악퀴즈를 종료한뒤 명령어를 사용해주세요.`);
                 return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
-            }
-            if (args[0] == '초기화' || args[0] == 'reset') {
-                data.ect = [];
-                await data.save().catch(err => console.log(err));
-                play_end(client, message);
-                play_score(client, message);
-                return message.channel.send('완료!').then(m => msgdelete(m, 3000));
             }
             if (args[0] == '종료' || args[0] == '중지' || args[0] == 'stop') {
                 return play_end(client, message);

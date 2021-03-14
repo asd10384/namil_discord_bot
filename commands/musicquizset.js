@@ -72,8 +72,6 @@ module.exports = {
                     await data.save().catch(err => console.log(err));
                 });
                 c.send(np).then(async m => {
-                    m.react('💡');
-                    m.react('⏭️');
                     data.npid = m.id;
                     await data.save().catch(err => console.log(err));
                 });

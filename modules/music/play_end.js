@@ -55,6 +55,7 @@ module.exports = {
                     });
                     c.messages.fetch(data.npid).then(m => {
                         m.edit(np);
+                        m.reactions.removeAll();
                     });
                     
                 } catch(err) {}

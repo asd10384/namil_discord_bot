@@ -11,7 +11,6 @@ const dataSchema = Schema({
     name: Array,
     vocal: Array,
     link: Array,
-    ect: Array,
     count: Number,
     skip: Number,
     start: Boolean,

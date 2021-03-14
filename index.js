@@ -16,7 +16,7 @@ connect(dburl, {
     useUnifiedTopology: true,
 });
 // const Data = require('./modules/data');
-const Data = require('./modules/music_data');
+const mData = require('./modules/music_data');
 
 client.config = config;
 client.commands = new Discord.Collection();

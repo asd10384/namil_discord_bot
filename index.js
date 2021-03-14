@@ -7,9 +7,7 @@ const { join } = require('path');
 const config = require('./config.json');
 const db = require('quick.db');
 
-const { play_hint } = require('./modules/music/play_hint');
-const { play_skip } = require('./modules/music/play_skip');
-
+const { creaction } = require('./modules/reaction');
 const { dbset, dbset_music } = require('./modules/functions');
 const { connect } = require('mongoose');
 var dburl = mongourl;
@@ -17,8 +15,8 @@ connect(dburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
-const Data = require('./modules/data');
-const mData = require('./modules/music_data');
+// const Data = require('./modules/data');
+const Data = require('./modules/music_data');
 
 client.config = config;
 client.commands = new Discord.Collection();
@@ -155,32 +153,7 @@ client.on('message', async message => {
 });
 
 client.on('messageReactionAdd', async (reaction, user) => {
-    if (reaction.message.partial) await reaction.message.fetch();
-    if (reaction.partial) await reaction.fetch();
-
-    if (user.bot) return;
-    if (!reaction.message.guild) return;
-
-    mData.findOne({
-        serverid: reaction.message.guild.id
-    }, async function (err, data) {
-        if (err) console.log(err);
-        if (!data) {
-            await dbset_music(reaction.message);
-            return ;
-        } else {
-            if (reaction.message.channel.id === data.channelid) {
-                if (reaction.emoji.name === '💡') {
-                    reaction.users.remove(user);
-                    return await play_hint(client, reaction.message, user.id);
-                }
-                if (reaction.emoji.name === '⏭️') {
-                    reaction.users.remove(user);
-                    return await play_skip(client, reaction.message, user.id);
-                }
-            }
-        }
-    });
+    await creaction(reaction, user);
 });
 
 

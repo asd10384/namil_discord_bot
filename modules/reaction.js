@@ -15,7 +15,7 @@ connect(dburl, {
 const Data = require('./music_data');
 
 module.exports = {
-    creaction: async function creaction (reaction, user) {
+    creaction: async function creaction (client, reaction, user) {
         if (reaction.message.partial) await reaction.message.fetch();
         if (reaction.partial) await reaction.fetch();
     

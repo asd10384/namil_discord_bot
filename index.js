@@ -153,7 +153,7 @@ client.on('message', async message => {
 });
 
 client.on('messageReactionAdd', async (reaction, user) => {
-    await creaction(reaction, user);
+    await creaction(client, reaction, user);
 });
 
 

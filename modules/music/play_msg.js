@@ -34,7 +34,7 @@ module.exports = {
         var np = new MessageEmbed()
             .setTitle(`**현재 음악퀴즈가 시작되지 않았습니다.**`)
             .setDescription(`\` ;음악퀴즈 명령어 \`\n\` ;음악퀴즈 설정 \`\n정답형식 : ${anser}\n다음곡시간 : ${time}초`)
-            .setImage(`https://cdn.hydra.bot/hydra_no_music.png`)
+            .setImage(`https://ytms.netlify.app/defult.png`)
             .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
             .setColor('ORANGE');
         return np;

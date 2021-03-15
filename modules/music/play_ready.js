@@ -1,14 +1,15 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
-const request = require("request");
-const cheerio = require("cheerio");
+const { default_prefix, msg_time, help_time, mongourl } = require('../../config.json');
 
 const { play } = require('./play');
 const { play_end } = require('./play_end');
 const { play_set } = require('./play_set');
 
-const { msg_time, help_time, mongourl } = require('../../config.json');
+const request = require("request");
+const cheerio = require("cheerio");
+
 const { dbset, dbset_music } = require('../functions');
 const { connect, set } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
@@ -49,7 +50,7 @@ module.exports = {
                 emerr.setDescription(`
                     아직 이 주제가 완성되지 않았습니다.
 
-                    ;음악퀴즈 주제로 다른 주제를 확인해보세요.
+                    ${default_prefix}음악퀴즈 주제로 다른 주제를 확인해보세요.
                 `);
                 await play_end(client, message);
                 return message.channel.send(emerr).then(m => msgdelete(m, msg_time));

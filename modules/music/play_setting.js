@@ -1,9 +1,10 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
+const { default_prefix, mongourl } = require('../../config.json');
+
 const { play_end } = require('./play_end');
 
-const { mongourl } = require('../../config.json');
 const { dbset, dbset_music } = require('../functions');
 const { connect, set } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
@@ -120,7 +121,7 @@ module.exports = {
                     `);
                 return message.channel.send(em).then(m => msgdelete(m, help_time));
             }
-            emerr.setDescription(`현재 노래퀴즈가 진행중입니다.\n\` ;음악퀴즈 종료\` 로 음악퀴즈를 종료한뒤 명령어를 사용해주세요.`);
+            emerr.setDescription(`현재 노래퀴즈가 진행중입니다.\n\` ${default_prefix}음악퀴즈 종료\` 로 음악퀴즈를 종료한뒤 명령어를 사용해주세요.`);
             return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
         });
     },

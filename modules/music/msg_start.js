@@ -1,8 +1,11 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
-const request = require('request');
+const { default_prefix } = require('../../config.json');
+
 const { play_ready } = require('./play_ready');
+
+const request = require('request');
 
 module.exports = {
     msg_start: async function msg_start (client, serverid, message, args, voiceChannel, channelid, npid, first=false) {
@@ -71,7 +74,7 @@ module.exports = {
 
                 var lrpage = await db.get(`db.music.${serverid}.lrpage`);
                 if (lrpage == undefined) lrpage = 1;
-                if (fmobject === mobject) text[lrpage-1] = '오류가 발생했습니다.\n\n;음악퀴즈 시작을\n다시 입력해주세요.';
+                if (fmobject === mobject) text[lrpage-1] = `오류가 발생했습니다.\n\n${default_prefix}음악퀴즈 시작을\n다시 입력해주세요.`;
 
                 var np = new MessageEmbed()
                     .setTitle(`**음악퀴즈 선택화면**`)
@@ -80,7 +83,7 @@ module.exports = {
                         ${text[lrpage-1]}
                         　
                     `)
-                    .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
+                    .setFooter(`기본 명령어 : ${default_prefix}음악퀴즈 명령어`)
                     .setColor('ORANGE');
                 try {
                     var c = client.channels.cache.get(channelid);

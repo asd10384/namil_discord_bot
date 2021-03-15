@@ -2,10 +2,11 @@
 const ytdl = require('ytdl-core');
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
+const { default_prefix, mongourl } = require('../../config.json');
+
 const { play_end } = require('./play_end');
 const { play_score } = require('./play_score');
 
-const { mongourl } = require('../../config.json');
 const { dbset, dbset_music } = require('../functions');
 const { connect, set } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
@@ -61,14 +62,14 @@ module.exports = {
             var count = data.count;
             var all_count = data.name.length;
             try {
-                var list = `음악퀴즈를 종료하시려면 \` ;음악퀴즈 종료 \`를 입력해주세요.
+                var list = `음악퀴즈를 종료하시려면 \` ${default_prefix}음악퀴즈 종료 \`를 입력해주세요.
 힌트를 받으시려면 \` 힌트 \`를 입력하거나 💡를 눌러주세요.
 음악을 스킵하시려면 \` 스킵 \`을 입력하거나 ⏭️를 눌러주세요.`;
                 var np = new MessageEmbed()
                     .setTitle(`**정답 : ???**`)
                     .setDescription(`**채팅창에 ${anser} 형식으로 적어주세요.**\n**곡 : ${count+1}/${all_count}**`)
                     .setImage(`https://ytms.netlify.app/question_mark.png`)
-                    .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
+                    .setFooter(`기본 명령어 : ${default_prefix}음악퀴즈 명령어`)
                     .setColor('ORANGE');
                 var channelid = data.channelid;
                 var listid = data.listid;
@@ -114,7 +115,7 @@ module.exports = {
                 var link = data.link[count];
                 var chack = /(?:http:\/\/|https:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?/gi;
                 var yturl = link.replace(chack, '').replace(/(?:&(.+))/gi, '');
-                var list = `음악퀴즈를 종료하시려면 \` ;음악퀴즈 종료 \`를 입력해 주세요.`;
+                var list = `음악퀴즈를 종료하시려면 \` ${default_prefix}음악퀴즈 종료 \`를 입력해 주세요.`;
                 var np = new MessageEmbed()
                     .setTitle(`**정답 : ${name}**`)
                     .setURL(`${link}`)

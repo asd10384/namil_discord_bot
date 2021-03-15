@@ -1,8 +1,8 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
+const { default_prefix, mongourl } = require('../../config.json');
 
-const { mongourl } = require('../../config.json');
 const { dbset, dbset_music } = require('../functions');
 const { connect, set } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정

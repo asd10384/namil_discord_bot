@@ -1,8 +1,8 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
+const { default_prefix, mongourl } = require('../../config.json');
 
-const { mongourl } = require('../../config.json');
 const { dbset, dbset_music } = require('../functions');
 const { msg_list, msg_np } = require('./play_msg');
 const { connect, set } = require('mongoose');

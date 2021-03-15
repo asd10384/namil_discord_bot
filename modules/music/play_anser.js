@@ -1,11 +1,12 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
+const { default_prefix, mongourl } = require('../../config.json');
+
 const { play } = require('./play');
 const { play_score } = require('./play_score');
 const { play_end } = require('./play_end');
 
-const { mongourl } = require('../../config.json');
 const { dbset, dbset_music } = require('../functions');
 const { connect, set } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
@@ -66,7 +67,7 @@ module.exports = {
                 var link = data.link[count];
                 var chack = /(?:http:\/\/|https:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?/gi;
                 var yturl = link.replace(chack, '').replace(/(?:&(.+))/gi, '');
-                var list = `음악퀴즈를 종료하시려면 \` ;음악퀴즈 종료 \`를 입력해 주세요.`;
+                var list = `음악퀴즈를 종료하시려면 \` ${default_prefix}음악퀴즈 종료 \`를 입력해 주세요.`;
                 var np = new MessageEmbed()
                     .setTitle(`**정답 : ${name}**`)
                     .setURL(`${link}`)

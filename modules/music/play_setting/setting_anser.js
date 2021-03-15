@@ -1,5 +1,4 @@
 
-const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { default_prefix, mongourl } = require('../../../config.json');
 
@@ -15,7 +14,7 @@ connect(dburl, {
 const Data = require('../../music_data');
 
 module.exports = {
-    setting_anser: async function setting_anser (client, message, args, em, emerr) {
+    setting_anser: async function setting_anser (client, message, args) {
         Data.findOne({
             serverid: message.guild.id
         }, async function (err, data) {
@@ -30,6 +29,12 @@ module.exports = {
                     m.delete();
                 }, t);
             }
+
+            const emerr = new MessageEmbed()
+                .setTitle(`오류`)
+                .setColor('RED');
+            const em = new MessageEmbed()
+                .setColor('RED');
 
             var anser = data.anser;
             var anl = data.anser_list;

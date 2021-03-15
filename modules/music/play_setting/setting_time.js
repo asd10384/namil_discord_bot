@@ -1,5 +1,4 @@
 
-const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { default_prefix, mongourl } = require('../../../config.json');
 
@@ -15,7 +14,7 @@ connect(dburl, {
 const Data = require('../../music_data');
 
 module.exports = {
-    setting_time: async function setting_time (client, message, args, em, emerr) {
+    setting_time: async function setting_time (client, message, args) {
         Data.findOne({
             serverid: message.guild.id
         }, async function (err, data) {
@@ -30,7 +29,13 @@ module.exports = {
                     m.delete();
                 }, t);
             }
-            
+
+            const emerr = new MessageEmbed()
+                .setTitle(`오류`)
+                .setColor('RED');
+            const em = new MessageEmbed()
+                .setColor('RED');
+
             if (args[2]) {
                 var anser_time = data.anser_time;
                 if (!isNaN(args[2])) {

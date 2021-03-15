@@ -1,6 +1,5 @@
 
 const db = require('quick.db');
-const { MessageEmbed } = require('discord.js');
 const { default_prefix, mongourl } = require('../../../config.json');
 
 const { play_score } = require('./play_score');

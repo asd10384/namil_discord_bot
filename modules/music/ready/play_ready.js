@@ -1,5 +1,4 @@
 
-const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time, mongourl } = require('../../../config.json');
 

@@ -1,6 +1,5 @@
 
 const db = require('quick.db');
-const { MessageEmbed } = require('discord.js');
 
 const { msg_start } = require('./music/ready/msg_start');
 const { play_hint } = require('./music/start/play_hint');

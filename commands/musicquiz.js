@@ -55,8 +55,6 @@ module.exports = {
         const emerr = new MessageEmbed()
             .setTitle(`오류`)
             .setColor('RED');
-        const em = new MessageEmbed()
-            .setColor('RED');
         const help = new MessageEmbed()
             .setTitle(`명령어`)
             .setDescription(`
@@ -104,7 +102,7 @@ module.exports = {
                 return await play_start(client, message, args, voiceChannel);
             }
             if (args[0] == '설정' || args[0] == 'setting') {
-                return await play_setting(client, message, args, em, emerr);
+                return await play_setting(client, message, args);
             }
             if (args[0] == '종료' || args[0] == '중단' || args[0] == '중지' || args[0] == 'stop') {
                 return play_end(client, message);

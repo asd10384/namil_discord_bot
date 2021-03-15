@@ -4,6 +4,7 @@ const { MessageEmbed } = require('discord.js');
 const { default_prefix } = require('../../../config.json');
 
 const { play_ready } = require('./play_ready');
+const { play_end } = require('../play_end');
 
 const request = require('request');
 
@@ -91,6 +92,8 @@ module.exports = {
                         m.edit(np);
                     });
                 } catch(err) {}
+            } else {
+                return await play_end(client, message);
             }
         });
         return ;

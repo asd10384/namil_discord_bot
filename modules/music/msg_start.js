@@ -78,6 +78,7 @@ module.exports = {
                     .setDescription(`
                         \` 아래 숫자을 눌러 선택해주세요. \`
                         ${text[lrpage-1]}
+                        　
                     `)
                     .setFooter(`기본 명령어 : ;음악퀴즈 명령어`)
                     .setColor('ORANGE');

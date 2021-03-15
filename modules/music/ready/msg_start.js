@@ -1,7 +1,7 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
-const { default_prefix } = require('../../config.json');
+const { default_prefix } = require('../../../config.json');
 
 const { play_ready } = require('./play_ready');
 

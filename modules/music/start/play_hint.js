@@ -1,16 +1,16 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
-const { default_prefix, mongourl } = require('../../config.json');
+const { default_prefix, mongourl } = require('../../../config.json');
 
-const { dbset, dbset_music } = require('../functions');
+const { dbset, dbset_music } = require('../../functions');
 const { connect, set } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
 connect(dburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
-const Data = require('../music_data');
+const Data = require('../../music_data');
 
 module.exports = {
     play_hint: async function play_hint (client, message, userid) {

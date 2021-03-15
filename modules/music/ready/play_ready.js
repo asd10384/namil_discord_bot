@@ -1,23 +1,23 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
-const { default_prefix, msg_time, help_time, mongourl } = require('../../config.json');
+const { default_prefix, msg_time, help_time, mongourl } = require('../../../config.json');
 
-const { play } = require('./play');
-const { play_end } = require('./play_end');
-const { play_set } = require('./play_set');
+const { play } = require('../start/play');
+const { play_end } = require('../play_end');
+const { play_set } = require('../start/play_set');
 
 const request = require("request");
 const cheerio = require("cheerio");
 
-const { dbset, dbset_music } = require('../functions');
+const { dbset, dbset_music } = require('../../functions');
 const { connect, set } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
 connect(dburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
-const Data = require('../music_data');
+const Data = require('../../music_data');
 
 module.exports = {
     play_ready: async function play_ready (client, message, args, voiceChannel, url='', complite=false) {

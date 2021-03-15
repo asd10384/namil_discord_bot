@@ -3,12 +3,12 @@ const db = require('quick.db');
 const { MessageEmbed, Collection } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');
 
-const { dbset, dbset_music } = require('../modules/functions');
-const { play_start } = require('../modules/music/play_start');
-const { play_anser } = require('../modules/music/play_anser');
+const { play_start } = require('../modules/music/ready/play_start');
+const { play_anser } = require('../modules/music/start/play_anser');
 const { play_end } = require('../modules/music/play_end');
-const { play_setting } = require('../modules/music/play_setting');
+const { play_setting } = require('../modules/music/play_setting/play_setting');
 
+const { dbset, dbset_music } = require('../modules/functions');
 const { connect, set } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
 connect(dburl, {

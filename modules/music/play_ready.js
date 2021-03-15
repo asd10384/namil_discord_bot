@@ -39,7 +39,7 @@ module.exports = {
                 .setColor('RED');
 
             try {
-                await clearInterval(ontimer);
+                clearInterval(ontimer);
             } catch(err) {}
             try {
                 data.voicechannelid = voiceChannel.id;
@@ -82,13 +82,14 @@ module.exports = {
                     var vl = [];
                     var ll = [];
                     var tt = '';
-                    for (i=0; i<name.length; i++) {
+                    var count = name.length;
+                    if (count > 50) count = 50;
+                    for (i=0; i<count; i++) {
                         var r = Math.floor(Math.random() * (parseInt(name.length+1)));
                         if (rl.includes(r) || name[r] == '') {
                             i--;
                             continue;
                         }
-                        // console.log(`${i+1}. ${vocal[r]}-${name[r]}  [${r}]`);
                         tt += `${i+1}. ${vocal[r]}-${name[r]}  [${r}]\n`;
                         rl.push(r);
                         nl.push(name[r]);
@@ -105,10 +106,10 @@ module.exports = {
                     play(client, voiceChannel, message);
                 }
                 setTimeout(async function() {
-                    var ontimer = await setInterval(async function() {
+                    var ontimer = setInterval(async function () {
                         if (!(message.guild.me.voice.channel == data.voicechannelid)) {
                             await play_end(client, message);
-                            return await clearInterval(ontimer);
+                            return clearInterval(ontimer);
                         }
                     }, 100);
                 }, 1000);

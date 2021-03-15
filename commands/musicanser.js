@@ -4,9 +4,9 @@ const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');
 
 const { dbset, dbset_music } = require('../modules/functions');
-const { play_anser } = require('../modules/music/play_anser');
-const { play_skip } = require('../modules/music/play_skip');
-const { play_hint } = require('../modules/music/play_hint');
+const { play_anser } = require('../modules/music/start/play_anser');
+const { play_skip } = require('../modules/music/start/play_skip');
+const { play_hint } = require('../modules/music/start/play_hint');
 
 const { connect } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정

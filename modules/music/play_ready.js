@@ -38,7 +38,6 @@ module.exports = {
                 .setTitle(`오류`)
                 .setColor('RED');
 
-            const all_song = 50;
             try {
                 await clearInterval(ontimer);
             } catch(err) {}
@@ -55,6 +54,7 @@ module.exports = {
                 await play_end(client, message);
                 return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
             }
+            await play_set(client, message);
             try {
                 var c = client.channels.cache.get(data.channelid);
                 c.messages.fetch(data.npid).then(m => {
@@ -63,7 +63,6 @@ module.exports = {
                     m.react('⏭️');
                 });
             } catch(err) {}
-            await play_set(client, message);
             request(url, async function (err, res, html) {
                 if (!err) {
                     var $ = cheerio.load(html);
@@ -83,7 +82,7 @@ module.exports = {
                     var vl = [];
                     var ll = [];
                     var tt = '';
-                    for (i=0; i<all_song;i++) {
+                    for (i=0; i<name.length; i++) {
                         var r = Math.floor(Math.random() * (parseInt(name.length+1)));
                         if (rl.includes(r) || name[r] == '') {
                             i--;

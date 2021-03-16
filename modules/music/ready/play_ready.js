@@ -86,7 +86,7 @@ module.exports = {
                     if (count > 50) count = 50;
                     for (i=0; i<count; i++) {
                         var r = Math.floor(Math.random() * (parseInt(name.length+1)));
-                        if (rl.includes(r) || name[r] == '') {
+                        if (r >= 50 || rl.includes(r) || name[r] == '') {
                             i--;
                             continue;
                         }

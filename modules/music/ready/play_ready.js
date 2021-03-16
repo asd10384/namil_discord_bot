@@ -7,7 +7,7 @@ const { play_end } = require('../play_end');
 const { play_set } = require('../start/play_set');
 
 const request = require("request");
-const cheerio = require("cheerio");
+const { load } = require("cheerio");
 
 const { dbset, dbset_music } = require('../../functions');
 const { connect, set } = require('mongoose');
@@ -65,7 +65,7 @@ module.exports = {
             } catch(err) {}
             request(url, async function (err, res, html) {
                 if (!err) {
-                    var $ = cheerio.load(html);
+                    var $ = load(html);
                     var name = [];
                     var vocal = [];
                     var link = [];
@@ -90,7 +90,7 @@ module.exports = {
                             i--;
                             continue;
                         }
-                        tt += `${i+1}. ${vocal[r]}-${name[r]}  [${r}]\n`;
+                        tt += `${i+1}. ${vocal[r]}-${name[r]}  [${r+1}]\n`;
                         rl.push(r);
                         nl.push(name[r]);
                         vl.push(vocal[r]);

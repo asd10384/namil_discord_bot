@@ -58,7 +58,7 @@ module.exports = {
                         if (!voiceChannel) {
                             var voiceChannel = message.member.voice.channel;
                         }
-                        return await msg_start(client, serverid, message, [], voiceChannel, data.channelid, data.npid);
+                        return await msg_start(client, serverid, message, [], 0, voiceChannel, data.channelid, data.npid);
                     }
                     if (name === '↩️') {
                         reaction.users.remove(user);
@@ -71,7 +71,7 @@ module.exports = {
                         if (!voiceChannel) {
                             var voiceChannel = message.member.voice.channel;
                         }
-                        return await msg_start(client, serverid, message, [], voiceChannel, data.channelid, data.npid);
+                        return await msg_start(client, serverid, message, [], 0, voiceChannel, data.channelid, data.npid);
                     }
                     if (name === '1️⃣' || name === '2️⃣' || name === '3️⃣' || name === '4️⃣' || name === '5️⃣') {
                         reaction.users.remove(user);
@@ -85,7 +85,7 @@ module.exports = {
                         if (!voiceChannel) {
                             var voiceChannel = message.member.voice.channel;
                         }
-                        return await msg_start(client, serverid, message, [], voiceChannel, data.channelid, data.npid);
+                        return await msg_start(client, serverid, message, [], num, voiceChannel, data.channelid, data.npid);
                     }
                 }
             }

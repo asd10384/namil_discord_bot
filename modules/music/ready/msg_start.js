@@ -9,7 +9,7 @@ const { play_end } = require('../play_end');
 const request = require('request');
 
 module.exports = {
-    msg_start: async function msg_start (client, serverid, message, args, voiceChannel, channelid, npid, first=false) {
+    msg_start: async function msg_start (client, serverid, message, args, num=0, voiceChannel, channelid, npid, first=false) {
         var url = `https://ytms.netlify.app/music_list.js`;
         request(url, async function (err, res, body) {
             if (!err) {
@@ -49,15 +49,27 @@ module.exports = {
                     }
                     if (page == 2) {
                         await db.set(`db.music.${serverid}.${page+1}.lastnum`, 1);
-                        mobject = await mobj(serverid, mobject, page);
+                        mobject = await mobj(serverid, mobject, page, num);
+                        if (mobject == undefined) {
+                            await db.set(`db.music.${serverid}.page`, page-1);
+                            return ;
+                        }
                         name = Object.keys(mobject);
                     }
                     if (page == 3) {
-                        mobject = await mobj(serverid, mobject, page);
+                        mobject = await mobj(serverid, mobject, page, num);
+                        if (mobject == undefined) {
+                            await db.set(`db.music.${serverid}.page`, page-1);
+                            return ;
+                        }
                         name = Object.keys(mobject);
                     }
                     if (page == 4) {
-                        mobject = await mobj(serverid, mobject, page);
+                        mobject = await mobj(serverid, mobject, page, num);
+                        if (mobject == undefined) {
+                            await db.set(`db.music.${serverid}.page`, page-1);
+                            return ;
+                        }
                         var lurl = mobject['url'];
                         var complite = mobject['complite'];
                         await db.set(`db.music.${serverid}.page`, 1);
@@ -98,17 +110,19 @@ module.exports = {
         });
         return ;
 
-        async function mobj(serverid, mobject, page=2) {
+        async function mobj(serverid, mobject, page=2, num=0) {
             if (page == 2) {
-                var lastnum = await db.get(`db.music.${serverid}.${page}.lastnum`);
-                if (lastnum > 0) {
+                var lastnum1 = await db.get(`db.music.${serverid}.${page-1}.lastnum`);
+                if (num != 0) lastnum1 = num;
+                if (lastnum1 > 0) {
                     var name = Object.keys(mobject);
-                    return mobject[name[lastnum-1]];
+                    return mobject[name[lastnum1-1]];
                 }
             }
             if (page == 3) {
-                var lastnum1 = await db.get(`db.music.${serverid}.${page-1}.lastnum`);
-                var lastnum2 = await db.get(`db.music.${serverid}.${page}.lastnum`);
+                var lastnum1 = await db.get(`db.music.${serverid}.${page-2}.lastnum`);
+                var lastnum2 = await db.get(`db.music.${serverid}.${page-1}.lastnum`);
+                if (num != 0) lastnum2 = num;
                 if (lastnum1 > 0 || lastnum2 > 0) {
                     var name1 = Object.keys(mobject);
                     var name2 = Object.keys(mobject[name1[lastnum1-1]]);
@@ -116,9 +130,10 @@ module.exports = {
                 }
             }
             if (page == 4) {
-                var lastnum1 = await db.get(`db.music.${serverid}.${page-2}.lastnum`);
-                var lastnum2 = await db.get(`db.music.${serverid}.${page-1}.lastnum`);
-                var lastnum3 = await db.get(`db.music.${serverid}.${page}.lastnum`);
+                var lastnum1 = await db.get(`db.music.${serverid}.${page-3}.lastnum`);
+                var lastnum2 = await db.get(`db.music.${serverid}.${page-2}.lastnum`);
+                var lastnum3 = await db.get(`db.music.${serverid}.${page-1}.lastnum`);
+                if (num != 0) lastnum3 = num;
                 if (lastnum1 > 0 || lastnum2 > 0 || lastnum3 > 0) {
                     var name1 = Object.keys(mobject);
                     var name2 = Object.keys(mobject[name1[lastnum1-1]]);

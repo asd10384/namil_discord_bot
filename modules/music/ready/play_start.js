@@ -28,7 +28,7 @@ module.exports = {
             const serverid = message.guild.id;
             await db.set(`db.music.${serverid}.page`, 1);
             await db.set(`db.music.${serverid}.lrpage`, 1);
-            await msg_start(client, serverid, message, args, voiceChannel, data.channelid, data.npid, true);
+            await msg_start(client, serverid, message, args, 0, voiceChannel, data.channelid, data.npid, true);
         });
     },
 }

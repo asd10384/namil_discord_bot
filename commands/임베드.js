@@ -46,7 +46,8 @@ module.exports = {
                 ${pp}임베드 [제목] [내용]
                 ${pp}임베드 [색깔] [제목]/[내용]
                 ${pp}임베드 [색깔] [제목]/[내용]/[출처]
-                (제목, 내용, 출처는 / 로 구분합니다.)
+                ${pp}임베드 [색깔] [제목]/[내용]/[출처]/[이미지주소]
+                (제목, 내용, 출처, 이미지는 / 로 구분합니다.)
             `)
             .setColor('RANDOM');
         
@@ -137,7 +138,15 @@ module.exports = {
                 }
                 let text = args.slice(1).join(' ').split('/');
                 let c = color[args[0].toUpperCase()];
-                if (text[2]) {
+                if (text.length == 2) {
+                    const embed1 = new MessageEmbed()
+                        .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
+                        .setColor(c)
+                        .setTitle(text[0])
+                        .setDescription(text[1]);
+                    return message.channel.send(embed1);
+                }
+                if (text.length == 3) {
                     const embed1 = new MessageEmbed()
                         .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
                         .setColor(c)
@@ -146,12 +155,16 @@ module.exports = {
                         .setFooter(text[2]);
                     return message.channel.send(embed1);
                 }
-                const embed1 = new MessageEmbed()
-                    .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
-                    .setColor(c)
-                    .setTitle(text[0])
-                    .setDescription(text[1]);
-                return message.channel.send(embed1);
+                if (text.length == 4) {
+                    const embed1 = new MessageEmbed()
+                        .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
+                        .setColor(c)
+                        .setTitle(text[0])
+                        .setDescription(text[1])
+                        .setFooter(text[2])
+                        .setImage(text[3]);
+                    return message.channel.send(embed1);
+                }
             } else {
                 let text = args.join(' ').split('/');
                 if (text[2]) {

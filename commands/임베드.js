@@ -55,32 +55,6 @@ module.exports = {
             .setTitle(`임베드 색깔`)
             .setColor('RANDOM');
         
-        const colorlist = [
-            'DEFAULT',
-            'RANDOM',
-            'AQUA',
-            'GREEN',
-            'BLUE',
-            'PURPLE',
-            'GOLD',
-            'ORANGE',
-            'RED',
-            'GREY',
-            'DARKER_GREY',
-            'NAVY',
-            'DARK_AQUA',
-            'DARK_GREEN',
-            'DARK_BLUE',
-            'DARK_PURPLE',
-            'DARK_GOLD',
-            'DARK_ORANGE',
-            'DARK_RED',
-            'DARK_GREY',
-            'LIGHT_GREY',
-            'DARK_NAVY',
-            'LUMINOUS_VIVID_PINK',
-            'DARK_VIVID_PINK'
-        ];
         const color = {
             DEFAULT: 0,
             RANDOM: 'RANDOM',
@@ -107,6 +81,7 @@ module.exports = {
             LUMINOUS_VIVID_PINK: 16580705,
             DARK_VIVID_PINK: 12320855
         };
+        const colorlist = Object.keys(color);
 
         Data.findOne({
             serverid: message.guild.id
@@ -121,14 +96,14 @@ module.exports = {
 
             if (args[0] === '색깔' || args[0] === 'color') {
                 let text = '';
-                for (i = 0; i < colorlist.length; i++) {
-                    text += `${colorlist[i]}\n`;
+                for (i in colorlist) {
+                    text += `${i}\n`;
                 }
                 colore.setDescription(text);
                 return message.channel.send(colore).then(m => msgdelete(m, help_time));
             }
 
-            if (color[args[0].toUpperCase()]) {
+            if (colorlist.includes(args[0].toUpperCase())) {
                 if (!args[1]) {
                     const texthelp = new MessageEmbed()
                         .setTitle(`제목을 입력해주세요.`)
@@ -138,31 +113,32 @@ module.exports = {
                 }
                 let text = args.slice(1).join(' ').split('/');
                 let c = color[args[0].toUpperCase()];
-                if (text.length == 2) {
+                if (text.length >= 2) {
+                    if (text.length >= 3) {
+                        if (text.length >= 4) {
+                            var img = text.slice(3).join('/');
+                            const embed1 = new MessageEmbed()
+                                .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
+                                .setColor(c)
+                                .setTitle(text[0])
+                                .setDescription(text[1])
+                                .setFooter(text[2])
+                                .setImage(img);
+                            return message.channel.send(embed1);
+                        }
+                        const embed1 = new MessageEmbed()
+                            .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
+                            .setColor(c)
+                            .setTitle(text[0])
+                            .setDescription(text[1])
+                            .setFooter(text[2]);
+                        return message.channel.send(embed1);
+                    }
                     const embed1 = new MessageEmbed()
                         .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
                         .setColor(c)
                         .setTitle(text[0])
                         .setDescription(text[1]);
-                    return message.channel.send(embed1);
-                }
-                if (text.length == 3) {
-                    const embed1 = new MessageEmbed()
-                        .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
-                        .setColor(c)
-                        .setTitle(text[0])
-                        .setDescription(text[1])
-                        .setFooter(text[2]);
-                    return message.channel.send(embed1);
-                }
-                if (text.length == 4) {
-                    const embed1 = new MessageEmbed()
-                        .setAuthor(`${message.author.username}`, 'https://cdn.discordapp.com/avatars/' + message.author.id + '/' + message.author.avatar + '.png')
-                        .setColor(c)
-                        .setTitle(text[0])
-                        .setDescription(text[1])
-                        .setFooter(text[2])
-                        .setImage(text[3]);
                     return message.channel.send(embed1);
                 }
             } else {

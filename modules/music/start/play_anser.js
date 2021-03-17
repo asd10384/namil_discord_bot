@@ -26,8 +26,15 @@ module.exports = {
                 await dbset_music(message);
             }
             // await data.save().catch(err => console.log(err));
-            
+
             try {
+                clearInterval(ontimer);
+                var ontimer = setInterval(async () => {
+                    if (!(message.guild.me.voice.channel == data.voicechannelid)) {
+                        clearInterval(ontimer);
+                        return await play_end(client, message);
+                    }
+                }, 100);
                 try {
                     var c = client.channels.cache.get(data.channelid);
                     c.messages.fetch().then(msg => {
@@ -38,7 +45,18 @@ module.exports = {
                 } catch(err) {}
                 await data.save().catch(err => console.log(err));
                 var c_anser = '';
-                if (!(args[0] == '스킵' || args[0] == 'skip')) {
+                if (args[0] == '스킵' || args[0] == 'skip') {
+                    c_anser = '스킵하셨습니다.';
+                    if (args[1] == '시간초과') c_anser = '시간초과로 스킵되었습니다.';
+                    var skip = data.skip;
+                    if (skip == undefined || skip == 0) {
+                        skip = 1;
+                    } else {
+                        skip = skip + 1;
+                    }
+                    data.skip = skip;
+                    await data.save().catch(err => console.log(err));
+                } else {
                     c_anser = message.member.user.username;
                     var userid = await message.author.id;
                     var score = await db.get(`db.music.${message.guild.id}.score`);
@@ -48,16 +66,6 @@ module.exports = {
                         score[userid] = 1;
                     }
                     await db.set(`db.music.${message.guild.id}.score`, score);
-                } else {
-                    c_anser = '스킵하셨습니다.';
-                    var skip = data.skip;
-                    if (skip == undefined || skip == 0) {
-                        skip = 1;
-                    } else {
-                        skip = skip + 1;
-                    }
-                    data.skip = skip;
-                    await data.save().catch(err => console.log(err));
                 }
                 var time = Number(data.anser_time);
                 var count = data.count;

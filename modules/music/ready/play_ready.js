@@ -102,6 +102,7 @@ module.exports = {
                     data.link = ll;
                     data.count = 0;
                     data.start = true;
+                    data.sthas = false;
                     await data.save().catch(err => console.log(err));
                     play(client, voiceChannel, message);
                 }

@@ -15,7 +15,7 @@ connect(dburl, {
 const Data = require('../../music_data');
 
 module.exports = {
-    play_setting: async function play_setting (client, message, args) {
+    play_setting: async function play_setting (client, message, args, em, emerr) {
         Data.findOne({
             serverid: message.guild.id
         }, async function (err, data) {
@@ -31,18 +31,12 @@ module.exports = {
                 }, t);
             }
 
-            const emerr = new MessageEmbed()
-                .setTitle(`오류`)
-                .setColor('RED');
-            const em = new MessageEmbed()
-                .setColor('RED');
-
             if (!data.start) {
                 if (args[1] == '정답') {
-                    return await setting_anser(client, message, args);
+                    return await setting_anser(client, message, args, em, emerr);
                 }
                 if (args[1] == '시간') {
-                    return await setting_time(client, message, args);
+                    return await setting_time(client, message, args, em, emerr);
                 }
                 em.setTitle(`\` 음악퀴즈 설정 명령어 \``)
                     .setDescription(`

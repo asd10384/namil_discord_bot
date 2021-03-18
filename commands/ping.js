@@ -10,7 +10,9 @@ module.exports = {
     async run (client, message, args) {
         function msgdelete(m, t) {
             setTimeout(function() {
-                m.delete();
+                try {
+                    m.delete();
+                } catch(err) {}
             }, t)
         }
         let pp = await db.get(`dp.prefix.${message.member.id}`);

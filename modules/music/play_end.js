@@ -29,8 +29,10 @@ module.exports = {
             data.link = [];
             data.count = 0;
             data.start = false;
+            data.sthas = false;
             data.tts = true;
             data.skip = 0;
+            await db.set(`db.music.${message.guild.id}.startmsg`, false);
             await db.set(`db.music.${message.guild.id}.user`, []);
             await db.set(`db.music.${message.guild.id}.hint`, []);
             await db.set(`db.music.${message.guild.id}.hintget`, false);

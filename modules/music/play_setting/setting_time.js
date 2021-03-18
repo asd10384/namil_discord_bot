@@ -14,7 +14,7 @@ connect(dburl, {
 const Data = require('../../music_data');
 
 module.exports = {
-    setting_time: async function setting_time (client, message, args) {
+    setting_time: async function setting_time (client, message, args, em, emerr) {
         Data.findOne({
             serverid: message.guild.id
         }, async function (err, data) {
@@ -29,12 +29,6 @@ module.exports = {
                     m.delete();
                 }, t);
             }
-
-            const emerr = new MessageEmbed()
-                .setTitle(`오류`)
-                .setColor('RED');
-            const em = new MessageEmbed()
-                .setColor('RED');
 
             if (args[2]) {
                 var anser_time = data.anser_time;

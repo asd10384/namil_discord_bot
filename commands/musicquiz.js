@@ -39,7 +39,9 @@ module.exports = {
     async run (client, message, args) {
         function msgdelete(m, t) {
             setTimeout(function() {
-                m.delete();
+                try {
+                    m.delete();
+                } catch(err) {}
             }, t);
         }
         var pp = db.get(`dp.prefix.${message.member.id}`);
@@ -52,6 +54,8 @@ module.exports = {
             .setTitle(`이 명령어를 사용할 권한이 없습니다.`)
             .setColor('RED');
         
+        const em = new MessageEmbed()
+            .setColor('ORANGE');
         const emerr = new MessageEmbed()
             .setTitle(`오류`)
             .setColor('RED');
@@ -99,12 +103,26 @@ module.exports = {
             } catch(err) {}
 
             if (args[0] == '시작' || args[0] == 'start') {
-                return await play_start(client, message, args, voiceChannel);
+                var startmsg = await db.get(`db.music.${message.guild.id}.startmsg`);
+                if (startmsg == undefined || startmsg == null) startmsg = false;
+                if (!startmsg) {
+                    await db.set(`db.music.${message.guild.id}.startmsg`, true);
+                    return await play_start(client, message, args, voiceChannel);
+                } else {
+                    emerr.setDescription(`
+                        이미 음악퀴즈 시작을 입력하셨습니다.
+
+                        **${default_prefix}음악퀴즈 종료**
+                        를 입력하신뒤 다시 시도해주세요.
+                    `);
+                    return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
+                }
             }
             if (args[0] == '설정' || args[0] == 'setting') {
-                return await play_setting(client, message, args);
+                return await play_setting(client, message, args, em, emerr);
             }
             if (args[0] == '종료' || args[0] == '중단' || args[0] == '중지' || args[0] == 'stop') {
+                await db.set(`db.music.${message.guild.id}.startmsg`, false);
                 return play_end(client, message);
             }
             if (args[0] == '스킵' || args[0] == 'skip') {

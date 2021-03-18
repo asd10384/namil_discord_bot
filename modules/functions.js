@@ -47,6 +47,7 @@ module.exports = {
             count: 0,
             skip: 0,
             start: false,
+            sthas: false,
             tts: true,
             role: [],
             anser_list: ['제목', '가수', '제목-가수', '가수-제목'],

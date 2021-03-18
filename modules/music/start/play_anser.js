@@ -27,6 +27,9 @@ module.exports = {
             }
             // await data.save().catch(err => console.log(err));
 
+            data.sthas = false;
+            data.save().catch(err => console.log(err));
+            
             try {
                 clearInterval(ontimer);
                 var ontimer = setInterval(async () => {
@@ -35,15 +38,7 @@ module.exports = {
                         return await play_end(client, message);
                     }
                 }, 100);
-                try {
-                    var c = client.channels.cache.get(data.channelid);
-                    c.messages.fetch().then(msg => {
-                        if (msg.size > 3) {
-                            c.bulkDelete(msg.size-3);
-                        }
-                    });
-                } catch(err) {}
-                await data.save().catch(err => console.log(err));
+                
                 var c_anser = '';
                 if (args[0] == '스킵' || args[0] == 'skip') {
                     c_anser = '스킵하셨습니다.';
@@ -109,6 +104,16 @@ module.exports = {
                 } catch(err) {}
                 return await play_end(client, message);
             }
+
+            try {
+                var c = client.channels.cache.get(data.channelid);
+                c.messages.fetch().then(msg => {
+                    if (msg.size > 3) {
+                        c.bulkDelete(msg.size-3);
+                    }
+                });
+            } catch(err) {}
+
             data.count = data.count + 1;
             await data.save().catch(err => console.log(err));
             setTimeout(async function() {

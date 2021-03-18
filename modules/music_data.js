@@ -14,6 +14,7 @@ const dataSchema = Schema({
     count: Number,
     skip: Number,
     start: Boolean,
+    sthas: Boolean,
     tts: Boolean,
     role: Array,
     anser_list: Array,

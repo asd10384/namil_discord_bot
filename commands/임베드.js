@@ -23,7 +23,9 @@ module.exports = {
     async run (client, message, args) {
         function msgdelete(m, t) {
             setTimeout(function() {
-                m.delete();
+                try {
+                    m.delete();
+                } catch(err) {}
             }, t)
         }
         var pp = db.get(`db.prefix.${message.member.id}`);

@@ -35,7 +35,9 @@ module.exports = {
     async run (client, message, args) {
         function msgdelete(m, t) {
             setTimeout(function() {
-                m.delete();
+                try {
+                    m.delete();
+                } catch(err) {}
             }, t)
         }
         var pp = db.get(`dp.prefix.${message.member.id}`);
@@ -82,13 +84,19 @@ module.exports = {
             }
 
             if (text == anser) {
-                return play_anser(message, client, args);
+                data.sthas = false;
+                await data.save().catch(err => console.log(err));
+                return await play_anser(message, client, args);
             }
             if (text == '스킵' || text == 'skip') {
-                await play_skip(client, message, message.author.id);
+                data.sthas = false;
+                await data.save().catch(err => console.log(err));
+                return await play_skip(client, message, message.author.id);
             }
             if (text == '힌트' || text == 'hint') {
-                await play_hint(client, message, message.author.id);
+                data.sthas = false;
+                await data.save().catch(err => console.log(err));
+                return await play_hint(client, message, message.author.id);
             }
         });
     },

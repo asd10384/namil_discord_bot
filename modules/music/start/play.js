@@ -92,6 +92,8 @@ module.exports = {
                         }
                     }, 100);
                     const dispatcher = connection.play(url, options);
+                    data.sthas = true;
+                    await data.save().catch(err => console.log(err));
                     dispatcher.on("finish", async () => {
                         const { play_anser } = require('./play_anser');
                         return await play_anser(message, client, ['스킵', '시간초과']);

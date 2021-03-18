@@ -11,7 +11,9 @@ module.exports = {
     async run (client, message, args) {
         function msgdelete(m, t) {
             setTimeout(function() {
-                m.delete();
+                try {
+                    m.delete();
+                } catch(err) {}
             }, t)
         }
         var pp = db.get(`dp.prefix.${message.member.id}`);
@@ -72,7 +74,7 @@ module.exports = {
             com6,
         ];
 
-        var time = help_time + (pages.length * 1500);
+        var time = (Math.floor(help_time/2)) + help_time + (pages.length * 1500);
         const emojiList = ["⏪", "⏩"];
         const timeout = time - 5;
         pagination(message, pages, emojiList, timeout)

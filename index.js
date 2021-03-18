@@ -98,6 +98,7 @@ client.on('message', async message => {
                 const command = client.commands.get(commandName) ||
                 client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
 
+
                 try {
                     await command.run(client, message, args);
                     msgdelete(300);
@@ -110,7 +111,7 @@ client.on('message', async message => {
                         .setColor('DARK_RED')
                         .setDescription(`\` ${commandName} \` 이라는 명령어를 찾을수 없습니다.`)
                         .setFooter(` ${prefix}help 를 입력해 명령어를 확인해 주세요.`);
-                    message.channel.send(embed).then(m => {
+                    return message.channel.send(embed).then(m => {
                         setTimeout(function() {
                             try {
                                 m.delete();
@@ -125,7 +126,7 @@ client.on('message', async message => {
                     var args = message.content.trim().split(/ +/g);
                 }
                 const command = client.commands.get('tts');
-                command.run(client, message, args);
+                return command.run(client, message, args);
             } else if (musicquizid == message.channel.id) {
                 try {
                     var args = message.content.trim().split(/ +/g);
@@ -134,11 +135,11 @@ client.on('message', async message => {
                 }
                 if (data.start == true) {
                     const command = client.commands.get('musicanser');
-                    command.run(client, message, args);
+                    return command.run(client, message, args);
                 } else {
                     msgdelete(500);
                     const command = client.commands.get('musicquiz');
-                    command.run(client, message, args);
+                    return command.run(client, message, args);
                 }
             }
         }

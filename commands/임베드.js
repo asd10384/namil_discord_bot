@@ -98,7 +98,7 @@ module.exports = {
 
             if (args[0] === '색깔' || args[0] === 'color') {
                 let text = '';
-                for (i in colorlist) {
+                for (i in color) {
                     text += `${i}\n`;
                 }
                 colore.setDescription(text);

@@ -51,10 +51,22 @@ module.exports = {
                                 .setDescription(`이미 밴 상태입니다.`);
                             return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
                         }
-                        var dd = new Date();
-                        var d = `${z(dd.getFullYear())}년${z(dd.getMonth()+1)}월${z(dd.getDate())}일 ${z(dd.getHours())}시${z(dd.getMinutes())}분${z(dd.getSeconds())}초`;
+                        const nowDate = new Date();
+                        var date = `${
+                            az(nowDate.getFullYear())
+                        }년${
+                            az(nowDate.getMonth()+1)
+                        }월${
+                            az(nowDate.getDate())
+                        }일 ${
+                            az(nowDate.getHours())
+                        }시${
+                            az(nowDate.getMinutes())
+                        }분${
+                            az(nowDate.getSeconds())
+                        }초`;
                         ttscheck.setTitle(`\` ${user.username} \`님의 TTS 설정`)
-                            .setDescription(`${d}\n이후로 \` 밴 \` 되셨습니다.`);
+                            .setDescription(`${date}\n이후로 \` 밴 \` 되셨습니다.`);
                         return message.channel.send(ttscheck).then(m => {
                             if (textchannel['tts'].includes(message.channel.id)) {
                                 msgdelete(m, msg_time+3000);
@@ -71,7 +83,7 @@ module.exports = {
                 .setDescription(`${pp}tts ban [player]`);
             return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
             
-            function z(num) {
+            function az(num) {
                 return num < 10 ? "0" + num : num;
             }
         });

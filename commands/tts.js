@@ -1,10 +1,11 @@
 
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
-const { default_prefix, msg_time, help_time, drole, mongourl, textchannel } = require('../config.json');
-const ytdl = require('ytdl-core');
-var checkyturl = /(?:http:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?(.+)/;
-var checkytid = /(?:http:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=)?/gi;
+const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');
+
+const { tts_play } = require('../modules/tts/tts_play');
+const { tts_ban } = require('../modules/tts/tts_ban');
+const { tts_unban } = require('../modules/tts/tts_unban');
 
 const { dbset, dbset_music } = require('../modules/functions');
 const { connect } = require('mongoose');
@@ -13,7 +14,7 @@ connect(dburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
-const Data = require('../modules/data');
+// const Data = require('../modules/data');
 const mData = require('../modules/music_data');
 
 module.exports = {
@@ -66,181 +67,19 @@ module.exports = {
         mData.findOne({
             serverid: message.guild.id
         }, async function (errr, dataa) {
-            if (errr) console.log(errr);
             if (!dataa) {
                 await dbset_music(message);
             }
             if (!args[0]) return message.channel.send(help).then(m => msgdelete(m, msg_time));
             if (args[0] == 'ban' || args[0] == '밴' || args[0] == '뮤트') {
                 if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>dataa.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
-                if (args[1]) {
-                    var muser = message.guild.members.cache.get(args[1].replace(/[^0-9]/g, ''));
-                    if (muser) {
-                        var user = muser.user;
-                        Data.findOne({
-                            userID: user.id
-                        }, (err, data) => {
-                            if (err) console.log(err);
-                            if (!data) {
-                                dbset(user);
-                                var ttsboolen = true;
-                            } else {
-                                var ttsboolen = data.tts;
-                                data.tts = false;
-                                data.save().catch(err => console.log(err));
-                            }
-                            if (ttsboolen == false) {
-                                ttscheck.setTitle(`\` ${user.username} \`님의 TTS 설정`)
-                                    .setDescription(`이미 밴 상태입니다.`);
-                                return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
-                            }
-                            var dd = new Date();
-                            var d = `${z(dd.getFullYear())}년${z(dd.getMonth())}월${z(dd.getDate())}일 ${z(dd.getHours())}시${z(dd.getMinutes())}분${z(dd.getSeconds())}초`;
-                            ttscheck.setTitle(`\` ${user.username} \`님의 TTS 설정`)
-                                .setDescription(`${d}\n이후로 \` 밴 \` 되셨습니다.`);
-                            return message.channel.send(ttscheck).then(m => {
-                                if (textchannel['tts'].includes(message.channel.id)) {
-                                    msgdelete(m, msg_time+3000);
-                                }
-                            });
-                        });
-                        return ;
-                    }
-                    ttscheck.setTitle(`\` TTS오류 \``)
-                        .setDescription(`플레이어를 찾을수 없습니다.`);
-                    return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
-                }
-                ttscheck.setTitle(`\` TTS오류 \``)
-                    .setDescription(`${pp}tts ban [player]`);
-                return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
+                return await tts_ban(client, message, args, ttscheck);
             }
             if (args[0] == 'unban' || args[0] == '언밴' || args[0] == '언벤' || args[0] == '해제') {
                 if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>dataa.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
-                if (args[1]) {
-                    var muser = message.guild.members.cache.get(args[1].replace(/[^0-9]/g, ''));
-                    if (muser) {
-                        var user = muser.user;
-                        Data.findOne({
-                            userID: user.id
-                        }, (err, data) => {
-                            if (err) console.log(err);
-                            if (!data) {
-                                dbset(user, 0);
-                                var ttsboolen = true;
-                            } else {
-                                var ttsboolen = data.tts;
-                                data.tts = true;
-                                data.save().catch(err => console.log(err));
-                            }
-                            if (ttsboolen == true) {
-                                ttscheck.setTitle(`\` ${user.username} \`님의 TTS 설정`)
-                                    .setDescription(`이미 언벤 상태입니다.`);
-                                return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
-                            }
-                            var dd = new Date();
-                            var d = `${z(dd.getFullYear())}년${z(dd.getMonth())}월${z(dd.getDate())}일 ${z(dd.getHours())}시${z(dd.getMinutes())}분${z(dd.getSeconds())}초`;
-                            ttscheck.setTitle(`\` ${user.username} \`님의 TTS 설정`)
-                                .setDescription(`${d}\n이후로 \` 언밴 \` 되셨습니다.`);
-                            return message.channel.send(ttscheck).then(m => {
-                                if (textchannel['tts'].includes(message.channel.id)) {
-                                    msgdelete(m, msg_time+3000);
-                                }
-                            });
-                        });
-                        return ;
-                    }
-                    ttscheck.setTitle(`\` TTS오류 \``)
-                        .setDescription(`플레이어를 찾을수 없습니다.`);
-                    return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
-                }
-                ttscheck.setTitle(`\` TTS오류 \``)
-                    .setDescription(`${pp}tts unban [player]`);
-                return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
+                return await tts_unban(client, message, args, ttscheck);
             }
-
-            var user = message.member.user;
-            Data.findOne({
-                userID: user.id
-            }, (err, data) => {
-                if (err) console.log(err);
-                if (!data) {
-                    dbset(user, 0);
-                    var ttsboolen = true;
-                } else {
-                    var ttsboolen = data.tts;
-                }
-                if (ttsboolen == false) {
-                    try {
-                        setTimeout(() => {
-                            return message.delete();
-                        }, 50);
-                    } catch(err) {}
-                    return ;
-                }
-                var text = args.join(' ');
-                var options = {};
-        
-                var url = '없음';
-                if (text.match(checkyturl)) {
-                    try {
-                        url = ytdl(`https://youtu.be/${text.replace(checkytid, '')}`, { bitrate: 512000 });
-                        options = {
-                            volume: 0.08
-                        };
-                        message.delete();
-                    } catch(e) {
-                        return message.channel.send(yterr).then(m => msgdelete(m, msg_time));
-                    }
-                }
-
-                text = text.replace(/\?/gi, '물음표') || text;
-                text = text.replace(/\!/gi, '느낌표') || text;
-                text = text.replace(/\~/gi, '물결표') || text;
-        
-                text = text.replace(/\'/gi, '따옴표') || text;
-                text = text.replace(/\"/gi, '큰따옴표') || text;
-        
-                text = text.replace(/\(/gi, '여는소괄호') || text;
-                text = text.replace(/\)/gi, '닫는소괄호') || text;
-                text = text.replace(/\{/gi, '여는중괄호') || text;
-                text = text.replace(/\}/gi, '닫는중괄호') || text;
-                text = text.replace(/\[/gi, '여는대괄호') || text;
-                text = text.replace(/\]/gi, '닫는대괄호') || text;
-        
-                text = text.replace(/ㄹㅇ/gi, '리얼') || text;
-                text = text.replace(/ㅅㅂ/gi, '시바') || text;
-                text = text.replace(/ㄲㅂ/gi, '까비') || text;
-                text = text.replace(/ㅅㄱ/gi, '수고') || text;
-                text = text.replace(/ㅎㅇ/gi, '하이') || text;
-                text = text.replace(/ㄴㅇㅅ/gi, '나이스') || text;
-        
-                if (dataa.tts) {
-                    try {
-                        if (!!message.member.voice.channel) {
-                            var channel = message.member.voice.channel;
-                        } else if (!!message.guild.me.voice.channel) {
-                            var channel = message.guild.voice.channel;
-                        }
-
-                        if (url == '없음') {
-                            var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${text}&tl=ko`;
-                        }
-                        const broadcast = client.voice.createBroadcast();
-                        channel.join().then(connection => {
-                            broadcast.play(url, options);
-                            connection.play(broadcast);
-                        });
-                    } catch (error) {
-                        return message.channel.send(vcerr).then(m => msgdelete(m, msg_time));
-                    }
-                } else {
-                    return message.channel.send(music).then(m => msgdelete(m, msg_time));
-                }
-            });
-            
-            function z(num) {
-                return num < 10 ? "0" + num : num;
-            }
+            return await tts_play(client, message, args, vcerr, yterr, music);
         });
     },
 };

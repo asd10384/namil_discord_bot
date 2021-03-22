@@ -80,7 +80,7 @@ module.exports = {
 
                         if (url == '없음') {
                             var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${
-                                await tts_msg(text)
+                                tts_msg(text)
                             }&tl=ko`;
                         }
                         const broadcast = client.voice.createBroadcast();

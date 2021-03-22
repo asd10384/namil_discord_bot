@@ -1,6 +1,6 @@
 
 module.exports = {
-    tts_msg: async function tts_msg (text) {
+    tts_msg: function tts_msg (text) {
         text = text.replace(/\?/gi, '물음표') || text;
         text = text.replace(/\!/gi, '느낌표') || text;
         text = text.replace(/\~/gi, '물결표') || text;

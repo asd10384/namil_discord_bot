@@ -28,7 +28,6 @@ module.exports = {
             // await data.save().catch(err => console.log(err));
 
             data.sthas = false;
-            data.save().catch(err => console.log(err));
             
             try {
                 clearInterval(ontimer);

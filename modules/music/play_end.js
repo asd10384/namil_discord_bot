@@ -23,7 +23,7 @@ module.exports = {
                 await dbset_music(message);
             }
             // await data.save().catch(err => console.log(err));
-            
+
             data.name = [];
             data.vocal = [];
             data.link = [];
@@ -61,8 +61,15 @@ module.exports = {
                         m.edit(np);
                         m.reactions.removeAll();
                     });
-                    
                 } catch(err) {}
+            } catch(err) {}
+            try {
+                var c = client.channels.cache.get(data.channelid);
+                c.messages.fetch().then(msg => {
+                    if (msg.size > 3) {
+                        c.bulkDelete(msg.size-3);
+                    }
+                });
             } catch(err) {}
         });
     },

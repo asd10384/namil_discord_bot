@@ -80,9 +80,6 @@ module.exports = {
                 var channelid = data.channelid;
                 var listid = data.listid;
                 var npid = data.npid;
-                setTimeout(async function() {
-                    await play_score(client, message);
-                }, 300);
                 try {
                     var c = client.channels.cache.get(channelid);
                     c.messages.fetch(listid).then(m => {
@@ -113,6 +110,10 @@ module.exports = {
                 });
             } catch(err) {}
 
+            try {
+                await play_score(client, message);
+            } catch(err) {}
+            
             data.count = data.count + 1;
             await data.save().catch(err => console.log(err));
             setTimeout(async function() {

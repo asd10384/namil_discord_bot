@@ -29,6 +29,8 @@ module.exports = {
             if (!dataa) {
                 await dbset_music(message);
             }
+
+            var nowDate = new Date();
             
             if (args[1]) {
                 var muser = message.guild.members.cache.get(args[1].replace(/[^0-9]/g, ''));
@@ -51,7 +53,6 @@ module.exports = {
                                 .setDescription(`이미 밴 상태입니다.`);
                             return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
                         }
-                        const nowDate = new Date();
                         var date = `${
                             az(nowDate.getFullYear())
                         }년${

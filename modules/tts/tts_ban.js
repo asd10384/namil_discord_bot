@@ -68,7 +68,7 @@ module.exports = {
                         ttscheck.setTitle(`\` ${user.username} \`님의 TTS 설정`)
                             .setDescription(`${date}\n이후로 \` 밴 \` 되셨습니다.`);
                         return message.channel.send(ttscheck).then(m => {
-                            if (textchannel['tts'].includes(message.channel.id)) {
+                            if (!dataa.ttsid === message.channel.id) {
                                 msgdelete(m, msg_time+3000);
                             }
                         });

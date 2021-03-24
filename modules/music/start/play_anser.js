@@ -117,6 +117,10 @@ module.exports = {
             data.count = data.count + 1;
             await data.save().catch(err => console.log(err));
             setTimeout(async function() {
+                if (!(message.guild.me.voice.channel == data.voicechannelid)) {
+                    clearInterval(ontimer);
+                    return ;
+                }
                 try {
                     var c = client.channels.cache.get(data.voicechannelid);
                 } catch(err) {

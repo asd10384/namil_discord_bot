@@ -3,7 +3,7 @@ const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole, mongourl, textchannel } = require('../../config.json');
 
-const { dbset, dbset_music } = require('../functions');
+const { dbset, dbset_music, nowtime } = require('../functions');
 const { connect } = require('mongoose');
 var dburl = process.env.mongourl || mongourl; // config 수정
 connect(dburl, {
@@ -29,8 +29,6 @@ module.exports = {
             if (!dataa) {
                 await dbset_music(message);
             }
-
-            var nowDate = new Date();
             
             if (args[1]) {
                 var muser = message.guild.members.cache.get(args[1].replace(/[^0-9]/g, ''));
@@ -53,21 +51,9 @@ module.exports = {
                                 .setDescription(`이미 밴 상태입니다.`);
                             return message.channel.send(ttscheck).then(m => msgdelete(m, msg_time+3000));
                         }
-                        var date = `${
-                            az(nowDate.getFullYear())
-                        }년${
-                            az(nowDate.getMonth()+1)
-                        }월${
-                            az(nowDate.getDate())
-                        }일 ${
-                            az(nowDate.getHours())
-                        }시${
-                            az(nowDate.getMinutes())
-                        }분${
-                            az(nowDate.getSeconds())
-                        }초`;
+                        const date = nowtime(new Date());
                         ttscheck.setTitle(`\` ${user.username} \`님의 TTS 설정`)
-                            .setDescription(`${date}\n이후로 \` 밴 \` 되셨습니다.`);
+                            .setDescription(`${date['time']['2']}\n이후로 \` 밴 \` 되셨습니다.`);
                         return message.channel.send(ttscheck).then(m => {
                             if (!dataa.ttsid === message.channel.id) {
                                 msgdelete(m, msg_time+3000);

@@ -90,25 +90,11 @@ module.exports = {
                     });
                 } catch(err) {}
             } catch(err) {
-                try {
-                    var c = client.channels.cache.get(data.channelid);
-                    c.messages.fetch().then(msg => {
-                        if (msg.size > 3) {
-                            c.bulkDelete(msg.size-3);
-                        }
-                    });
-                } catch(err) {}
+                await delmsg(client, data);
                 return await play_end(client, message);
             }
 
-            try {
-                var c = client.channels.cache.get(data.channelid);
-                c.messages.fetch().then(msg => {
-                    if (msg.size > 3) {
-                        c.bulkDelete(msg.size-3);
-                    }
-                });
-            } catch(err) {}
+            await delmsg(client, data);
 
             try {
                 await play_score(client, message);
@@ -130,14 +116,7 @@ module.exports = {
                         var c = message.member.voice.channel.id;
                     }
                 }
-                try {
-                    var c = client.channels.cache.get(data.channelid);
-                    c.messages.fetch().then(msg => {
-                        if (msg.size > 3) {
-                            c.bulkDelete(msg.size-3);
-                        }
-                    });
-                } catch(err) {}
+                await delmsg(client, data);
                 
                 await db.set(`db.music.${message.guild.id}.user`, []);
                 await db.set(`db.music.${message.guild.id}.hint`, []);
@@ -146,5 +125,15 @@ module.exports = {
                 return await play(client, c, message);
             }, time * 1000);
         });
+        async function delmsg(client, data) {
+            try {
+                var c = client.channels.cache.get(data.channelid);
+                c.messages.fetch().then(msg => {
+                    if (msg.size > 3) {
+                        c.bulkDelete(msg.size-3);
+                    }
+                });
+            } catch(err) {}
+        }
     },
 }

@@ -28,7 +28,9 @@ module.exports = {
                 var c = client.channels.cache.get(data.channelid);
                 c.messages.fetch().then(msg => {
                     if (msg.size > 3) {
-                        c.bulkDelete(msg.size-3);
+                        try {
+                            c.bulkDelete(msg.size-3);
+                        } catch(err) {}
                     }
                 });
             } catch(err) {}

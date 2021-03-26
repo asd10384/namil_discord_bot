@@ -116,19 +116,19 @@ module.exports = {
                         var c = message.member.voice.channel.id;
                     }
                 }
-                await delmsg(client, data);
                 
                 await db.set(`db.music.${message.guild.id}.user`, []);
                 await db.set(`db.music.${message.guild.id}.hint`, []);
                 await db.set(`db.music.${message.guild.id}.hintget`, false);
                 await db.set(`db.music.${message.guild.id}.skipget`, false);
+                await delmsg(client, data);
                 return await play(client, c, message);
             }, time * 1000);
         });
         async function delmsg(client, data) {
             try {
                 var c = client.channels.cache.get(data.channelid);
-                c.messages.fetch().then(msg => {
+                return c.messages.fetch().then(msg => {
                     if (msg.size > 3) {
                         c.bulkDelete(msg.size-3);
                     }

@@ -130,6 +130,15 @@ module.exports = {
                         var c = message.member.voice.channel.id;
                     }
                 }
+                try {
+                    var c = client.channels.cache.get(data.channelid);
+                    c.messages.fetch().then(msg => {
+                        if (msg.size > 3) {
+                            c.bulkDelete(msg.size-3);
+                        }
+                    });
+                } catch(err) {}
+                
                 await db.set(`db.music.${message.guild.id}.user`, []);
                 await db.set(`db.music.${message.guild.id}.hint`, []);
                 await db.set(`db.music.${message.guild.id}.hintget`, false);

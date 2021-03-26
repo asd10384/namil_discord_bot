@@ -89,13 +89,9 @@ module.exports = {
                 return await play_anser(message, client, args);
             }
             if (text == '스킵' || text == 'skip') {
-                data.sthas = false;
-                await data.save().catch(err => console.log(err));
                 return await play_skip(client, message, message.author.id);
             }
             if (text == '힌트' || text == 'hint') {
-                data.sthas = false;
-                await data.save().catch(err => console.log(err));
                 return await play_hint(client, message, message.author.id);
             }
         });

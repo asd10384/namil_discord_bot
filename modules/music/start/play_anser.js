@@ -90,7 +90,6 @@ module.exports = {
                     });
                 } catch(err) {}
             } catch(err) {
-                await delmsg(client, data);
                 return await play_end(client, message);
             }
 

@@ -63,14 +63,16 @@ module.exports = {
                     });
                 } catch(err) {}
             } catch(err) {}
-            
+
             try {
                 var c = client.channels.cache.get(data.channelid);
-                c.messages.fetch().then(msg => {
-                    if (msg.size > 3) {
-                        c.bulkDelete(msg.size-3);
-                    }
-                });
+                setTimeout(() => {
+                    c.messages.fetch().then(msg => {
+                        if (msg.size > 3) {
+                            c.bulkDelete(msg.size-3);
+                        }
+                    });
+                }, 500);
             } catch(err) {}
         });
     },

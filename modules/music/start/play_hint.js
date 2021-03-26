@@ -52,10 +52,13 @@ module.exports = {
                         var count = Math.floor(vcms / 2);
                         var hint = await db.get(`db.music.${message.guild.id}.hint`);
                         var idx = hint.indexOf(userid);
+                        var text = '';
                         if (idx > -1) {
                             hint.splice(idx, 1);
+                            text = `${message.author.username} 님이 힌트를 요청했습니다.`;
                         } else {
                             hint.push(userid);
+                            text = `${message.author.username} 님이 힌트를 요청을 취소했습니다.`;
                         }
                         if (hint.length >= count) {
                             await db.set(`db.music.${message.guild.id}.hintget`, true);
@@ -84,7 +87,7 @@ module.exports = {
                         }
                         await db.set(`db.music.${message.guild.id}.hint`, hint);
                         em.setTitle(`힌트 (${hint.length} / ${count})`)
-                            .setDescription(`${count-hint.length}명이 더 힌트를 입력해야합니다.`)
+                            .setDescription(`${text}\n\n${count-hint.length}명이 더 힌트를 입력해야합니다.`)
                             .setFooter(`한번더 입력하면 취소됩니다.`);
                         return message.channel.send(em);
                     }

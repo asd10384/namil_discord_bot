@@ -53,10 +53,13 @@ module.exports = {
                     var count = Math.floor(vcms / 2);
                     var user = await db.get(`db.music.${message.guild.id}.user`);
                     var idx = user.indexOf(userid);
+                    var text = '';
                     if (idx > -1) {
                         user.splice(idx, 1);
+                        text = `${message.author.username} 님이 스킵을 요청했습니다.`;
                     } else {
                         user.push(userid);
+                        text = `${message.author.username} 님이 스킵을 요청을 취소했습니다.`;
                     }
                     if (user.length >= count) {
                         await db.set(`db.music.${message.guild.id}.skipget`, true);
@@ -65,7 +68,7 @@ module.exports = {
                     }
                     await db.set(`db.music.${message.guild.id}.user`, user);
                     em.setTitle(`스킵 (${user.length} / ${count})`)
-                        .setDescription(`${count-user.length}명이 더 스킵해야합니다.`)
+                        .setDescription(`${text}\n\n${count-user.length}명이 더 스킵해야합니다.`)
                         .setFooter(`한번더 입력하면 취소됩니다.`);
                     return message.channel.send(em);
                 }   

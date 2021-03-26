@@ -72,7 +72,7 @@ module.exports = {
                             c.bulkDelete(msg.size-3);
                         }
                     });
-                }, 500);
+                }, 750);
             } catch(err) {}
         });
     },

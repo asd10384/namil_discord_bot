@@ -94,7 +94,8 @@ module.exports = {
                     .setDescription(`
                         \` 아래 숫자을 눌러 선택해주세요. \`
                         ${text[lrpage-1]}
-                        　
+                        
+                        (아래 이모지가 전부 로딩된 뒤 선택해주세요.)
                     `)
                     .setFooter(`기본 명령어 : ${default_prefix}음악퀴즈 명령어`)
                     .setColor('ORANGE');

@@ -55,10 +55,10 @@ module.exports = {
                         var text = '';
                         if (idx > -1) {
                             hint.splice(idx, 1);
-                            text = `${message.author.username} 님이 힌트를 요청했습니다.`;
+                            text = `<@!${message.author.id}> 님이 힌트를 요청을 취소했습니다.`;
                         } else {
                             hint.push(userid);
-                            text = `${message.author.username} 님이 힌트를 요청을 취소했습니다.`;
+                            text = `<@!${message.author.id}> 님이 힌트를 요청했습니다.`;
                         }
                         if (hint.length >= count) {
                             await db.set(`db.music.${message.guild.id}.hintget`, true);

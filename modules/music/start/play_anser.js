@@ -29,25 +29,23 @@ module.exports = {
 
             data.sthas = false;
             
+            clearInterval(ontimer);
+            var ontimer = setInterval(async () => {
+                if (!(message.guild.me.voice.channel == data.voicechannelid)) {
+                    clearInterval(ontimer);
+                    return await play_end(client, message);
+                }
+            }, 100);
+
+            // bulkmessage
+            await delmsg(client, data);
+
             try {
-                clearInterval(ontimer);
-                var ontimer = setInterval(async () => {
-                    if (!(message.guild.me.voice.channel == data.voicechannelid)) {
-                        clearInterval(ontimer);
-                        return await play_end(client, message);
-                    }
-                }, 100);
-                
                 var c_anser = '';
                 if (args[0] == '스킵' || args[0] == 'skip') {
-                    c_anser = '스킵하셨습니다.';
-                    if (args[1] == '시간초과') c_anser = '시간초과로 스킵되었습니다.';
+                    c_anser = (args[1] == '시간초과') ? '시간초과로 스킵되었습니다.' : '스킵하셨습니다.';
                     var skip = data.skip;
-                    if (skip == undefined || skip == 0) {
-                        skip = 1;
-                    } else {
-                        skip = skip + 1;
-                    }
+                    skip = (skip == undefined || skip == 0) ? 1 : skip + 1;
                     data.skip = skip;
                     await data.save().catch(err => console.log(err));
                 } else {
@@ -80,21 +78,17 @@ module.exports = {
                 var channelid = data.channelid;
                 var listid = data.listid;
                 var npid = data.npid;
-                try {
-                    var c = client.channels.cache.get(channelid);
-                    c.messages.fetch(listid).then(m => {
-                        m.edit(list);
-                    });
-                    c.messages.fetch(npid).then(m => {
-                        m.edit(np);
-                    });
-                } catch(err) {}
+                
+                var c = client.channels.cache.get(channelid);
+                c.messages.fetch(listid).then(m => {
+                    m.edit(list);
+                });
+                c.messages.fetch(npid).then(m => {
+                    m.edit(np);
+                });
             } catch(err) {
                 return await play_end(client, message);
             }
-
-            await delmsg(client, data);
-
             try {
                 await play_score(client, message);
             } catch(err) {}
@@ -102,6 +96,7 @@ module.exports = {
             data.count = data.count + 1;
             await data.save().catch(err => console.log(err));
             setTimeout(async function() {
+                await delmsg(client, data);
                 if (!(message.guild.me.voice.channel == data.voicechannelid)) {
                     clearInterval(ontimer);
                     return ;
@@ -120,16 +115,15 @@ module.exports = {
                 await db.set(`db.music.${message.guild.id}.hint`, []);
                 await db.set(`db.music.${message.guild.id}.hintget`, false);
                 await db.set(`db.music.${message.guild.id}.skipget`, false);
-                await delmsg(client, data);
                 return await play(client, c, message);
             }, time * 1000);
         });
         async function delmsg(client, data) {
             try {
                 var c = client.channels.cache.get(data.channelid);
-                return c.messages.fetch().then(msg => {
+                await c.messages.fetch().then(async (msg) => {
                     if (msg.size > 3) {
-                        c.bulkDelete(msg.size-3);
+                        await c.bulkDelete(msg.size-3);
                     }
                 });
             } catch(err) {}

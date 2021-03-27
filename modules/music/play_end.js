@@ -66,10 +66,10 @@ module.exports = {
 
             try {
                 var c = client.channels.cache.get(data.channelid);
-                setTimeout(() => {
-                    c.messages.fetch().then(msg => {
+                setTimeout(async () => {
+                    await c.messages.fetch().then(async (msg) => {
                         if (msg.size > 3) {
-                            c.bulkDelete(msg.size-3);
+                            await c.bulkDelete(msg.size-3);
                         }
                     });
                 }, 750);

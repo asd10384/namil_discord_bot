@@ -56,10 +56,10 @@ module.exports = {
                     var text = '';
                     if (idx > -1) {
                         user.splice(idx, 1);
-                        text = `<@!${message.author.id}> 님이 스킵을 요청을 취소했습니다.`;
+                        text = `<@!${message.member.id}> 님이 스킵을 요청을 취소했습니다.`;
                     } else {
                         user.push(userid);
-                        text = `<@!${message.author.id}> 님이 스킵을 요청했습니다.`;
+                        text = `<@!${message.member.id}> 님이 스킵을 요청했습니다.`;
                     }
                     if (user.length >= count) {
                         await db.set(`db.music.${message.guild.id}.skipget`, true);

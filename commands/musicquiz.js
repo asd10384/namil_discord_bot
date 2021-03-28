@@ -91,9 +91,13 @@ module.exports = {
                 client.commands.set(command.name, command);
             }
 
+            // 음성확인
+            var checkcvc = await checkvc(message, data, emerr);
+
             if (args[0] == '시작' || args[0] == 'start') {
                 // 음성확인
-                if (!await checkvc(message, data, emerr)) return ;
+                if (!checkcvc['check']) return ;
+                var voiceChannel = checkcvc['voiceChannel'];
 
                 var startmsg = await db.get(`db.music.${message.guild.id}.startmsg`);
                 if (startmsg == undefined || startmsg == null) startmsg = false;
@@ -112,20 +116,20 @@ module.exports = {
             }
             if (args[0] == '설정' || args[0] == 'setting') {
                 // 음성확인
-                if (!await checkvc(message, data, emerr)) return ;
+                if (!checkcvc['check']) return ;
 
                 return await play_setting(client, message, args, em, emerr);
             }
             if (args[0] == '종료' || args[0] == '중단' || args[0] == '중지' || args[0] == 'stop') {
                 // 음성확인
-                if (!await checkvc(message, data, emerr)) return ;
+                if (!checkcvc['check']) return ;
 
                 await db.set(`db.music.${message.guild.id}.startmsg`, false);
                 return play_end(client, message);
             }
             if (args[0] == '스킵' || args[0] == 'skip') {
                 // 음성확인
-                if (!await checkvc(message, data, emerr)) return ;
+                if (!checkcvc['check']) return ;
 
                 if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>data.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
                 return play_anser(message, client, args);
@@ -163,13 +167,19 @@ module.exports = {
             if (!voiceChannel) {
                 emerr.setDescription(`음성채널에 들어간 뒤 사용해주세요.`);
                 message.channel.send(emerr).then(m => msgdelete(m, msg_time));
-                return false;
+                return {
+                    'check': false, 
+                    voiceChannel: undefined
+                };
             }
             try {
                 data.voicechannelid = voiceChannel.id;
                 await data.save().catch(err => console.log(err));
             } catch(err) {}
-            return true;
+            return {
+                'check': true, 
+                'voiceChannel': voiceChannel
+            };
         }
     },
 };

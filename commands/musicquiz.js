@@ -91,18 +91,10 @@ module.exports = {
                 client.commands.set(command.name, command);
             }
 
-            var voiceChannel = message.member.voice.channel;
-            if (!voiceChannel) {
-                emerr.setDescription(`음성채널에 들어간 뒤 사용해주세요.`);
-                return message.channel.send(emerr).then(m => msgdelete(m, msg_time));
-            }
-
-            try {
-                data.voicechannelid = voiceChannel.id;
-                await data.save().catch(err => console.log(err));
-            } catch(err) {}
-
             if (args[0] == '시작' || args[0] == 'start') {
+                // 음성확인
+                if (!await checkvc(message, data, emerr)) return ;
+
                 var startmsg = await db.get(`db.music.${message.guild.id}.startmsg`);
                 if (startmsg == undefined || startmsg == null) startmsg = false;
                 if (!startmsg) {
@@ -119,13 +111,22 @@ module.exports = {
                 }
             }
             if (args[0] == '설정' || args[0] == 'setting') {
+                // 음성확인
+                if (!await checkvc(message, data, emerr)) return ;
+
                 return await play_setting(client, message, args, em, emerr);
             }
             if (args[0] == '종료' || args[0] == '중단' || args[0] == '중지' || args[0] == 'stop') {
+                // 음성확인
+                if (!await checkvc(message, data, emerr)) return ;
+
                 await db.set(`db.music.${message.guild.id}.startmsg`, false);
                 return play_end(client, message);
             }
             if (args[0] == '스킵' || args[0] == 'skip') {
+                // 음성확인
+                if (!await checkvc(message, data, emerr)) return ;
+
                 if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>data.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
                 return play_anser(message, client, args);
             }
@@ -153,8 +154,22 @@ module.exports = {
                 return message.channel.send(`${pp}음악퀴즈 오류확인 [음악퀴즈 채팅 채널 아이디]`).then(m => msgdelete(m, 5500));
             }
             if (args[0] == '명령어' || args[0] == '도움말' || args[0] == 'help') {
-                return message.channel.send(help).then(m => msgdelete(m, msg_time));
+                return message.channel.send(help).then(m => msgdelete(m, 4000));
             }
         });
+
+        async function checkvc(message, data, emerr) {
+            var voiceChannel = message.member.voice.channel;
+            if (!voiceChannel) {
+                emerr.setDescription(`음성채널에 들어간 뒤 사용해주세요.`);
+                message.channel.send(emerr).then(m => msgdelete(m, msg_time));
+                return false;
+            }
+            try {
+                data.voicechannelid = voiceChannel.id;
+                await data.save().catch(err => console.log(err));
+            } catch(err) {}
+            return true;
+        }
     },
 };

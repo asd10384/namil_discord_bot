@@ -17,9 +17,11 @@ connect(dburl, {
 });
 const Data = require('../data');
 const mData = require('../music_data');
+const map = new Map();
 
 module.exports = {
     tts_play: async function tts_play (client, message, args, vcerr, yterr, music) {
+        clearTimeout(map.get(`${message.guild.id}.tts`));
         function msgdelete(m, t) {
             setTimeout(function() {
                 try {
@@ -38,7 +40,7 @@ module.exports = {
             var user = message.member.user;
             Data.findOne({
                 userID: user.id
-            }, (err, data) => {
+            }, async (err, data) => {
                 if (err) console.log(err);
                 if (!data) {
                     dbset(user, 0);
@@ -83,10 +85,15 @@ module.exports = {
                                 tts_msg(text)
                             }&tl=ko`;
                         }
-                        const broadcast = client.voice.createBroadcast();
+                        clearTimeout(map.get(`${message.guild.id}.tts`));
                         channel.join().then(connection => {
-                            broadcast.play(url, options);
-                            connection.play(broadcast);
+                            const dispatcher = connection.play(url, options);
+                            dispatcher.on("finish", async () => {
+                                var ttstimer = setTimeout(async() => {
+                                    return channel.leave();
+                                }, 1000 * 60 * 5);
+                                map.set(`${message.guild.id}.tts`, ttstimer);
+                            });
                         });
                     } catch (error) {
                         return message.channel.send(vcerr).then(m => msgdelete(m, msg_time));

@@ -91,7 +91,7 @@ module.exports = {
                             dispatcher.on("finish", async () => {
                                 var ttstimer = setTimeout(async() => {
                                     return channel.leave();
-                                }, 1000 * 60 * 5);
+                                }, 1000 * 60 * 10);
                                 map.set(`${message.guild.id}.tts`, ttstimer);
                             });
                         });

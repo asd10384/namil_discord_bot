@@ -4,6 +4,8 @@ module.exports = {
         text = text.replace(/\?/gi, '물음표') || text;
         text = text.replace(/\!/gi, '느낌표') || text;
         text = text.replace(/\~/gi, '물결표') || text;
+        text = text.replace(/\+/gi, '더하기') || text;
+        text = text.replace(/\-/gi, '빼기') || text;
 
         text = text.replace(/\'/gi, '따옴표') || text;
         text = text.replace(/\"/gi, '큰따옴표') || text;

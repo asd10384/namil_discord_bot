@@ -27,8 +27,7 @@
     "ytdl-core": "^4.5.0"
   },
   "scripts": {
-    ".": "node index.js",
-    "start": "node index.js"
+    ".": "node index.js"
   },
   "author": "asd10384",
   "license": "ISC"

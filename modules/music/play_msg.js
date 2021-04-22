@@ -1,4 +1,5 @@
 
+require('dotenv').config();
 const { MessageEmbed } = require('discord.js');
 const { default_prefix } = require('../../config.json');
 

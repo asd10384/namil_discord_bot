@@ -1,4 +1,5 @@
 
+require('dotenv').config();
 const { formatDate } = require('../modules/functions');
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');

@@ -1,4 +1,5 @@
 
+require('dotenv').config();
 const pagination = require('discord.js-pagination');
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');

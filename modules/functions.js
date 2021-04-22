@@ -1,9 +1,10 @@
 
+require('dotenv').config();
 const db = require('quick.db');
 
 const { mongourl } = require('../config.json');
 const { connect } = require('mongoose');
-connect(mongourl, {
+connect(process.env.mongourl || mongourl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });

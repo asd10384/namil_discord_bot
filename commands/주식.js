@@ -1,4 +1,5 @@
 
+require('dotenv').config();
 const db = require('quick.db');
 const { MessageEmbed, Collection } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole, mongourl } = require('../config.json');

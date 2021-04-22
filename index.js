@@ -1,4 +1,5 @@
 
+require('dotenv').config();
 const Discord = require('discord.js');
 const client = new Discord.Client({partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'USER']});
 const { token, default_prefix, msg_time, help_time, textchannel, mongourl } = require('./config.json');
@@ -7,10 +8,14 @@ const { join } = require('path');
 const config = require('./config.json');
 const db = require('quick.db');
 
+// google key
+const googleapi = require('./googlettsapi');
+googleapi.getkeyfile();
+
 const { creaction } = require('./modules/reaction');
 const { dbset, dbset_music } = require('./modules/functions');
 const { connect } = require('mongoose');
-var dburl = mongourl;
+var dburl = process.env.mongourl || mongourl;
 connect(dburl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -159,4 +164,4 @@ client.on('messageReactionAdd', async (reaction, user) => {
 
 
 // process.env.token
-client.login(process.env.token || token || 'testNzk2OTIyNjEwMTUwNjcwMzc2.X_e-BA.yEQ6nEkH5W5N6Vm3fsKMxEkxWyc');
+client.login(process.env.token);

@@ -1,4 +1,5 @@
 
+require('dotenv').config();
 const db = require('quick.db');
 const { MessageEmbed } = require('discord.js');
 const { default_prefix, msg_time, help_time, drole, mongourl, textchannel } = require('../../config.json');
@@ -10,6 +11,7 @@ var checkytid = /(?:http:\/\/)?(?:www\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v
 const { tts_msg } = require('./tts_msg');
 const { dbset, dbset_music } = require('../functions');
 const { connect } = require('mongoose');
+const { seturl, ttsstart } = require('./seturl');
 var dburl = process.env.mongourl || mongourl; // config 수정
 connect(dburl, {
     useNewUrlParser: true,
@@ -81,20 +83,9 @@ module.exports = {
                         }
 
                         if (url == '없음') {
-                            var url = `http://translate.google.com/translate_tts?ie=UTF-8&total=1&idx=0&textlen=32&client=tw-ob&q=${
-                                tts_msg(text)
-                            }&tl=ko`;
+                            return seturl(message, channel, map, text, options);
                         }
-                        clearTimeout(map.get(`${message.guild.id}.tts`));
-                        channel.join().then(connection => {
-                            const dispatcher = connection.play(url, options);
-                            dispatcher.on("finish", async () => {
-                                var ttstimer = setTimeout(async() => {
-                                    return channel.leave();
-                                }, 1000 * 60 * 10);
-                                map.set(`${message.guild.id}.tts`, ttstimer);
-                            });
-                        });
+                        return ttsstart(message, channel, map, url, options);
                     } catch (error) {
                         return message.channel.send(vcerr).then(m => msgdelete(m, msg_time));
                     }

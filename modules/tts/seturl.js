@@ -2,6 +2,7 @@
 require('dotenv').config();
 const TTS = require('@google-cloud/text-to-speech');
 const { writeFile } = require('fs');
+const { tts_msg } = require('./tts_msg');
 const ttsclient = new TTS.TextToSpeechClient({
     keyFile: 'googlettsapi.json'
 });
@@ -12,7 +13,7 @@ module.exports = {
 
 async function seturl(message, channel, map, text, options) {
     const [response] = await ttsclient.synthesizeSpeech({
-        input: {text: text},
+        input: {text: tts_msg(text)},
         voice: {
             languageCode: 'ko-KR',
             name: 'ko-KR-Standard-A'

@@ -1,5 +1,6 @@
 
 require('dotenv').config();
+const db = require('quick.db');
 const TTS = require('@google-cloud/text-to-speech');
 const { writeFile } = require('fs');
 const { tts_msg } = require('./tts_msg');
@@ -11,7 +12,7 @@ module.exports = {
     ttsstart,
 };
 
-async function seturl(message, channel, map, text, options) {
+async function seturl(message, channel, text, options) {
     const [response] = await ttsclient.synthesizeSpeech({
         input: {text: tts_msg(text)},
         voice: {
@@ -30,19 +31,17 @@ async function seturl(message, channel, map, text, options) {
 
     var fileurl = `tts.wav`;
     writeFile(fileurl, response.audioContent, (err) => {
-        ttsstart(message, channel, map, fileurl, options);
+        ttsstart(message, channel, fileurl, options);
     });
 }
 
-function ttsstart(message, channel, map, url, options) {
-    clearTimeout(map.get(`${message.guild.id}.tts`));
+function ttsstart(message, channel, url, options) {
+    db.set(`db.${message.guild.id}.tts.timeron`, true);
+    db.set(`db.${message.guild.id}.tts.timertime`, 600);
     channel.join().then(connection => {
         const dispatcher = connection.play(url, options);
         dispatcher.on("finish", () => {
-            var ttstimer = setTimeout(() => {
-                return channel.leave();
-            }, 1000 * 60 * 10);
-            map.set(`${message.guild.id}.tts`, ttstimer);
+            db.set(`db.${message.guild.id}.tts.timertime`, 600);
         });
     });
 }

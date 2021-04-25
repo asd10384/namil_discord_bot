@@ -19,11 +19,9 @@ connect(dburl, {
 });
 const Data = require('../data');
 const mData = require('../music_data');
-const map = new Map();
 
 module.exports = {
     tts_play: async function tts_play (client, message, args, vcerr, yterr, music) {
-        clearTimeout(map.get(`${message.guild.id}.tts`));
         function msgdelete(m, t) {
             setTimeout(function() {
                 try {
@@ -31,6 +29,8 @@ module.exports = {
                 } catch(err) {}
             }, t);
         }
+
+        db.set(`db.${message.guild.id}.tts.timertime`, 600);
 
         mData.findOne({
             serverid: message.guild.id
@@ -83,9 +83,9 @@ module.exports = {
                         }
 
                         if (url == '없음') {
-                            return seturl(message, channel, map, text, options);
+                            return seturl(message, channel, text, options);
                         }
-                        return ttsstart(message, channel, map, url, options);
+                        return ttsstart(message, channel, url, options);
                     } catch (error) {
                         return message.channel.send(vcerr).then(m => msgdelete(m, msg_time));
                     }

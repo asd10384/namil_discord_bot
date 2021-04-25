@@ -15,7 +15,7 @@ const Data = require('../data');
 const mData = require('../music_data');
 
 module.exports = {
-    tts_ban: async function tts_ban (client, message, args, ttscheck) {
+    tts_ban: async function tts_ban (client, message, args, ttscheck, pp) {
         function msgdelete(m, t) {
             setTimeout(function() {
                 try {

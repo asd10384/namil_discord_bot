@@ -74,11 +74,11 @@ module.exports = {
             if (!args[0]) return message.channel.send(help).then(m => msgdelete(m, msg_time));
             if (args[0] == 'ban' || args[0] == '밴' || args[0] == '뮤트') {
                 if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>dataa.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
-                return await tts_ban(client, message, args, ttscheck);
+                return await tts_ban(client, message, args, ttscheck, pp);
             }
             if (args[0] == 'unban' || args[0] == '언밴' || args[0] == '언벤' || args[0] == '해제') {
                 if (!(message.member.permissions.has(drole) || message.member.roles.cache.some(r=>dataa.role.includes(r.id)))) return message.channel.send(per).then(m => msgdelete(m, msg_time));
-                return await tts_unban(client, message, args, ttscheck);
+                return await tts_unban(client, message, args, ttscheck, pp);
             }
             return await tts_play(client, message, args, vcerr, yterr, music);
         });

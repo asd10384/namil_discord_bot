@@ -107,7 +107,6 @@ async function ttstimer(message) {
         var time = await db.get(`db.${message.guild.id}.tts.timertime`);
         if (time == undefined || time == null) time = 600;
         var on = await db.get(`db.${message.guild.id}.tts.timeron`) || false;
-        console.log(on, time);
         if (on) {
             if (time <= 0) {
                 await db.set(`db.${message.guild.id}.tts.timeron`, false);

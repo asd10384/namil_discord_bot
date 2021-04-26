@@ -26,6 +26,7 @@ module.exports = {
             .setTitle(`봇이 음성채널에 없습니다.`)
             .setColor('RANDOM');
         
+        db.set(`db.${message.guild.id}.tts.timeron`, false);
         try {
             message.guild.me.voice.channel.leave();
         } catch (error) {

@@ -43,7 +43,8 @@ module.exports = {
             .setTitle(`\` 명령어 \``)
             .setDescription(`
                 \` 메인 명령어 \`
-                ${pp}tts [messages]
+                ${pp}tts [messages] : 메세지를 음성으로 재생
+                ${pp}tts 오류수정 : 봇 오류해결
 
                 \` 관련 명령어 \`
                 ${pp}join [voice channel id]

@@ -30,6 +30,11 @@ module.exports = {
             }, t);
         }
 
+        var checktimer = await db.get(`db.${message.guild.id}.tts.timercheck`);
+        if (!checktimer) {
+            await db.set(`db.${message.guild.id}.tts.timercheck`, true);
+            await ttstimer(message);
+        }
         db.set(`db.${message.guild.id}.tts.timertime`, 600);
 
         mData.findOne({
@@ -96,3 +101,26 @@ module.exports = {
         });
     },
 };
+
+async function ttstimer(message) {
+    setInterval(async () => {
+        var time = await db.get(`db.${message.guild.id}.tts.timertime`);
+        if (time == undefined || time == null) time = 600;
+        var on = await db.get(`db.${message.guild.id}.tts.timeron`) || false;
+        console.log(on, time);
+        if (on) {
+            if (time <= 0) {
+                await db.set(`db.${message.guild.id}.tts.timeron`, false);
+                await db.set(`db.${message.guild.id}.tts.timertime`, 600);
+                try {
+                    message.guild.me.voice.channel.leave();
+                } catch(err) {}
+            } else {
+                await db.set(`db.${message.guild.id}.tts.timertime`, time-5);
+            }
+        } else {
+            await db.set(`db.${message.guild.id}.tts.timeron`, false);
+            await db.set(`db.${message.guild.id}.tts.timertime`, 600);
+        }
+    }, 5000);
+}

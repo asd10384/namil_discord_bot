@@ -71,12 +71,7 @@ client.on('ready', async () => {
     });
 });
 
-var ttstimerstart = false;
 client.on('message', async message => {
-    if (!ttstimerstart) {
-        ttstimerstart = true;
-        await ttstimer(message);
-    }
     if (message.author.bot) return;
     if (message.channel.type === 'dm') return;
     
@@ -170,24 +165,3 @@ client.on('messageReactionAdd', async (reaction, user) => {
 
 // process.env.token
 client.login(process.env.token);
-
-async function ttstimer(message) {
-    setInterval(async () => {
-        var time = await db.get(`db.${message.guild.id}.tts.timertime`) || 600;
-        var on = await db.get(`db.${message.guild.id}.tts.timeron`) || false;
-        if (on) {
-            if (time <= 0) {
-                await db.set(`db.${message.guild.id}.tts.timeron`, false);
-                await db.set(`db.${message.guild.id}.tts.timertime`, 600);
-                try {
-                    message.guild.me.voice.channel.leave();
-                } catch(err) {}
-            } else {
-                await db.set(`db.${message.guild.id}.tts.timertime`, time-5);
-            }
-        } else {
-            await db.set(`db.${message.guild.id}.tts.timeron`, false);
-            await db.set(`db.${message.guild.id}.tts.timertime`, 600);
-        }
-    }, 5000);
-}

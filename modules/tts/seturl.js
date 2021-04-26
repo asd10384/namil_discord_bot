@@ -30,17 +30,17 @@ async function seturl(message, channel, text, options) {
     options['volume'] = 0.7;
 
     var fileurl = `tts.wav`;
-    writeFile(fileurl, response.audioContent, (err) => {
-        ttsstart(message, channel, fileurl, options);
+    writeFile(fileurl, response.audioContent, async (err) => {
+        await ttsstart(message, channel, fileurl, options);
     });
 }
 
-function ttsstart(message, channel, url, options) {
+async function ttsstart(message, channel, url, options) {
     db.set(`db.${message.guild.id}.tts.timeron`, true);
     db.set(`db.${message.guild.id}.tts.timertime`, 600);
     channel.join().then(connection => {
         const dispatcher = connection.play(url, options);
-        dispatcher.on("finish", () => {
+        dispatcher.on("finish", async () => {
             db.set(`db.${message.guild.id}.tts.timertime`, 600);
         });
     });

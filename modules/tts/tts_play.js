@@ -33,7 +33,7 @@ module.exports = {
         var checktimer = await db.get(`db.${message.guild.id}.tts.timercheck`);
         if (!checktimer) {
             await db.set(`db.${message.guild.id}.tts.timercheck`, true);
-            await ttstimer(message);
+            await ttstimer(message, dataa);
         }
         db.set(`db.${message.guild.id}.tts.timertime`, 600);
 
@@ -102,8 +102,9 @@ module.exports = {
     },
 };
 
-async function ttstimer(message) {
+async function ttstimer(message, dataa) {
     setInterval(async () => {
+        if (dataa.start) return;
         var time = await db.get(`db.${message.guild.id}.tts.timertime`);
         if (time == undefined || time == null) time = 600;
         var on = await db.get(`db.${message.guild.id}.tts.timeron`) || false;

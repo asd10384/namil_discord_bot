@@ -7,7 +7,14 @@ const dataSchema = Schema({
     money: Number,
     daily: String,
     stock: Array,
-    tts: Boolean
+    tts: Boolean,
+    selfcheck: {
+        area: String,
+        school: String,
+        name: String,
+        birthday: String,
+        password: String,
+    },
 });
 
 module.exports = model('Data', dataSchema);

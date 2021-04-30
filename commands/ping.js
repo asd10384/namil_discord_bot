@@ -26,6 +26,6 @@ module.exports = {
             .setTitle(`\` PONG! \``)
             .setDescription(`🏓 \` ${client.ws.ping} \` ms`)
             .setColor('RANDOM');
-        message.channel.send(ping).then(m => msgdelete(m, msg_time));
+        return message.channel.send(ping).then(m => msgdelete(m, msg_time));
     },
 };

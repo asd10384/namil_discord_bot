@@ -54,7 +54,14 @@ module.exports = {
                     수량: 0
                 }
             ],
-            tts: true
+            tts: true,
+            selfcheck: {
+                area: '',
+                school: '',
+                name: '',
+                birthday: '',
+                password: '',
+            }
         });
         return newData.save().catch(err => console.log(err));
     },

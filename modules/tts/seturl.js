@@ -5,7 +5,8 @@ const TTS = require('@google-cloud/text-to-speech');
 const { writeFile } = require('fs');
 const { tts_msg } = require('./tts_msg');
 const ttsclient = new TTS.TextToSpeechClient({
-    keyFile: 'googlettsapi.json'
+    keyFile: 'googlettsapi.json',
+    fallback: false
 });
 module.exports = {
     seturl,
